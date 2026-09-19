@@ -703,12 +703,39 @@ function waveLabel() {
   return `Wave ${game.wave}: ${wave.name}`;
 }
 
+function showDamageNumber(target, amount, isCrit = false) {
+  const layer = document.getElementById(target === "player" ? "player-damage-layer" : "monster-damage-layer");
+  const combatant = layer ? layer.parentElement : null;
+  if (!layer || !combatant) return;
+
+  const number = document.createElement("div");
+  number.className = "damage-number" + (isCrit ? " critical" : "");
+  number.textContent = (isCrit ? "CRIT " : "") + amount;
+  number.style.setProperty("--damage-x", ((Math.random() * 70) - 35).toFixed(1) + "px");
+  number.style.setProperty("--damage-rotate", ((Math.random() * 12) - 6).toFixed(1) + "deg");
+  layer.appendChild(number);
+
+  combatant.classList.remove("damage-flash", "critical-hit");
+  void combatant.offsetWidth;
+  combatant.classList.add(isCrit ? "critical-hit" : "damage-flash");
+
+  window.setTimeout(() => number.remove(), isCrit ? 1050 : 800);
+  window.setTimeout(() => combatant.classList.remove("damage-flash", "critical-hit"), isCrit ? 330 : 220);
+}
+
 function playerAttack() {
   if (!game.battleActive) return;
 
-  game.monster.hp = Math.max(0, game.monster.hp - game.player.damage);
+  const isCrit = Math.random() * 100 < game.player.critChance;
+  const baseDamage = Math.max(1, Math.round(game.player.damage));
+  const damage = isCrit
+    ? Math.max(baseDamage, Math.round(baseDamage * (game.player.critDamage / 100)))
+    : baseDamage;
+
+  game.monster.hp = Math.max(0, game.monster.hp - damage);
+  showDamageNumber("monster", damage, isCrit);
   updateBattleUi();
-  writeLog(`Player attacks for ${game.player.damage} damage.`);
+  writeLog(`Player attacks for ${damage} damage${isCrit ? " · CRITICAL HIT!" : ""}.`);
 
   if (game.monster.hp <= 0) {
     finishVictory();
@@ -718,9 +745,11 @@ function playerAttack() {
 function monsterAttack() {
   if (!game.battleActive) return;
 
-  game.player.hp = Math.max(0, game.player.hp - game.monster.damage);
+  const damage = Math.max(1, Math.round(game.monster.damage));
+  game.player.hp = Math.max(0, game.player.hp - damage);
+  showDamageNumber("player", damage, false);
   updateBattleUi();
-  writeLog(`Monster attacks for ${game.monster.damage} damage.`);
+  writeLog(`Monster attacks for ${damage} damage.`);
 
   if (game.player.hp <= 0) {
     finishDefeat();
