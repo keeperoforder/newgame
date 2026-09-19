@@ -27,6 +27,8 @@ const game = {
   exp: 0,
   level: 1,
   wave: 1,
+  farmingWave: false,
+  nextWaveTarget: 1,
   soundOn: true,
   musicOn: true,
   player: { maxHp: 100, hp: 100, damage: 10, attackSpeed: 1500 },
@@ -54,6 +56,7 @@ const ui = {
   monsterDamage: document.getElementById("monster-damage"),
   monsterAttackSpeed: document.getElementById("monster-attack-speed"),
   status: document.getElementById("battle-status"),
+  nextWaveButton: document.getElementById("next-wave-button"),
   log: document.getElementById("combat-log"),
   victoryEyebrow: document.getElementById("victory-eyebrow"),
   continueButton: document.getElementById("continue-game"),
@@ -244,9 +247,14 @@ function resetBattle() {
   applyWaveData();
   game.player.hp = game.player.maxHp;
   game.battleActive = true;
-  ui.status.textContent = `WAVE ${game.wave} · AUTO BATTLE`;
+  ui.status.textContent = game.farmingWave
+    ? `WAVE \${game.wave} · FARMING`
+    : `WAVE \${game.wave} · AUTO BATTLE`;
+  ui.nextWaveButton.hidden = !game.farmingWave || game.wave >= slimeWaves.length;
   updateBattleUi();
-  writeLog(`${waveLabel()} has begun.`);
+  writeLog(game.farmingWave
+    ? `\${waveLabel()} is being farmed. Win it until you are ready for the next wave.`
+    : `\${waveLabel()} has begun.`);
 }
 
 function waveLabel() {
@@ -314,6 +322,18 @@ function finishVictory() {
     ui.nextWaveDescription.textContent = `${next.name} · HP ${next.maxHp} · Damage ${next.damage}`;
   }
 
+  if (game.farmingWave) {
+    ui.status.textContent = "FARMING · NEXT WAVE READY";
+    writeLog(waveLabel() + " cleared. Keep farming or press NEXT WAVE when ready.");
+    ui.nextWaveButton.hidden = game.wave >= slimeWaves.length;
+    saveGame();
+    window.setTimeout(() => {
+      if (game.battleActive || !game.farmingWave) return;
+      startBattle();
+    }, 900);
+    return;
+  }
+
   if (game.wave < slimeWaves.length) {
     ui.status.textContent = "VICTORY · NEXT WAVE";
     writeLog(waveLabel() + " cleared. Next wave starting automatically...");
@@ -329,8 +349,26 @@ function finishVictory() {
 }
 
 function finishDefeat() {
+  const failedWave = game.wave;
   game.battleActive = false;
   clearBattleTimers();
+
+  game.nextWaveTarget = failedWave;
+  game.farmingWave = failedWave > 1;
+  game.wave = failedWave > 1 ? failedWave - 1 : 1;
+
+  saveGame();
+
+  if (game.farmingWave) {
+    writeLog("Wave " + failedWave + " defeated you. Returning to Wave " + game.wave + " to farm until you are ready.");
+    ui.status.textContent = "DEFEAT · RETURNING TO FARM";
+    window.setTimeout(() => {
+      if (game.battleActive) return;
+      startBattle();
+    }, 900);
+    return;
+  }
+
   ui.status.textContent = "DEFEAT";
   showScreen(screens.defeat);
 }
@@ -375,19 +413,33 @@ activateSvgButton(document.getElementById("svg-music-toggle"), () => {
   setSvgToggle("svg-music-label", "svg-music-toggle", game.musicOn);
 });
 
+ui.nextWaveButton.addEventListener("click", () => {
+  if (!game.farmingWave || game.nextWaveTarget <= game.wave) return;
+
+  game.wave = Math.min(slimeWaves.length, game.nextWaveTarget);
+  game.farmingWave = false;
+  ui.nextWaveButton.hidden = true;
+  saveGame();
+  writeLog("Moving to Wave " + game.wave + ". The player has chosen to advance.");
+  startBattle();
+});
+
 document.getElementById("try-again").addEventListener("click", () => {
+  game.farmingWave = false;
   startBattle();
 });
 
 document.getElementById("back-to-menu-from-defeat").addEventListener("click", () => {
   clearBattleTimers();
   game.battleActive = false;
+  game.farmingWave = false;
   game.wave = 1;
   closeMenuOverlayViews();
   showScreen(screens.menu);
 });
 
 document.getElementById("continue-game").addEventListener("click", () => {
+  game.farmingWave = false;
   game.wave = 1;
   closeMenuOverlayViews();
   showScreen(screens.menu);
@@ -413,6 +465,8 @@ function saveGame() {
     exp: game.exp,
     level: game.level,
     wave: game.wave,
+    farmingWave: game.farmingWave,
+    nextWaveTarget: game.nextWaveTarget,
     soundOn: game.soundOn,
     musicOn: game.musicOn,
     playerHp: game.player.hp,
@@ -435,6 +489,11 @@ function loadGame() {
     game.exp = Number.isFinite(saveData.exp) ? saveData.exp : 0;
     game.level = Math.max(1, Math.min(100, Number.isFinite(saveData.level) ? saveData.level : 1));
     game.wave = Math.max(1, Math.min(slimeWaves.length, Number.isFinite(saveData.wave) ? saveData.wave : 1));
+    game.farmingWave = saveData.farmingWave === true;
+    game.nextWaveTarget = Math.max(game.wave, Math.min(
+      slimeWaves.length,
+      Number.isFinite(saveData.nextWaveTarget) ? saveData.nextWaveTarget : game.wave
+    ));
     game.soundOn = saveData.soundOn !== false;
     game.musicOn = saveData.musicOn !== false;
 
