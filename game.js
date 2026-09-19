@@ -604,8 +604,8 @@ function renderEquipmentCard(slot) {
 
 function updateBlacksmithUi() {
   if (!ui.blacksmithResources) return;
-  ui.blacksmithResources.innerHTML = "<strong><span class=\"resource-chip-icon gold-chip\">✦</span> Gold " + game.gold + "</strong>" +
-    Object.entries(game.materials).map(([key, value]) => "<span><i class=\"resource-chip-icon\">" + getMaterialIconSvg(key) + "</i>" + formatMaterialName(key) + " " + value + "</span>").join("");
+  ui.blacksmithResources.innerHTML = "<strong class=\"resource-chip gold-resource\"><span class=\"resource-chip-icon gold-chip\">✦</span><span>Gold</span><b>" + game.gold + "</b></strong>" +
+    Object.entries(game.materials).map(([key, value]) => "<span class=\"resource-chip resource-" + key + "\"><span class=\"resource-chip-icon\">" + getMaterialIconSvg(key) + "</span><span>" + formatMaterialName(key) + "</span><b>" + value + "</b></span>").join("");
   ui.equipmentGrid.innerHTML = equipmentSlots.map(renderEquipmentCard).join("");
   ui.equipmentGrid.querySelectorAll(".equipment-action").forEach((button) => {
     button.addEventListener("click", () => craftOrUpgradeEquipment(button.dataset.slot, button.dataset.action));
