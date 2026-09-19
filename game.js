@@ -314,10 +314,41 @@ function closeCharacterScreen() {
 function renderInventoryItem(item) {
   const slot = equipmentSlots.find((entry) => entry.id === item.slotId);
   const rarity = rarityData[item.rarity];
+  const actionData = getEquipmentAction(slot, item);
+  const canUpgrade = actionData.action !== "max" && canAfford(actionData.cost);
+  const upgradeLabel = actionData.action === "tier2" ? "FORGE T2" : actionData.action === "upgrade" ? "UPGRADE" : "";
   return "<article class=\"inventory-item " + getItemVisualClass(item) + "\" style=\"--rarity:" + rarity.color + ";--rarity-glow:" + rarity.glow + "\">" +
     "<div class=\"inventory-item-icon\">" + getSlotIcon(item.slotId) + "</div>" +
-    "<div class=\"inventory-item-info\"><div class=\"inventory-rarity\">" + item.rarity + "</div><h3>" + item.name + " <span>Lv." + item.level + "</span></h3><p>" + slot.effect + "</p><div>" + equipmentEffectText(item.slotId, item) + "</div></div>" +
-    "<div class=\"inventory-actions\"><button data-item=\"" + item.uid + "\" data-action=\"equip\">EQUIP</button><button data-item=\"" + item.uid + "\" data-action=\"sell\">SELL</button></div></article>";
+    "<div class=\"inventory-item-info\"><div class=\"inventory-rarity\">" + item.rarity + "</div><h3>" + item.name + " <span>Lv." + item.level + "</span></h3><p>" + slot.effect + " · Item Level " + item.level + "</p><div>" + equipmentEffectText(item.slotId, item) + "</div>" + getEquipmentComparisonHtml(item) + "</div>" +
+    "<div class=\"inventory-actions\"><button data-item=\"" + item.uid + "\" data-action=\"equip\">EQUIP</button>" +
+    (upgradeLabel ? "<button data-item=\"" + item.uid + "\" data-action=\"upgrade\" " + (canUpgrade ? "" : "disabled") + ">" + upgradeLabel + "</button>" : "") +
+    "<button data-item=\"" + item.uid + "\" data-action=\"sell\">SELL</button></div></article>";
+}
+
+function upgradeInventoryItem(item) {
+  const slot = equipmentSlots.find((entry) => entry.id === item.slotId);
+  const actionData = getEquipmentAction(slot, item);
+  if (actionData.action === "max" || !canAfford(actionData.cost)) {
+    ui.inventoryMessage.textContent = "Not enough Gold or materials for this upgrade.";
+    return;
+  }
+
+  payCost(actionData.cost);
+  if (actionData.action === "tier2") {
+    item.tier = 2;
+    item.name = slot.tier2Name;
+    item.level = Math.max(item.level, getCraftItemLevel(game.wave, 2));
+    item.rarity = game.wave >= 15 ? "Legendary" : "Epic";
+    ui.inventoryMessage.textContent = item.name + " forged to Tier 2 · Lv." + item.level + ".";
+  } else {
+    item.level = Math.min(100, item.level + 1);
+    ui.inventoryMessage.textContent = item.name + " upgraded to Item Lv." + item.level + ".";
+  }
+
+  updateProgressionUi();
+  updateInventoryUi();
+  updateBlacksmithUi();
+  saveGame();
 }
 
 function updateInventoryUi() {
@@ -328,6 +359,7 @@ function updateInventoryUi() {
     const item = game.inventory.find((entry) => entry.uid === button.dataset.item);
     if (!item) return;
     if (button.dataset.action === "equip") equipInventoryItem(item);
+    if (button.dataset.action === "upgrade") upgradeInventoryItem(item);
     if (button.dataset.action === "sell") sellInventoryItem(item);
   }));
 }
