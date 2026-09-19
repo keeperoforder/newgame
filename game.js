@@ -242,7 +242,7 @@ function getMonsterBalanceMultiplier(wave = game.wave) {
   const rebirthScale = Math.max(0, game.rebirths || 0);
   return {
     hp: (2.6 + Math.min(1.0, wave / 100)) * (1 + rebirthScale * 0.08),
-    damage: (0.018 + Math.min(0.012, wave / 500)) * (1 + rebirthScale * 0.04),
+    damage: (0.024 + Math.min(0.010, wave / 700)) * (1 + rebirthScale * 0.04),
   };
 }
 function getRebirthBonus() {
@@ -1407,7 +1407,9 @@ function monsterAttack() {
   }
 
   const armorReduction = 100 / (100 + Math.max(0, game.player.armor || 0));
-  const damage = Math.max(1, Math.round(game.monster.damage * armorReduction));
+  const rawDamage = Math.max(1, Math.round(game.monster.damage * armorReduction));
+  const maxHit = Math.max(1, Math.round(game.player.maxHp * 0.55));
+  const damage = Math.min(rawDamage, maxHit);
   const tone = combatToneForZone(getCurrentSlime().zone);
   triggerCombatAnimation("enemy", "attack");
   triggerCombatAnimation("player", "hit");
