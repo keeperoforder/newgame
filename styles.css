@@ -1014,3 +1014,29 @@ h3 {
   .dev-card { width: calc(100vw - 20px); max-height: calc(100vh - 20px); }
   .dev-button-row-wide { grid-template-columns: 1fr; }
 }
+
+.dev-open-button {
+  position: fixed;
+  right: 14px;
+  bottom: 14px;
+  z-index: 99;
+  min-width: 46px;
+  height: 34px;
+  padding: 0 12px;
+  border: 1px solid rgba(244, 173, 80, .65);
+  border-radius: 7px;
+  background: rgba(18, 17, 19, .94);
+  color: #e4b36d;
+  box-shadow: 0 5px 18px rgba(0,0,0,.45);
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: .14em;
+  cursor: pointer;
+  opacity: .72;
+  transition: opacity .15s ease, transform .15s ease, background .15s ease;
+}
+.dev-open-button:hover {
+  opacity: 1;
+  background: #272127;
+  transform: translateY(-1px);
+}
