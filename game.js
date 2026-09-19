@@ -41,27 +41,14 @@ const equipmentTiers = {
   10: { multiplier: 8.00, maxLevel: 5 },
 };
 
-const slimeWaves = [
-  { name: "Mire Slime", maxHp: 50, damage: 5, attackSpeed: 2000 },
-  { name: "Briar Slime", maxHp: 80, damage: 8, attackSpeed: 1950 },
-  { name: "Horned Slime", maxHp: 120, damage: 12, attackSpeed: 1900 },
-  { name: "Reefguard Slime", maxHp: 170, damage: 17, attackSpeed: 1850 },
-  { name: "Ironhide Slime", maxHp: 230, damage: 23, attackSpeed: 1800 },
-  { name: "Crystal Slime", maxHp: 300, damage: 30, attackSpeed: 1750 },
-  { name: "Abyss Slime", maxHp: 380, damage: 38, attackSpeed: 1700 },
-  { name: "Dread Slime", maxHp: 470, damage: 47, attackSpeed: 1650 },
-  { name: "Void Slime", maxHp: 500, damage: 50, attackSpeed: 1600 },
-  { name: "Sewer Rat", maxHp: 520, damage: 52, attackSpeed: 1850 },
-  { name: "Feral Rat", maxHp: 650, damage: 65, attackSpeed: 1820 },
-  { name: "Plague Rat", maxHp: 820, damage: 82, attackSpeed: 1790 },
-  { name: "Ironclaw Rat", maxHp: 1030, damage: 103, attackSpeed: 1760 },
-  { name: "Ravager Rat", maxHp: 1290, damage: 129, attackSpeed: 1730 },
-  { name: "Venom Rat", maxHp: 1610, damage: 161, attackSpeed: 1700 },
-  { name: "Shadow Rat", maxHp: 2010, damage: 201, attackSpeed: 1670 },
-  { name: "Bloodfang Rat", maxHp: 2510, damage: 251, attackSpeed: 1640 },
-  { name: "Dire Rat", maxHp: 3140, damage: 314, attackSpeed: 1600 },
-  { name: "Rat King · MINI-BOSS", maxHp: 5000, damage: 500, attackSpeed: 1500 },
-];
+const monsterZoneForWave = (wave) => {
+  const zone = zones.find((entry) => wave >= entry[1] && wave <= entry[2]);
+  return zone ? zone[0] : "UNKNOWN";
+};
+
+const zones = [["SLIMES",1,10],["RATS",11,20],["GOBLINS",21,30],["UNDEAD",31,40],["BEASTS",41,50],["SPIDERS",51,60],["CORRUPTED",61,70],["ORCS",71,80],["DEMONS",81,90],["ANCIENT",91,100]];
+
+const slimeWaves = [{"name":"Green Slime","maxHp":50,"damage":5,"attackSpeed":2000,"zone":"SLIMES","isBoss":false},{"name":"Blue Slime","maxHp":58,"damage":6,"attackSpeed":1992,"zone":"SLIMES","isBoss":false},{"name":"Red Slime","maxHp":67,"damage":7,"attackSpeed":1984,"zone":"SLIMES","isBoss":false},{"name":"Yellow Slime","maxHp":78,"damage":8,"attackSpeed":1976,"zone":"SLIMES","isBoss":false},{"name":"Purple Slime","maxHp":91,"damage":9,"attackSpeed":1968,"zone":"SLIMES","isBoss":false},{"name":"Crystal Slime","maxHp":105,"damage":11,"attackSpeed":1960,"zone":"SLIMES","isBoss":false},{"name":"Poison Slime","maxHp":122,"damage":12,"attackSpeed":1952,"zone":"SLIMES","isBoss":false},{"name":"Lightning Slime","maxHp":141,"damage":14,"attackSpeed":1944,"zone":"SLIMES","isBoss":false},{"name":"Shadow Slime","maxHp":164,"damage":16,"attackSpeed":1936,"zone":"SLIMES","isBoss":false},{"name":"King Slime","maxHp":295,"damage":30,"attackSpeed":1828,"zone":"SLIMES","isBoss":true},{"name":"Sewer Rat","maxHp":221,"damage":22,"attackSpeed":1920,"zone":"RATS","isBoss":false},{"name":"Dirty Rat","maxHp":234,"damage":23,"attackSpeed":1912,"zone":"RATS","isBoss":false},{"name":"Scrap Rat","maxHp":248,"damage":25,"attackSpeed":1904,"zone":"RATS","isBoss":false},{"name":"Plague Rat","maxHp":263,"damage":26,"attackSpeed":1896,"zone":"RATS","isBoss":false},{"name":"Armored Rat","maxHp":278,"damage":28,"attackSpeed":1888,"zone":"RATS","isBoss":false},{"name":"Tunnel Rat","maxHp":295,"damage":30,"attackSpeed":1880,"zone":"RATS","isBoss":false},{"name":"Toxic Rat","maxHp":313,"damage":31,"attackSpeed":1872,"zone":"RATS","isBoss":false},{"name":"Berserk Rat","maxHp":332,"damage":33,"attackSpeed":1864,"zone":"RATS","isBoss":false},{"name":"Rat Shaman","maxHp":352,"damage":35,"attackSpeed":1856,"zone":"RATS","isBoss":false},{"name":"Sewer Matriarch","maxHp":578,"damage":58,"attackSpeed":1748,"zone":"RATS","isBoss":true},{"name":"Goblin Scout","maxHp":395,"damage":40,"attackSpeed":1840,"zone":"GOBLINS","isBoss":false},{"name":"Goblin Cutthroat","maxHp":419,"damage":42,"attackSpeed":1832,"zone":"GOBLINS","isBoss":false},{"name":"Goblin Brute","maxHp":444,"damage":44,"attackSpeed":1824,"zone":"GOBLINS","isBoss":false},{"name":"Goblin Shielder","maxHp":470,"damage":47,"attackSpeed":1816,"zone":"GOBLINS","isBoss":false},{"name":"Goblin Archer","maxHp":499,"damage":50,"attackSpeed":1808,"zone":"GOBLINS","isBoss":false},{"name":"Goblin Shaman","maxHp":529,"damage":53,"attackSpeed":1800,"zone":"GOBLINS","isBoss":false},{"name":"Goblin Warrior","maxHp":560,"damage":56,"attackSpeed":1792,"zone":"GOBLINS","isBoss":false},{"name":"Goblin Berserker","maxHp":594,"damage":59,"attackSpeed":1784,"zone":"GOBLINS","isBoss":false},{"name":"Goblin Chief","maxHp":630,"damage":63,"attackSpeed":1776,"zone":"GOBLINS","isBoss":false},{"name":"Goblin Warlord","maxHp":1034,"damage":103,"attackSpeed":1668,"zone":"GOBLINS","isBoss":true},{"name":"Rotting Skeleton","maxHp":707,"damage":71,"attackSpeed":1760,"zone":"UNDEAD","isBoss":false},{"name":"Bone Warrior","maxHp":750,"damage":75,"attackSpeed":1752,"zone":"UNDEAD","isBoss":false},{"name":"Skeleton Archer","maxHp":795,"damage":80,"attackSpeed":1744,"zone":"UNDEAD","isBoss":false},{"name":"Armored Skeleton","maxHp":843,"damage":84,"attackSpeed":1736,"zone":"UNDEAD","isBoss":false},{"name":"Skeleton Knight","maxHp":893,"damage":89,"attackSpeed":1728,"zone":"UNDEAD","isBoss":false},{"name":"Grave Walker","maxHp":947,"damage":95,"attackSpeed":1720,"zone":"UNDEAD","isBoss":false},{"name":"Bone Reaper","maxHp":1003,"damage":100,"attackSpeed":1712,"zone":"UNDEAD","isBoss":false},{"name":"Undead Berserker","maxHp":1064,"damage":106,"attackSpeed":1704,"zone":"UNDEAD","isBoss":false},{"name":"Death Priest","maxHp":1127,"damage":113,"attackSpeed":1696,"zone":"UNDEAD","isBoss":false},{"name":"Grave Lord","maxHp":1852,"damage":185,"attackSpeed":1588,"zone":"UNDEAD","isBoss":true},{"name":"Wild Wolf","maxHp":1267,"damage":127,"attackSpeed":1680,"zone":"BEASTS","isBoss":false},{"name":"Dire Wolf","maxHp":1343,"damage":134,"attackSpeed":1672,"zone":"BEASTS","isBoss":false},{"name":"Feral Boar","maxHp":1423,"damage":142,"attackSpeed":1664,"zone":"BEASTS","isBoss":false},{"name":"Alpha Wolf","maxHp":1509,"damage":151,"attackSpeed":1656,"zone":"BEASTS","isBoss":false},{"name":"Cave Bear","maxHp":1599,"damage":160,"attackSpeed":1648,"zone":"BEASTS","isBoss":false},{"name":"Razorfang Wolf","maxHp":1695,"damage":170,"attackSpeed":1640,"zone":"BEASTS","isBoss":false},{"name":"Black Bear","maxHp":1797,"damage":180,"attackSpeed":1632,"zone":"BEASTS","isBoss":false},{"name":"Bloodfang Beast","maxHp":1905,"damage":191,"attackSpeed":1624,"zone":"BEASTS","isBoss":false},{"name":"Ancient Beast","maxHp":2019,"damage":202,"attackSpeed":1616,"zone":"BEASTS","isBoss":false},{"name":"Beast Alpha","maxHp":3317,"damage":332,"attackSpeed":1508,"zone":"BEASTS","isBoss":true},{"name":"Cave Spider","maxHp":2269,"damage":227,"attackSpeed":1600,"zone":"SPIDERS","isBoss":false},{"name":"Venom Spider","maxHp":2405,"damage":241,"attackSpeed":1592,"zone":"SPIDERS","isBoss":false},{"name":"Web Crawler","maxHp":2549,"damage":255,"attackSpeed":1584,"zone":"SPIDERS","isBoss":false},{"name":"Dark Spider","maxHp":2702,"damage":270,"attackSpeed":1576,"zone":"SPIDERS","isBoss":false},{"name":"Armored Spider","maxHp":2864,"damage":286,"attackSpeed":1568,"zone":"SPIDERS","isBoss":false},{"name":"Spider Hunter","maxHp":3036,"damage":304,"attackSpeed":1560,"zone":"SPIDERS","isBoss":false},{"name":"Toxic Widow","maxHp":3218,"damage":322,"attackSpeed":1552,"zone":"SPIDERS","isBoss":false},{"name":"Shadow Spider","maxHp":3411,"damage":341,"attackSpeed":1544,"zone":"SPIDERS","isBoss":false},{"name":"Brood Mother","maxHp":3616,"damage":362,"attackSpeed":1536,"zone":"SPIDERS","isBoss":false},{"name":"Spider Queen","maxHp":5941,"damage":594,"attackSpeed":1428,"zone":"SPIDERS","isBoss":true},{"name":"Corrupted Villager","maxHp":4063,"damage":406,"attackSpeed":1520,"zone":"CORRUPTED","isBoss":false},{"name":"Dark Wanderer","maxHp":4307,"damage":431,"attackSpeed":1512,"zone":"CORRUPTED","isBoss":false},{"name":"Cursed Warrior","maxHp":4565,"damage":457,"attackSpeed":1504,"zone":"CORRUPTED","isBoss":false},{"name":"Corrupted Archer","maxHp":4839,"damage":484,"attackSpeed":1496,"zone":"CORRUPTED","isBoss":false},{"name":"Dark Knight","maxHp":5129,"damage":513,"attackSpeed":1488,"zone":"CORRUPTED","isBoss":false},{"name":"Blood Cultist","maxHp":5437,"damage":544,"attackSpeed":1480,"zone":"CORRUPTED","isBoss":false},{"name":"Corrupted Mage","maxHp":5763,"damage":576,"attackSpeed":1472,"zone":"CORRUPTED","isBoss":false},{"name":"Soul Eater","maxHp":6109,"damage":611,"attackSpeed":1464,"zone":"CORRUPTED","isBoss":false},{"name":"Dark Executioner","maxHp":6476,"damage":648,"attackSpeed":1456,"zone":"CORRUPTED","isBoss":false},{"name":"Corrupted Champion","maxHp":10639,"damage":1064,"attackSpeed":1348,"zone":"CORRUPTED","isBoss":true},{"name":"Orc Grunt","maxHp":7276,"damage":728,"attackSpeed":1440,"zone":"ORCS","isBoss":false},{"name":"Orc Raider","maxHp":7713,"damage":771,"attackSpeed":1432,"zone":"ORCS","isBoss":false},{"name":"Orc Warrior","maxHp":8175,"damage":818,"attackSpeed":1424,"zone":"ORCS","isBoss":false},{"name":"Orc Archer","maxHp":8666,"damage":867,"attackSpeed":1416,"zone":"ORCS","isBoss":false},{"name":"Orc Brute","maxHp":9186,"damage":919,"attackSpeed":1408,"zone":"ORCS","isBoss":false},{"name":"Orc Berserker","maxHp":9737,"damage":974,"attackSpeed":1400,"zone":"ORCS","isBoss":false},{"name":"Orc Shielder","maxHp":10321,"damage":1032,"attackSpeed":1392,"zone":"ORCS","isBoss":false},{"name":"Orc Warlock","maxHp":10941,"damage":1094,"attackSpeed":1384,"zone":"ORCS","isBoss":false},{"name":"Orc Commander","maxHp":11597,"damage":1160,"attackSpeed":1376,"zone":"ORCS","isBoss":false},{"name":"Orc Warlord","maxHp":19054,"damage":1905,"attackSpeed":1268,"zone":"ORCS","isBoss":true},{"name":"Lesser Imp","maxHp":13030,"damage":1303,"attackSpeed":1360,"zone":"DEMONS","isBoss":false},{"name":"Flame Imp","maxHp":13812,"damage":1381,"attackSpeed":1352,"zone":"DEMONS","isBoss":false},{"name":"Demon Hound","maxHp":14641,"damage":1464,"attackSpeed":1344,"zone":"DEMONS","isBoss":false},{"name":"Hellspawn","maxHp":15520,"damage":1552,"attackSpeed":1336,"zone":"DEMONS","isBoss":false},{"name":"Demon Warrior","maxHp":16451,"damage":1645,"attackSpeed":1328,"zone":"DEMONS","isBoss":false},{"name":"Blood Demon","maxHp":17438,"damage":1744,"attackSpeed":1320,"zone":"DEMONS","isBoss":false},{"name":"Flame Demon","maxHp":18484,"damage":1848,"attackSpeed":1312,"zone":"DEMONS","isBoss":false},{"name":"Shadow Demon","maxHp":19593,"damage":1959,"attackSpeed":1304,"zone":"DEMONS","isBoss":false},{"name":"Demon General","maxHp":20769,"damage":2077,"attackSpeed":1300,"zone":"DEMONS","isBoss":false},{"name":"Demon Lord","maxHp":34123,"damage":3412,"attackSpeed":1200,"zone":"DEMONS","isBoss":true},{"name":"Ancient Lizard","maxHp":23336,"damage":2334,"attackSpeed":1300,"zone":"ANCIENT","isBoss":false},{"name":"Stone Golem","maxHp":24736,"damage":2474,"attackSpeed":1300,"zone":"ANCIENT","isBoss":false},{"name":"Crystal Golem","maxHp":26220,"damage":2622,"attackSpeed":1300,"zone":"ANCIENT","isBoss":false},{"name":"Ancient Guardian","maxHp":27793,"damage":2779,"attackSpeed":1300,"zone":"ANCIENT","isBoss":false},{"name":"Wyvern","maxHp":29461,"damage":2946,"attackSpeed":1300,"zone":"ANCIENT","isBoss":false},{"name":"Ancient Dragonspawn","maxHp":31228,"damage":3123,"attackSpeed":1300,"zone":"ANCIENT","isBoss":false},{"name":"Elder Golem","maxHp":33102,"damage":3310,"attackSpeed":1300,"zone":"ANCIENT","isBoss":false},{"name":"Void Beast","maxHp":35088,"damage":3509,"attackSpeed":1300,"zone":"ANCIENT","isBoss":false},{"name":"Ancient Dragon","maxHp":37193,"damage":3719,"attackSpeed":1300,"zone":"ANCIENT","isBoss":false},{"name":"Elder Dragon","maxHp":61109,"damage":6111,"attackSpeed":1200,"zone":"ANCIENT","isBoss":true}];
 
 const game = {
   gold: 0,
@@ -864,6 +851,67 @@ function getCurrentSlime() {
   return slimeWaves[game.wave - 1];
 }
 
+function ensureAdvancedWaveVisuals() {
+  const svg = document.querySelector(".slime-art svg");
+  if (!svg) return;
+
+  const namespace = "http://www.w3.org/2000/svg";
+  const palettes = {
+    GOBLINS: ["#6f8f48", "#b7cf72", "#29351f"],
+    UNDEAD: ["#68727b", "#d5d8d1", "#252a2d"],
+    BEASTS: ["#755744", "#b98b68", "#30231d"],
+    SPIDERS: ["#493b61", "#9b72c8", "#211b2b"],
+    CORRUPTED: ["#573b68", "#b36cc4", "#251a2e"],
+    ORCS: ["#5d6f42", "#a5a95d", "#26301e"],
+    DEMONS: ["#743d3d", "#ef6b4f", "#321b1b"],
+    ANCIENT: ["#64707c", "#d2b76d", "#202832"],
+  };
+
+  for (let wave = 21; wave <= 100; wave += 1) {
+    if (svg.querySelector(".advanced-wave-" + wave)) continue;
+
+    const data = slimeWaves[wave - 1];
+    const [bodyColor, accentColor, darkColor] = palettes[data.zone] || palettes.ANCIENT;
+    const group = document.createElementNS(namespace, "g");
+    group.setAttribute("class", "slime-wave slime-wave-" + wave + " advanced-wave advanced-wave-" + wave);
+    group.setAttribute("display", "none");
+
+    const body = document.createElementNS(namespace, "ellipse");
+    body.setAttribute("cx", "220"); body.setAttribute("cy", "205");
+    body.setAttribute("rx", data.isBoss ? "125" : "108"); body.setAttribute("ry", data.isBoss ? "82" : "70");
+    body.setAttribute("fill", bodyColor); body.setAttribute("stroke", darkColor); body.setAttribute("stroke-width", data.isBoss ? "11" : "8");
+
+    const head = document.createElementNS(namespace, "path");
+    head.setAttribute("d", data.zone === "SPIDERS"
+      ? "M120 190Q135 115 220 105Q305 115 320 190L295 230H145Z"
+      : "M145 205Q145 125 220 105Q295 125 295 205L270 245H170Z");
+    head.setAttribute("fill", bodyColor); head.setAttribute("stroke", darkColor); head.setAttribute("stroke-width", data.isBoss ? "10" : "7");
+
+    const eyeL = document.createElementNS(namespace, "circle");
+    eyeL.setAttribute("cx","188"); eyeL.setAttribute("cy","170"); eyeL.setAttribute("r",data.isBoss?"14":"10"); eyeL.setAttribute("fill",accentColor);
+    const eyeR=eyeL.cloneNode(); eyeR.setAttribute("cx","252");
+
+    const accent=document.createElementNS(namespace,"path");
+    accent.setAttribute("d", data.zone==="DEMONS" ? "M180 110L160 55L205 91L220 45L235 91L280 55L260 110Z" : "M170 115L220 70L270 115");
+    accent.setAttribute("fill","none"); accent.setAttribute("stroke",accentColor); accent.setAttribute("stroke-width",data.isBoss?"13":"8"); accent.setAttribute("stroke-linecap","round"); accent.setAttribute("stroke-linejoin","round");
+
+    const weapon=document.createElementNS(namespace,"path");
+    weapon.setAttribute("d", data.zone==="BEASTS" ? "M120 250L75 300L92 314L145 268Z" : "M112 275L65 310L78 326L132 289Z");
+    weapon.setAttribute("fill",accentColor); weapon.setAttribute("stroke",darkColor); weapon.setAttribute("stroke-width","6");
+
+    [body,head,eyeL,eyeR,accent,weapon].forEach((el)=>group.appendChild(el));
+
+    if (data.isBoss) {
+      const crown=document.createElementNS(namespace,"path");
+      crown.setAttribute("d","M170 72L190 35L220 65L250 35L270 72L250 94H190Z");
+      crown.setAttribute("fill",accentColor); crown.setAttribute("stroke",darkColor); crown.setAttribute("stroke-width","6");
+      group.appendChild(crown);
+    }
+
+    svg.appendChild(group);
+  }
+}
+
 function ensureRatWaveVisuals() {
   const svg = document.querySelector(".slime-art svg");
   if (!svg) return;
@@ -936,6 +984,7 @@ function ensureRatWaveVisuals() {
 
 function selectSlimeWaveVisual() {
   ensureRatWaveVisuals();
+  ensureAdvancedWaveVisuals();
   document.querySelectorAll(".slime-wave").forEach((element) => {
     element.setAttribute("display", "none");
   });
@@ -952,7 +1001,7 @@ function applyWaveData() {
   game.monster.attackSpeed = wave.attackSpeed;
 
   ui.waveTitle.textContent = `WAVE ${game.wave}`;
-  const enemyType = game.wave >= 20 ? "ENEMY · MINI-BOSS" : game.wave >= 10 ? "ENEMY · RAT" : "ENEMY · SLIME";
+  const enemyType = wave.isBoss ? "ENEMY · MINI-BOSS" : "ENEMY · " + wave.zone;
   const enemyTypeLabel = document.getElementById("enemy-type-label");
   if (enemyTypeLabel) enemyTypeLabel.textContent = enemyType;
   ui.monsterName.textContent = wave.name;
