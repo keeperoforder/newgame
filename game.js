@@ -675,10 +675,10 @@ function ensureRatWaveVisuals() {
     if (svg.querySelector(`.rat-wave-${wave}`)) continue;
 
     const group = document.createElementNS(namespace, "g");
-    group.setAttribute("class", "slime-wave rat-wave rat-wave-" + wave);
+    group.setAttribute("class", "slime-wave slime-wave-" + wave + " rat-wave rat-wave-" + wave);
     group.setAttribute("display", "none");
 
-    const t = (wave - 11) / 9;
+    const t = (wave - 10) / 10;
     const body = document.createElementNS(namespace, "ellipse");
     body.setAttribute("cx", "220");
     body.setAttribute("cy", "205");
@@ -754,6 +754,9 @@ function applyWaveData() {
   game.monster.attackSpeed = wave.attackSpeed;
 
   ui.waveTitle.textContent = `WAVE ${game.wave}`;
+  const enemyType = game.wave >= 20 ? "ENEMY · MINI-BOSS" : game.wave >= 10 ? "ENEMY · RAT" : "ENEMY · SLIME";
+  const enemyTypeLabel = document.getElementById("enemy-type-label");
+  if (enemyTypeLabel) enemyTypeLabel.textContent = enemyType;
   ui.monsterName.textContent = wave.name;
   ui.monsterDamage.textContent = String(wave.damage);
   ui.monsterAttackSpeed.textContent = `${(wave.attackSpeed / 1000).toFixed(1)}s`;
