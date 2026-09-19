@@ -942,7 +942,7 @@ function spawnBattleAttack(sourceSelector, targetSelector, mode = "player", tone
   trail.style.left = source.x + "px";
   trail.style.top = source.y + "px";
   trail.style.width = Math.max(90, distance) + "px";
-  trail.style.transform = "translateY(-50%) rotate(" + angle + "deg)";
+  trail.style.setProperty("--trail-angle", angle + "deg");
   layer.appendChild(trail);
 
   const strike = document.createElement("div");
