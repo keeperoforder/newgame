@@ -357,286 +357,34 @@ h3 {
 }
 
 
-/* Original uploaded image is used directly as the main-menu background. */
+
+/* Fully vector main menu. All menu visuals live inside the inline SVG. */
 #main-menu {
   position: fixed;
   inset: 0;
-  z-index: 1;
   width: 100vw;
   height: 100vh;
   min-height: 0;
   margin: 0;
   padding: 0;
+  display: block;
   overflow: hidden;
-  display: block;
-  background: #05070c;
+  background: #05080e;
 }
 
-#main-menu .main-menu-bg {
-  position: absolute;
-  inset: 0;
+#main-menu-svg {
   width: 100%;
   height: 100%;
+  min-width: 100%;
+  min-height: 100%;
   display: block;
-  object-fit: cover;
-  object-position: center center;
-  user-select: none;
-  -webkit-user-drag: none;
 }
 
-#main-menu .main-menu-ui {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
+#main-menu.screen.active {
+  align-items: stretch;
+  justify-content: stretch;
 }
 
-#main-menu .main-menu-hotspot {
-  position: absolute;
-  z-index: 2;
-  display: block;
-  padding: 0;
-  margin: 0;
-  border: 0;
-  border-radius: 0;
-  background: transparent;
-  box-shadow: none;
-  appearance: none;
-  pointer-events: auto;
-  cursor: pointer;
-  outline: none;
-  transition: transform .18s ease, background-color .18s ease, box-shadow .18s ease;
-}
-
-/* These percentages follow the button composition of the supplied 1536x1024 image. */
-#main-menu .start-hotspot {
-  top: 36.1%;
-  right: 7.25%;
-  width: 24.2%;
-  height: 8.7%;
-}
-
-#main-menu .settings-hotspot {
-  top: 46.8%;
-  right: 7.25%;
-  width: 24.2%;
-  height: 8.7%;
-}
-
-#main-menu .quit-hotspot {
-  top: 57.3%;
-  right: 7.25%;
-  width: 24.2%;
-  height: 8.7%;
-}
-
-#main-menu .main-menu-hotspot:hover {
-  background: rgba(255, 218, 174, .035);
-  box-shadow: inset 0 0 0 1px rgba(223, 167, 113, .22);
-}
-
-#main-menu .main-menu-hotspot:focus-visible {
-  box-shadow:
-    inset 0 0 0 2px rgba(240, 205, 167, .85),
-    0 0 0 4px rgba(0, 0, 0, .35);
-}
-
-#main-menu .mobile-menu-buttons {
-  display: none;
-}
-
-#main-menu.is-leaving .main-menu-bg,
-#main-menu.is-leaving .main-menu-ui {
-  opacity: 0;
-  transform: scale(1.015);
-  transition: opacity .24s ease, transform .24s ease;
-}
-
-@media (max-width: 760px) {
-  #main-menu .main-menu-hotspot {
-    display: none;
-  }
-
-  #main-menu .mobile-menu-buttons {
-    position: absolute;
-    left: 50%;
-    bottom: clamp(28px, 7vh, 64px);
-    transform: translateX(-50%);
-    width: min(420px, 86vw);
-    display: grid;
-    gap: clamp(10px, 2.4vw, 16px);
-    pointer-events: auto;
-  }
-
-  #main-menu .mobile-menu-button {
-    min-height: clamp(54px, 10vw, 66px);
-    width: 100%;
-    padding: 12px 18px;
-    border: 2px solid rgba(184,132,87,.96);
-    border-radius: 5px;
-    background: linear-gradient(180deg, rgba(20,23,29,.96), rgba(10,13,18,.98));
-    color: #ead9c8;
-    font-family: Georgia, "Times New Roman", serif;
-    font-size: clamp(.96rem, 3.2vw, 1.18rem);
-    font-weight: 700;
-    letter-spacing: .07em;
-    text-shadow: 0 2px 8px rgba(0,0,0,.68);
-    box-shadow:
-      0 12px 28px rgba(0,0,0,.42),
-      inset 0 0 0 1px rgba(255,255,255,.03);
-    clip-path: polygon(
-      4% 0, 96% 0, 100% 16%, 100% 84%, 96% 100%,
-      4% 100%, 0 84%, 0 16%
-    );
-    cursor: pointer;
-    transition: transform .16s ease, filter .16s ease;
-  }
-
-  #main-menu .mobile-menu-button:hover {
-    transform: translateY(-2px);
-    filter: brightness(1.1);
-  }
-}
-
-@media (max-width: 440px) {
-  #main-menu .mobile-menu-buttons {
-    width: 90vw;
-    bottom: 24px;
-  }
-}
-
-/* Settings and quit overlays. */
-.overlay-screen {
-  position: fixed;
-  inset: 0;
-  z-index: 30;
-  display: none;
-  align-items: center;
-  justify-content: center;
-  padding: clamp(16px, 4vw, 40px);
-}
-
-.overlay-screen.active {
-  display: flex;
-}
-
-.overlay-backdrop {
-  position: absolute;
-  inset: 0;
-  background: rgba(3, 6, 11, .74);
-  backdrop-filter: blur(3px);
-}
-
-.menu-overlay-panel {
-  position: relative;
-  z-index: 1;
-  width: min(620px, 94vw);
-  padding: clamp(30px, 5vw, 48px) clamp(22px, 5vw, 64px) 42px;
-  text-align: center;
-  border: 2px solid rgba(184,132,87,.96);
-  border-radius: 6px;
-  background: linear-gradient(180deg, rgba(22,24,29,.98), rgba(7,10,15,.98));
-  box-shadow:
-    0 30px 70px rgba(0,0,0,.58),
-    inset 0 0 0 1px rgba(255,255,255,.03);
-  clip-path: polygon(
-    2.5% 0, 97.5% 0, 100% 5%, 100% 95%, 97.5% 100%,
-    2.5% 100%, 0 95%, 0 5%
-  );
-}
-
-.menu-overlay-panel::before,
-.menu-overlay-panel::after {
-  content: "";
-  position: absolute;
-  width: 19px;
-  height: 19px;
-  top: 50%;
-  background: #0c1016;
-  border: 2px solid rgba(184,132,87,.96);
-  transform: translateY(-50%) rotate(45deg);
-  pointer-events: none;
-}
-
-.menu-overlay-panel::before { left: -8px; }
-.menu-overlay-panel::after { right: -8px; }
-
-.menu-overlay-decor {
-  margin-bottom: 12px;
-  color: #d7aa79;
-  font-size: 1rem;
-  opacity: .9;
-}
-
-.menu-overlay-panel .eyebrow {
-  color: #c8b6a2;
-  font-family: Georgia, "Times New Roman", serif;
-  letter-spacing: .28em;
-}
-
-.menu-overlay-panel h2 {
-  margin: 10px 0 28px;
-  color: #e4c6aa;
-  font-family: Georgia, "Times New Roman", serif;
-  letter-spacing: .09em;
-  text-shadow: 0 6px 22px rgba(0,0,0,.55);
-}
-
-.menu-overlay-panel .setting-row {
-  border-bottom: 1px solid rgba(184,132,87,.25);
-  color: #e7dbcf;
-  font-family: Georgia, "Times New Roman", serif;
-  font-weight: 700;
-  letter-spacing: .07em;
-}
-
-.menu-overlay-panel .toggle {
-  min-width: 88px;
-  min-height: 44px;
-  border-radius: 4px;
-  background: #13171d;
-  border: 1px solid rgba(184,132,87,.7);
-  color: #e4c6aa;
-}
-
-.menu-overlay-panel .toggle.on {
-  background: linear-gradient(180deg, #4a3021, #261a13);
-}
-
-.menu-overlay-panel .toggle.off {
-  background: #14171b;
-  opacity: .75;
-}
-
-.overlay-back-button {
-  width: 100%;
-  margin-top: 22px;
-}
-
-.overlay-copy {
-  color: #c8bbb0;
-  font-family: Georgia, "Times New Roman", serif;
-  margin: 0 auto 16px;
-  max-width: 420px;
-  font-size: 1rem;
-  line-height: 1.6;
-}
-
-.quit-actions {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 16px;
-}
-
-.quit-actions .menu-action {
-  margin-top: 0;
-  width: 100%;
-  min-height: 62px;
-}
-
-@media (max-width: 560px) {
-  .quit-actions {
-    grid-template-columns: 1fr;
-  }
+@media (max-width: 700px) {
+  #main-menu-svg { min-height: 100%; }
 }
