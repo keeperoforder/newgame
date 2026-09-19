@@ -33,22 +33,47 @@
       </div>
     </section>
 
-    <section id="settings-screen" class="screen">
-      <div class="panel settings-panel">
+    <section id="settings-screen" class="overlay-screen" aria-hidden="true">
+      <div class="overlay-backdrop"></div>
+      <div class="menu-overlay-panel settings-overlay-panel" role="dialog" aria-modal="true" aria-labelledby="settings-title">
+        <div class="menu-overlay-decor">◆</div>
         <div class="eyebrow">SETTINGS</div>
-        <h2>Settings</h2>
+        <h2 id="settings-title">SETTINGS</h2>
 
         <div class="setting-row">
-          <span>Sound</span>
+          <span>SOUND</span>
           <button id="sound-toggle" class="toggle on" type="button">ON</button>
         </div>
 
         <div class="setting-row">
-          <span>Music</span>
+          <span>MUSIC</span>
           <button id="music-toggle" class="toggle on" type="button">ON</button>
         </div>
 
-        <button id="back-to-menu-from-settings" class="secondary full-width">BACK</button>
+        <button id="back-to-menu-from-settings" class="menu-action overlay-back-button" type="button">
+          <span class="menu-icon">↩</span>
+          <span>BACK</span>
+        </button>
+      </div>
+    </section>
+
+    <section id="quit-confirmation" class="overlay-screen" aria-hidden="true">
+      <div class="overlay-backdrop"></div>
+      <div class="menu-overlay-panel quit-overlay-panel" role="dialog" aria-modal="true" aria-labelledby="quit-title">
+        <div class="menu-overlay-decor">◆</div>
+        <div class="eyebrow">LEAVE THE JOURNEY</div>
+        <h2 id="quit-title">QUIT GAME?</h2>
+        <p class="overlay-copy">Are you sure you want to leave the game?</p>
+        <div class="quit-actions">
+          <button id="confirm-quit" class="menu-action" type="button">
+            <span class="menu-icon">✓</span>
+            <span>YES</span>
+          </button>
+          <button id="cancel-quit" class="menu-action" type="button">
+            <span class="menu-icon">×</span>
+            <span>NO</span>
+          </button>
+        </div>
       </div>
     </section>
 
