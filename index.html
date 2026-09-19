@@ -8,27 +8,24 @@
 </head>
 <body>
   <main id="app">
-    <section id="main-menu" class="screen active">
-      <div class="main-menu-frame" aria-label="Main Menu">
-        <div class="main-menu-title">
-          <div class="main-menu-title-main">BEYOND</div>
-          <div class="main-menu-title-sub">THE WAVES</div>
-          <div class="main-menu-tagline">FURTHER THAN THE KNOWN.</div>
-        </div>
+    <section id="main-menu" class="screen active" aria-label="Main Menu">
+      <img
+        class="main-menu-bg"
+        src="./assets/main-menu-bg.png"
+        alt=""
+        aria-hidden="true"
+        draggable="false"
+      />
 
-        <div class="main-menu-buttons">
-          <button id="start-game" class="menu-action" type="button">
-            <span class="menu-icon">⚔</span>
-            <span>START GAME</span>
-          </button>
-          <button id="open-settings" class="menu-action" type="button">
-            <span class="menu-icon">⚙</span>
-            <span>SETTINGS</span>
-          </button>
-          <button id="quit-game" class="menu-action" type="button">
-            <span class="menu-icon menu-exit-icon">⇥</span>
-            <span>QUIT</span>
-          </button>
+      <div class="main-menu-ui" aria-label="Main menu controls">
+        <button id="start-game" class="main-menu-hotspot start-hotspot" type="button" aria-label="Start Game"></button>
+        <button id="open-settings" class="main-menu-hotspot settings-hotspot" type="button" aria-label="Settings"></button>
+        <button id="quit-game" class="main-menu-hotspot quit-hotspot" type="button" aria-label="Quit"></button>
+
+        <div class="mobile-menu-buttons">
+          <button class="mobile-menu-button" type="button" data-action="start">START GAME</button>
+          <button class="mobile-menu-button" type="button" data-action="settings">SETTINGS</button>
+          <button class="mobile-menu-button" type="button" data-action="quit">QUIT</button>
         </div>
       </div>
     </section>
