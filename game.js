@@ -851,20 +851,161 @@ function getCurrentSlime() {
   return slimeWaves[game.wave - 1];
 }
 
+
+function ensureBattleFxLayer() {
+  const arena = document.querySelector("#battle-screen .arena");
+  if (!arena) return null;
+
+  let layer = arena.querySelector(".battle-fx-layer");
+  if (!layer) {
+    layer = document.createElement("div");
+    layer.className = "battle-fx-layer";
+    layer.setAttribute("aria-hidden", "true");
+    arena.appendChild(layer);
+  }
+  return layer;
+}
+
+function getArenaPoint(selector) {
+  const arena = document.querySelector("#battle-screen .arena");
+  const element = document.querySelector(selector);
+  if (!arena || !element) return null;
+
+  const arenaRect = arena.getBoundingClientRect();
+  const rect = element.getBoundingClientRect();
+  return {
+    x: rect.left - arenaRect.left + rect.width / 2,
+    y: rect.top - arenaRect.top + rect.height / 2,
+  };
+}
+
+function spawnBattleParticles(point, tone = "gold", count = 10) {
+  const layer = ensureBattleFxLayer();
+  if (!layer || !point) return;
+
+  const colors = {
+    gold: "#f3cf82",
+    ice: "#8ed8ff",
+    poison: "#9be36a",
+    arcane: "#c889ff",
+    fire: "#ff8059",
+    shadow: "#b06cff",
+    blood: "#ff5366",
+    ancient: "#e7c978",
+  };
+  const color = colors[tone] || colors.gold;
+
+  for (let i = 0; i < count; i += 1) {
+    const particle = document.createElement("i");
+    particle.className = "battle-particle";
+    const angle = (Math.PI * 2 * i) / count + Math.random() * 0.4;
+    const distance = 26 + Math.random() * 62;
+    particle.style.left = point.x + "px";
+    particle.style.top = point.y + "px";
+    particle.style.setProperty("--particle-x", Math.cos(angle) * distance + "px");
+    particle.style.setProperty("--particle-y", Math.sin(angle) * distance + "px");
+    particle.style.setProperty("--particle-color", color);
+    particle.style.animationDelay = Math.random() * 70 + "ms";
+    layer.appendChild(particle);
+    window.setTimeout(() => particle.remove(), 650);
+  }
+}
+
+function spawnBattleImpact(targetSelector, tone = "gold", critical = false) {
+  const layer = ensureBattleFxLayer();
+  const point = getArenaPoint(targetSelector);
+  if (!layer || !point) return;
+
+  const ring = document.createElement("div");
+  ring.className = "battle-impact " + tone + (critical ? " critical" : "");
+  ring.style.left = point.x + "px";
+  ring.style.top = point.y + "px";
+  layer.appendChild(ring);
+
+  spawnBattleParticles(point, tone, critical ? 18 : 11);
+  window.setTimeout(() => ring.remove(), critical ? 560 : 440);
+}
+
+function spawnBattleAttack(sourceSelector, targetSelector, mode = "player", tone = "gold", critical = false) {
+  const layer = ensureBattleFxLayer();
+  const source = getArenaPoint(sourceSelector);
+  const target = getArenaPoint(targetSelector);
+  if (!layer || !source || !target) return;
+
+  const dx = target.x - source.x;
+  const dy = target.y - source.y;
+  const distance = Math.hypot(dx, dy);
+  const angle = Math.atan2(dy, dx) * 180 / Math.PI;
+
+  const trail = document.createElement("div");
+  trail.className = "battle-trail " + mode + " " + tone + (critical ? " critical" : "");
+  trail.style.left = source.x + "px";
+  trail.style.top = source.y + "px";
+  trail.style.width = Math.max(90, distance) + "px";
+  trail.style.transform = "translateY(-50%) rotate(" + angle + "deg)";
+  layer.appendChild(trail);
+
+  const strike = document.createElement("div");
+  strike.className = "battle-slash " + mode + " " + tone + (critical ? " critical" : "");
+  strike.style.left = target.x + "px";
+  strike.style.top = target.y + "px";
+  strike.style.setProperty("--slash-angle", (angle + (mode === "player" ? -28 : 35)) + "deg");
+  layer.appendChild(strike);
+
+  window.setTimeout(() => trail.remove(), critical ? 360 : 300);
+  window.setTimeout(() => strike.remove(), critical ? 560 : 430);
+
+  window.setTimeout(() => {
+    spawnBattleImpact(targetSelector, tone, critical);
+  }, mode === "player" ? 105 : 135);
+}
+
+function triggerCombatAnimation(side, type = "attack") {
+  const combatant = document.querySelector(".combatant." + side + "-side");
+  if (!combatant) return;
+  const className = type === "hit" ? "combat-hit" : "combat-attack";
+  combatant.classList.remove(className);
+  void combatant.offsetWidth;
+  combatant.classList.add(className);
+  window.setTimeout(() => combatant.classList.remove(className), type === "hit" ? 340 : 300);
+}
+
+function combatToneForZone(zone) {
+  return ({
+    SLIMES: "poison",
+    RATS: "blood",
+    GOBLINS: "poison",
+    UNDEAD: "shadow",
+    BEASTS: "blood",
+    SPIDERS: "arcane",
+    CORRUPTED: "shadow",
+    ORCS: "gold",
+    DEMONS: "fire",
+    ANCIENT: "ancient",
+  })[zone] || "gold";
+}
+
 function ensureAdvancedWaveVisuals() {
   const svg = document.querySelector(".slime-art svg");
   if (!svg) return;
 
   const namespace = "http://www.w3.org/2000/svg";
   const palettes = {
-    GOBLINS: ["#6f8f48", "#b7cf72", "#29351f"],
-    UNDEAD: ["#68727b", "#d5d8d1", "#252a2d"],
-    BEASTS: ["#755744", "#b98b68", "#30231d"],
-    SPIDERS: ["#493b61", "#9b72c8", "#211b2b"],
-    CORRUPTED: ["#573b68", "#b36cc4", "#251a2e"],
-    ORCS: ["#5d6f42", "#a5a95d", "#26301e"],
-    DEMONS: ["#743d3d", "#ef6b4f", "#321b1b"],
-    ANCIENT: ["#64707c", "#d2b76d", "#202832"],
+    GOBLINS: ["#6f8f48", "#d0e47a", "#29351f"],
+    UNDEAD: ["#5f6870", "#e4e5db", "#202529"],
+    BEASTS: ["#704f3d", "#d19a70", "#2a1c17"],
+    SPIDERS: ["#44345e", "#c58cff", "#1d1527"],
+    CORRUPTED: ["#513461", "#f27ad7", "#241429"],
+    ORCS: ["#596c3c", "#d2d86d", "#202a18"],
+    DEMONS: ["#6f3035", "#ff875e", "#301317"],
+    ANCIENT: ["#53677b", "#f0d27b", "#172331"],
+  };
+
+  const append = (group, tag, attrs) => {
+    const el = document.createElementNS(namespace, tag);
+    Object.entries(attrs).forEach(([key, value]) => el.setAttribute(key, value));
+    group.appendChild(el);
+    return el;
   };
 
   for (let wave = 21; wave <= 100; wave += 1) {
@@ -873,39 +1014,144 @@ function ensureAdvancedWaveVisuals() {
     const data = slimeWaves[wave - 1];
     const [bodyColor, accentColor, darkColor] = palettes[data.zone] || palettes.ANCIENT;
     const group = document.createElementNS(namespace, "g");
-    group.setAttribute("class", "slime-wave slime-wave-" + wave + " advanced-wave advanced-wave-" + wave);
+    group.setAttribute("class", "slime-wave slime-wave-" + wave + " advanced-wave advanced-wave-" + wave + " zone-" + data.zone.toLowerCase());
     group.setAttribute("display", "none");
 
-    const body = document.createElementNS(namespace, "ellipse");
-    body.setAttribute("cx", "220"); body.setAttribute("cy", "205");
-    body.setAttribute("rx", data.isBoss ? "125" : "108"); body.setAttribute("ry", data.isBoss ? "82" : "70");
-    body.setAttribute("fill", bodyColor); body.setAttribute("stroke", darkColor); body.setAttribute("stroke-width", data.isBoss ? "11" : "8");
+    const bodyRx = data.isBoss ? 128 : 108;
+    const bodyRy = data.isBoss ? 84 : 70;
+    append(group, "ellipse", {
+      cx: "220", cy: "213", rx: String(bodyRx), ry: String(bodyRy),
+      fill: bodyColor, stroke: darkColor, "stroke-width": data.isBoss ? "12" : "8"
+    });
 
-    const head = document.createElementNS(namespace, "path");
-    head.setAttribute("d", data.zone === "SPIDERS"
-      ? "M120 190Q135 115 220 105Q305 115 320 190L295 230H145Z"
-      : "M145 205Q145 125 220 105Q295 125 295 205L270 245H170Z");
-    head.setAttribute("fill", bodyColor); head.setAttribute("stroke", darkColor); head.setAttribute("stroke-width", data.isBoss ? "10" : "7");
+    if (data.zone === "SPIDERS") {
+      for (let leg = 0; leg < 8; leg += 1) {
+        const side = leg < 4 ? -1 : 1;
+        const row = leg % 4;
+        const y = 170 + row * 25;
+        const x = side < 0 ? 142 : 298;
+        const bendX = side < 0 ? 75 - row * 4 : 365 + row * 4;
+        append(group, "path", {
+          d: "M" + x + " " + y + "L" + (x + side * 38) + " " + (y - 18) + "L" + bendX + " " + (y + 12),
+          fill: "none", stroke: darkColor, "stroke-width": data.isBoss ? "11" : "8",
+          "stroke-linecap": "round"
+        });
+      }
+    }
 
-    const eyeL = document.createElementNS(namespace, "circle");
-    eyeL.setAttribute("cx","188"); eyeL.setAttribute("cy","170"); eyeL.setAttribute("r",data.isBoss?"14":"10"); eyeL.setAttribute("fill",accentColor);
-    const eyeR=eyeL.cloneNode(); eyeR.setAttribute("cx","252");
+    const headPath = data.zone === "BEASTS"
+      ? "M142 205Q145 132 205 112Q220 98 235 112Q295 132 298 205L270 245H170Z"
+      : data.zone === "SPIDERS"
+        ? "M120 194Q132 115 220 103Q308 115 320 194L296 235H144Z"
+        : "M145 205Q145 125 220 103Q295 125 295 205L270 245H170Z";
+    append(group, "path", {
+      d: headPath, fill: bodyColor, stroke: darkColor, "stroke-width": data.isBoss ? "10" : "7"
+    });
 
-    const accent=document.createElementNS(namespace,"path");
-    accent.setAttribute("d", data.zone==="DEMONS" ? "M180 110L160 55L205 91L220 45L235 91L280 55L260 110Z" : "M170 115L220 70L270 115");
-    accent.setAttribute("fill","none"); accent.setAttribute("stroke",accentColor); accent.setAttribute("stroke-width",data.isBoss?"13":"8"); accent.setAttribute("stroke-linecap","round"); accent.setAttribute("stroke-linejoin","round");
+    if (data.zone === "GOBLINS" || data.zone === "ORCS") {
+      append(group, "path", {
+        d: "M166 133L125 82L178 105ZM274 133L315 82L262 105Z",
+        fill: bodyColor, stroke: darkColor, "stroke-width": "7", "stroke-linejoin": "round"
+      });
+    }
 
-    const weapon=document.createElementNS(namespace,"path");
-    weapon.setAttribute("d", data.zone==="BEASTS" ? "M120 250L75 300L92 314L145 268Z" : "M112 275L65 310L78 326L132 289Z");
-    weapon.setAttribute("fill",accentColor); weapon.setAttribute("stroke",darkColor); weapon.setAttribute("stroke-width","6");
+    if (data.zone === "BEASTS") {
+      append(group, "path", {
+        d: "M192 176Q220 151 248 176L239 207Q220 219 201 207Z",
+        fill: darkColor, stroke: darkColor, "stroke-width": "5"
+      });
+      append(group, "path", {
+        d: "M197 219Q220 233 243 219",
+        fill: "none", stroke: accentColor, "stroke-width": "6", "stroke-linecap": "round"
+      });
+    }
 
-    [body,head,eyeL,eyeR,accent,weapon].forEach((el)=>group.appendChild(el));
+    const eyeY = data.zone === "SPIDERS" ? 171 : 166;
+    const eyeRadius = data.isBoss ? 15 : 10;
+    append(group, "circle", { cx: "188", cy: String(eyeY), r: String(eyeRadius), fill: accentColor });
+    append(group, "circle", { cx: "252", cy: String(eyeY), r: String(eyeRadius), fill: accentColor });
+
+    if (data.zone === "UNDEAD") {
+      append(group, "path", {
+        d: "M183 202Q220 231 257 202L248 225Q220 244 192 225Z",
+        fill: "#d7d7cc", stroke: darkColor, "stroke-width": "5"
+      });
+      for (let tooth = 0; tooth < 5; tooth += 1) {
+        append(group, "path", {
+          d: "M198 " + (210 + tooth % 2 * 4) + "L" + (198 + tooth * 11) + " 228L" + (204 + tooth * 11) + " 211Z",
+          fill: darkColor
+        });
+      }
+    }
+
+    if (data.zone === "SPIDERS") {
+      append(group, "path", {
+        d: "M205 201L220 190L235 201L220 214Z",
+        fill: accentColor, stroke: darkColor, "stroke-width": "4"
+      });
+    }
+
+    if (data.zone === "CORRUPTED") {
+      append(group, "path", {
+        d: "M175 118Q205 85 220 118Q235 85 265 118Q248 146 220 151Q192 146 175 118Z",
+        fill: "none", stroke: accentColor, "stroke-width": "9", "stroke-linecap": "round"
+      });
+      append(group, "path", {
+        d: "M156 240Q125 260 145 286M284 240Q315 260 295 286",
+        fill: "none", stroke: accentColor, "stroke-width": "8", "stroke-linecap": "round"
+      });
+    }
+
+    if (data.zone === "DEMONS") {
+      append(group, "path", {
+        d: "M178 115L151 48L205 92L220 38L235 92L289 48L262 115Z",
+        fill: "none", stroke: accentColor, "stroke-width": data.isBoss ? "14" : "10",
+        "stroke-linecap": "round", "stroke-linejoin": "round"
+      });
+      append(group, "path", {
+        d: "M150 220L82 176L112 238L82 260L154 254ZM290 220L358 176L328 238L358 260L286 254Z",
+        fill: darkColor, stroke: accentColor, "stroke-width": "5", "stroke-linejoin": "round"
+      });
+    }
+
+    if (data.zone === "ANCIENT") {
+      append(group, "path", {
+        d: "M220 75L244 105L220 132L196 105Z",
+        fill: accentColor, stroke: darkColor, "stroke-width": "6"
+      });
+      append(group, "path", {
+        d: "M145 242L105 280L155 268L182 292L188 251ZM295 242L335 280L285 268L258 292L252 251Z",
+        fill: "none", stroke: accentColor, "stroke-width": "7", "stroke-linejoin": "round"
+      });
+    }
+
+    if (data.zone === "ORCS") {
+      append(group, "path", {
+        d: "M196 211L184 230L204 224ZM244 211L256 230L236 224Z",
+        fill: "#f2e3b2", stroke: darkColor, "stroke-width": "3"
+      });
+      append(group, "path", {
+        d: "M115 260L58 306L72 319L132 280Z",
+        fill: accentColor, stroke: darkColor, "stroke-width": "6"
+      });
+    } else {
+      append(group, "path", {
+        d: data.zone === "BEASTS" ? "M120 260L78 309L95 320L145 275Z" : "M112 274L62 312L77 327L132 289Z",
+        fill: accentColor, stroke: darkColor, "stroke-width": "6"
+      });
+    }
+
+    append(group, "path", {
+      d: "M174 256Q220 235 266 256L280 290Q220 312 160 290Z",
+      fill: darkColor, stroke: accentColor, "stroke-width": data.isBoss ? "8" : "5"
+    });
 
     if (data.isBoss) {
-      const crown=document.createElementNS(namespace,"path");
-      crown.setAttribute("d","M170 72L190 35L220 65L250 35L270 72L250 94H190Z");
-      crown.setAttribute("fill",accentColor); crown.setAttribute("stroke",darkColor); crown.setAttribute("stroke-width","6");
-      group.appendChild(crown);
+      append(group, "path", {
+        d: "M168 76L188 32L220 61L252 32L272 76L252 96H188Z",
+        fill: accentColor, stroke: darkColor, "stroke-width": "6"
+      });
+      append(group, "circle", { cx: "220", cy: "59", r: "7", fill: "#fff4b0" });
     }
 
     svg.appendChild(group);
@@ -1003,7 +1249,12 @@ function applyWaveData() {
   ui.waveTitle.textContent = `WAVE ${game.wave}`;
   const enemyType = wave.isBoss ? "ENEMY · MINI-BOSS" : "ENEMY · " + wave.zone;
   const enemyTypeLabel = document.getElementById("enemy-type-label");
+  const enemySide = document.querySelector(".enemy-side");
   if (enemyTypeLabel) enemyTypeLabel.textContent = enemyType;
+  if (enemySide) {
+    enemySide.dataset.zone = wave.zone;
+    enemySide.classList.toggle("boss-enemy", wave.isBoss);
+  }
   ui.monsterName.textContent = wave.name;
   ui.monsterDamage.textContent = String(wave.damage);
   ui.monsterAttackSpeed.textContent = `${(wave.attackSpeed / 1000).toFixed(1)}s`;
@@ -1012,6 +1263,9 @@ function applyWaveData() {
 
 function resetBattle() {
   clearBattleTimers();
+  ensureBattleFxLayer();
+  const fxLayer = document.querySelector(".battle-fx-layer");
+  if (fxLayer) fxLayer.innerHTML = "";
   applyWaveData();
   game.player.hp = game.player.maxHp;
   game.battleActive = true;
@@ -1063,6 +1317,10 @@ function playerAttack() {
     : baseDamage;
 
   game.monster.hp = Math.max(0, game.monster.hp - damage);
+  const tone = combatToneForZone(getCurrentSlime().zone);
+  triggerCombatAnimation("player", "attack");
+  triggerCombatAnimation("enemy", "hit");
+  spawnBattleAttack(".player-art", ".slime-art", "player", tone, isCrit);
   showDamageNumber("monster", damage, isCrit);
   updateBattleUi();
   writeLog(`Player attacks for ${damage} damage${isCrit ? " · CRITICAL HIT!" : ""}.`);
@@ -1076,6 +1334,10 @@ function monsterAttack() {
   if (!game.battleActive) return;
 
   const damage = Math.max(1, Math.round(game.monster.damage));
+  const tone = combatToneForZone(getCurrentSlime().zone);
+  triggerCombatAnimation("enemy", "attack");
+  triggerCombatAnimation("player", "hit");
+  spawnBattleAttack(".slime-art", ".player-art", "enemy", tone, false);
   game.player.hp = Math.max(0, game.player.hp - damage);
   showDamageNumber("player", damage, false);
   updateBattleUi();
