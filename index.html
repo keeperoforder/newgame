@@ -9,14 +9,26 @@
 <body>
   <main id="app">
     <section id="main-menu" class="screen active">
-      <div class="panel menu-panel">
-        <div class="eyebrow">WEB IDLE GAME</div>
-        <h1>Echo of Alchemy</h1>
-        <p class="subtitle">A simple idle adventure begins.</p>
-        <div class="menu-buttons">
-          <button id="start-game" class="primary">START GAME</button>
-          <button id="open-settings" class="secondary">SETTINGS</button>
-          <button id="quit-game" class="secondary">QUIT</button>
+      <div class="main-menu-frame" aria-label="Main Menu">
+        <div class="main-menu-title">
+          <div class="main-menu-title-main">BEYOND</div>
+          <div class="main-menu-title-sub">THE WAVES</div>
+          <div class="main-menu-tagline">FURTHER THAN THE KNOWN.</div>
+        </div>
+
+        <div class="main-menu-buttons">
+          <button id="start-game" class="menu-action" type="button">
+            <span class="menu-icon">⚔</span>
+            <span>START GAME</span>
+          </button>
+          <button id="open-settings" class="menu-action" type="button">
+            <span class="menu-icon">⚙</span>
+            <span>SETTINGS</span>
+          </button>
+          <button id="quit-game" class="menu-action" type="button">
+            <span class="menu-icon menu-exit-icon">⇥</span>
+            <span>QUIT</span>
+          </button>
         </div>
       </div>
     </section>
