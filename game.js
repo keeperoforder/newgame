@@ -11,15 +11,15 @@ const screens = {
 
 const slimeWaves = [
   { name: "Mire Slime", maxHp: 50, damage: 5, attackSpeed: 2000 },
-  { name: "Briar Slime", maxHp: 72, damage: 7, attackSpeed: 1950 },
-  { name: "Horned Slime", maxHp: 100, damage: 9, attackSpeed: 1900 },
-  { name: "Reefguard Slime", maxHp: 135, damage: 12, attackSpeed: 1850 },
-  { name: "Ironhide Slime", maxHp: 180, damage: 15, attackSpeed: 1800 },
-  { name: "Crystal Slime", maxHp: 240, damage: 18, attackSpeed: 1750 },
-  { name: "Abyss Slime", maxHp: 315, damage: 22, attackSpeed: 1700 },
-  { name: "Dread Slime", maxHp: 410, damage: 27, attackSpeed: 1650 },
-  { name: "Void Slime", maxHp: 530, damage: 33, attackSpeed: 1600 },
-  { name: "Slime Sovereign", maxHp: 700, damage: 40, attackSpeed: 1550 },
+  { name: "Briar Slime", maxHp: 80, damage: 8, attackSpeed: 1950 },
+  { name: "Horned Slime", maxHp: 120, damage: 12, attackSpeed: 1900 },
+  { name: "Reefguard Slime", maxHp: 170, damage: 17, attackSpeed: 1850 },
+  { name: "Ironhide Slime", maxHp: 230, damage: 23, attackSpeed: 1800 },
+  { name: "Crystal Slime", maxHp: 300, damage: 30, attackSpeed: 1750 },
+  { name: "Abyss Slime", maxHp: 380, damage: 38, attackSpeed: 1700 },
+  { name: "Dread Slime", maxHp: 470, damage: 47, attackSpeed: 1650 },
+  { name: "Void Slime", maxHp: 500, damage: 50, attackSpeed: 1600 },
+  { name: "Slime Sovereign · MINI-BOSS", maxHp: 5000, damage: 500, attackSpeed: 1500 },
 ];
 
 const game = {
