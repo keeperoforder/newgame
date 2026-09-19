@@ -65,6 +65,7 @@ const game = {
   playerTimer: null,
   monsterTimer: null,
   battleActive: false,
+  inventoryOpen: false,
 };
 
 const ui = {
@@ -309,6 +310,24 @@ function openCharacterScreen() {
 
 function closeCharacterScreen() {
   showScreen(screens.battle);
+}
+
+function openInventoryOverlay() {
+  updateInventoryUi();
+  game.inventoryOpen = true;
+  ui.inventoryScreen.classList.add("inventory-overlay-active");
+  ui.inventoryScreen.setAttribute("aria-hidden", "false");
+}
+
+function closeInventoryOverlay() {
+  game.inventoryOpen = false;
+  ui.inventoryScreen.classList.remove("inventory-overlay-active");
+  ui.inventoryScreen.setAttribute("aria-hidden", "true");
+  if (game.battleActive) {
+    showScreen(screens.battle);
+  } else {
+    showScreen(screens.character);
+  }
 }
 
 function renderInventoryItem(item) {
@@ -946,7 +965,9 @@ function monsterAttack() {
 }
 
 function startBattle() {
-  showScreen(screens.battle);
+  if (!game.inventoryOpen) {
+    showScreen(screens.battle);
+  }
   resetBattle();
 
   game.playerTimer = setInterval(playerAttack, game.player.attackSpeed);
@@ -1004,6 +1025,19 @@ function finishVictory() {
   writeLog(waveLabel() + " defeated. +" + goldReward + " Gold · +" + xpReward + " XP · " + (materialDrops.length ? materialDrops.map(([key, value]) => formatMaterialName(key) + " +" + value).join(" · ") : "no materials") + (droppedItem ? " · ITEM DROP: " + droppedItem.name + " " + droppedItem.rarity + " Lv." + droppedItem.level : "") + ".");
   saveGame();
   ui.status.textContent = "VICTORY";
+
+  if (game.inventoryOpen) {
+    ui.status.textContent = game.farmingWave ? "FARMING · NEXT WAVE READY" : "VICTORY · NEXT WAVE";
+    if (game.wave < slimeWaves.length) {
+      writeLog(waveLabel() + " cleared while Inventory is open. Next wave starting automatically...");
+      window.setTimeout(() => {
+        if (game.battleActive || !game.inventoryOpen || game.wave >= slimeWaves.length) return;
+        game.wave += 1;
+        startBattle();
+      }, 1400);
+    }
+    return;
+  }
 
   ui.victoryEyebrow.textContent = game.wave === slimeWaves.length
     ? "ALL " + slimeWaves.length + " WAVES CLEARED"
@@ -1081,8 +1115,8 @@ activateSvgButton(document.getElementById("svg-start-game"), () => {
 ui.characterButton.addEventListener("click", openCharacterScreen);
 ui.characterClose.addEventListener("click", closeCharacterScreen);
 ui.characterBack.addEventListener("click", closeCharacterScreen);
-ui.openInventory.addEventListener("click", () => showScreen(screens.inventory));
-ui.inventoryClose.addEventListener("click", () => showScreen(screens.character));
+ui.openInventory.addEventListener("click", openInventoryOverlay);
+ui.inventoryClose.addEventListener("click", closeInventoryOverlay);
 ui.blacksmithButton.addEventListener("click", openBlacksmithPanel);
 ui.blacksmithClose.addEventListener("click", closeBlacksmithPanel);
 ui.blacksmithPanel.addEventListener("click", (event) => {
