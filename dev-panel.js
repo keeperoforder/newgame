@@ -12,6 +12,10 @@
   const hpValue = document.getElementById("dev-hp-value");
   const damageValue = document.getElementById("dev-damage-value");
   const attackSpeedValue = document.getElementById("dev-attack-speed-value");
+  const critChanceValue = document.getElementById("dev-crit-chance-value");
+  const critDamageValue = document.getElementById("dev-crit-damage-value");
+  const armorValue = document.getElementById("dev-armor-value");
+  const magicResistValue = document.getElementById("dev-magic-resist-value");
   const goldValue = document.getElementById("dev-gold-value");
   const expValue = document.getElementById("dev-exp-value");
   const message = document.getElementById("dev-message");
@@ -27,6 +31,10 @@
     hpValue.textContent = String(current.player.hp) + " / " + String(current.player.maxHp);
     damageValue.textContent = String(current.player.damage);
     attackSpeedValue.textContent = (current.player.attackSpeed / 1000).toFixed(2) + "s";
+    critChanceValue.textContent = String(current.player.critChance) + "%";
+    critDamageValue.textContent = String(current.player.critDamage) + "%";
+    armorValue.textContent = String(current.player.armor);
+    magicResistValue.textContent = String(current.player.magicResist);
     goldValue.textContent = String(current.gold);
     expValue.textContent = String(current.exp);
   }
