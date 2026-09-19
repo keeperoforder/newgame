@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>WEB IDLE GAME</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <main id="app">
+    <section id="main-menu" class="screen active">
+      <div class="panel menu-panel">
+        <div class="eyebrow">WEB IDLE GAME</div>
+        <h1>Echo of Alchemy</h1>
+        <p class="subtitle">A simple idle adventure begins.</p>
+        <div class="menu-buttons">
+          <button id="start-game" class="primary">START GAME</button>
+          <button id="open-settings" class="secondary">SETTINGS</button>
+          <button id="quit-game" class="secondary">QUIT</button>
+        </div>
+      </div>
+    </section>
+
+    <section id="settings-screen" class="screen">
+      <div class="panel settings-panel">
+        <div class="eyebrow">SETTINGS</div>
+        <h2>Settings</h2>
+
+        <div class="setting-row">
+          <span>Sound</span>
+          <button id="sound-toggle" class="toggle on" type="button">ON</button>
+        </div>
+
+        <div class="setting-row">
+          <span>Music</span>
+          <button id="music-toggle" class="toggle on" type="button">ON</button>
+        </div>
+
+        <button id="back-to-menu-from-settings" class="secondary full-width">BACK</button>
+      </div>
+    </section>
+
+    <section id="battle-screen" class="screen">
+      <div class="battle-shell">
+        <div class="battle-header">
+          <div>
+            <div class="eyebrow">AUTO BATTLE</div>
+            <h2 id="wave-title">WAVE 1</h2>
+          </div>
+          <div class="resource-bar">
+            <span>Gold</span>
+            <strong id="gold-value">0</strong>
+          </div>
+        </div>
+
+        <div class="arena">
+          <article class="combatant player-side">
+            <div class="combatant-title">PLAYER</div>
+            <div class="character-art" aria-label="Player">🧙</div>
+            <h3 id="player-name">Alchemist</h3>
+            <div class="stats">
+              <div class="stat-line"><span>HP</span><span id="player-hp-text">100 / 100</span></div>
+              <div class="hp-bar"><div id="player-hp-bar" class="hp-fill"></div></div>
+              <div class="stat-mini"><span>Damage</span><strong>10</strong></div>
+              <div class="stat-mini"><span>Attack Speed</span><strong>1.5s</strong></div>
+            </div>
+          </article>
+
+          <div class="versus">
+            <span>VS</span>
+            <div id="battle-status" class="battle-status">AUTO BATTLE</div>
+          </div>
+
+          <article class="combatant enemy-side">
+            <div class="combatant-title">MONSTER</div>
+            <div class="character-art" aria-label="Monster">🐀</div>
+            <h3 id="monster-name">Rat</h3>
+            <div class="stats">
+              <div class="stat-line"><span>HP</span><span id="monster-hp-text">50 / 50</span></div>
+              <div class="hp-bar"><div id="monster-hp-bar" class="hp-fill"></div></div>
+              <div class="stat-mini"><span>Damage</span><strong>5</strong></div>
+              <div class="stat-mini"><span>Attack Speed</span><strong>2.0s</strong></div>
+            </div>
+          </article>
+        </div>
+
+        <div class="combat-log" id="combat-log">
+          <p>Battle started...</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="victory-screen" class="screen">
+      <div class="panel result-panel">
+        <div class="result-icon victory-icon">✓</div>
+        <div class="eyebrow">WAVE 1 COMPLETE</div>
+        <h2>VICTORY!</h2>
+        <div class="reward-box">
+          <div>Reward</div>
+          <strong>Gold +10</strong>
+          <strong>EXP +5</strong>
+        </div>
+        <button id="continue-game" class="primary full-width">CONTINUE</button>
+      </div>
+    </section>
+
+    <section id="defeat-screen" class="screen">
+      <div class="panel result-panel">
+        <div class="result-icon defeat-icon">×</div>
+        <div class="eyebrow">BATTLE ENDED</div>
+        <h2>DEFEAT</h2>
+        <button id="try-again" class="primary full-width">TRY AGAIN</button>
+        <button id="back-to-menu-from-defeat" class="secondary full-width">BACK TO MENU</button>
+      </div>
+    </section>
+
+    <section id="wave2-screen" class="screen">
+      <div class="panel result-panel">
+        <div class="result-icon wave-icon">2</div>
+        <div class="eyebrow">NEXT BATTLE</div>
+        <h2>WAVE 2</h2>
+        <p class="subtitle">The next battle scene is ready for expansion.</p>
+        <button id="back-to-menu-from-wave2" class="secondary full-width">BACK TO MENU</button>
+      </div>
+    </section>
+
+    <section id="thanks-screen" class="screen">
+      <div class="panel result-panel">
+        <div class="result-icon wave-icon">♥</div>
+        <div class="eyebrow">GAME OVER</div>
+        <h2>Thanks for playing!</h2>
+        <button id="back-to-menu-from-thanks" class="primary full-width">BACK TO MENU</button>
+      </div>
+    </section>
+  </main>
+
+  <script src="game.js"></script>
+</body>
+</html>
