@@ -445,3 +445,76 @@ h3 {
 @media (max-width: 700px) {
   #main-menu-svg { min-height: 100%; }
 }
+
+
+.player-progression {
+  display: grid;
+  gap: 8px;
+  min-width: min(330px, 42vw);
+}
+
+.level-bar {
+  padding: 8px 12px 10px;
+  border-radius: 12px;
+  background: #111522;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.level-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 6px;
+  color: #9da6c8;
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+}
+
+.level-row strong { color: #f3f5ff; }
+
+.xp-bar {
+  width: 100%;
+  height: 7px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: #080b13;
+}
+
+.xp-fill {
+  width: 0%;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #6f8cff, #a875ff);
+  transition: width 0.25s ease;
+}
+
+.level-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: fit-content;
+  margin: 8px auto 0;
+  padding: 5px 10px;
+  border-radius: 999px;
+  background: rgba(108, 129, 255, 0.12);
+  border: 1px solid rgba(125, 145, 255, 0.24);
+  color: #aeb8df;
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+}
+
+.level-badge strong { color: #ffffff; }
+
+@media (max-width: 700px) {
+  .player-progression {
+    min-width: 0;
+    width: 100%;
+  }
+
+  .battle-header {
+    align-items: stretch;
+    flex-direction: column;
+  }
+}
