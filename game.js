@@ -403,7 +403,7 @@ function renderInventoryItem(item) {
 function upgradeInventoryItem(item) {
   const slot = equipmentSlots.find((entry) => entry.id === item.slotId);
   const actionData = getEquipmentAction(slot, item);
-  if (actionData.action === "max" || !canAfford(actionData.cost)) {
+  if (actionData.action === "max" || actionData.action === "locked" || !canAfford(actionData.cost)) {
     ui.inventoryMessage.textContent = "Not enough Gold or materials for this upgrade.";
     return;
   }
