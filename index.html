@@ -570,6 +570,92 @@
       </div>
     </section>
 
+
+    <section id="dev-panel" class="dev-overlay" aria-hidden="true">
+      <div class="dev-card" role="dialog" aria-modal="true" aria-labelledby="dev-title">
+        <div class="dev-header">
+          <div>
+            <div class="dev-eyebrow">DEVELOPMENT ONLY · F2</div>
+            <h2 id="dev-title">DEV PANEL</h2>
+          </div>
+          <button id="dev-close-button" class="dev-close" type="button" aria-label="Close developer panel">×</button>
+        </div>
+
+        <div class="dev-grid">
+          <section class="dev-section">
+            <div class="dev-section-title">WAVE CONTROL</div>
+            <div class="dev-current-row">CURRENT WAVE <strong id="dev-wave-value">1</strong></div>
+            <div class="dev-button-row">
+              <button id="dev-wave-minus" type="button">−</button>
+              <button id="dev-wave-plus" type="button">+</button>
+            </div>
+            <div class="dev-input-row">
+              <input id="dev-wave-input" type="number" min="1" max="10" value="1" aria-label="Set wave">
+              <button id="dev-set-wave" type="button">SET</button>
+            </div>
+            <div class="dev-button-row dev-button-row-wide">
+              <button id="dev-skip-wave" type="button">SKIP WAVE</button>
+              <button id="dev-win-wave" type="button">WIN WAVE</button>
+              <button id="dev-lose-wave" type="button">LOSE WAVE</button>
+            </div>
+          </section>
+
+          <section class="dev-section">
+            <div class="dev-section-title">PLAYER</div>
+            <div class="dev-current-row"><span>LEVEL</span><strong id="dev-level-value">1</strong></div>
+            <div class="dev-button-row">
+              <button id="dev-level-minus" type="button">− LEVEL</button>
+              <button id="dev-level-plus" type="button">+ LEVEL</button>
+            </div>
+            <div class="dev-input-row">
+              <input id="dev-level-input" type="number" min="1" max="100" value="1" aria-label="Set level">
+              <button id="dev-set-level" type="button">SET LEVEL</button>
+            </div>
+            <div class="dev-current-row"><span>HP</span><strong id="dev-hp-value">100 / 100</strong></div>
+            <button id="dev-full-heal" class="dev-wide-button" type="button">FULL HEAL</button>
+            <div class="dev-input-row">
+              <input id="dev-damage-input" type="number" min="1" value="10" aria-label="Damage player">
+              <button id="dev-damage-player" type="button">DAMAGE HP</button>
+            </div>
+          </section>
+
+          <section class="dev-section">
+            <div class="dev-section-title">STAT OVERRIDES</div>
+            <div class="dev-current-row"><span>DAMAGE</span><strong id="dev-damage-value">10</strong></div>
+            <div class="dev-input-row">
+              <input id="dev-damage-stat-input" type="number" min="0" value="10" aria-label="Set damage">
+              <button id="dev-set-damage" type="button">SET DAMAGE</button>
+            </div>
+            <div class="dev-current-row"><span>ATTACK SPEED</span><strong id="dev-attack-speed-value">1.50s</strong></div>
+            <div class="dev-input-row">
+              <input id="dev-attack-speed-input" type="number" min="0.1" step="0.05" value="1.50" aria-label="Set attack speed in seconds">
+              <button id="dev-set-attack-speed" type="button">SET SPEED</button>
+            </div>
+            <div class="dev-current-row"><span>GOLD</span><strong id="dev-gold-value">0</strong></div>
+            <div class="dev-input-row">
+              <input id="dev-gold-input" type="number" min="0" value="0" aria-label="Set gold">
+              <button id="dev-set-gold" type="button">SET GOLD</button>
+            </div>
+            <div class="dev-current-row"><span>XP</span><strong id="dev-exp-value">0</strong></div>
+            <div class="dev-input-row">
+              <input id="dev-exp-input" type="number" min="0" value="0" aria-label="Set experience">
+              <button id="dev-set-exp" type="button">SET XP</button>
+            </div>
+          </section>
+
+          <section class="dev-section">
+            <div class="dev-section-title">TEST / SAVE</div>
+            <div class="dev-button-row dev-button-row-wide">
+              <button id="dev-save-now" type="button">SAVE NOW</button>
+              <button id="dev-reset-battle" type="button">RESET BATTLE</button>
+            </div>
+            <button id="dev-reset-save" class="dev-danger-button" type="button">RESET LOCAL SAVE</button>
+            <p id="dev-message" class="dev-message">Ready.</p>
+          </section>
+        </div>
+      </div>
+    </section>
+
     <section id="victory-screen" class="screen">
       <div class="panel result-panel">
         <div class="result-icon victory-icon">✓</div>
@@ -615,5 +701,6 @@
   </main>
 
   <script src="game.js"></script>
+  <script src="dev-panel.js"></script>
 </body>
 </html>
