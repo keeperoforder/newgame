@@ -302,15 +302,25 @@
             <div class="eyebrow">AUTO BATTLE</div>
             <h2 id="wave-title">WAVE 1</h2>
           </div>
-          <div class="resource-bar">
-            <span>Gold</span>
-            <strong id="gold-value">0</strong>
+          <div class="player-progression">
+            <div class="resource-bar">
+              <span>Gold</span>
+              <strong id="gold-value">0</strong>
+            </div>
+            <div class="level-bar">
+              <div class="level-row">
+                <span>LEVEL <strong id="player-level">1</strong></span>
+                <span><strong id="player-exp-text">0 / 100</strong> XP</span>
+              </div>
+              <div class="xp-bar"><div id="player-xp-bar" class="xp-fill"></div></div>
+            </div>
           </div>
         </div>
 
         <div class="arena">
           <article class="combatant player-side">
             <div class="combatant-title">PLAYER · WARRIOR</div>
+            <div class="level-badge">LEVEL <strong id="player-level-card">1</strong></div>
             <div class="character-art player-art" aria-label="Armored warrior">
               <svg viewBox="0 0 440 330" role="img" aria-label="Armored warrior with sword">
                 <defs>
