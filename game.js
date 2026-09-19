@@ -1703,7 +1703,9 @@ function fullResetProgress() {
 
   try {
     localStorage.removeItem("beyondTheWavesSave");
+    localStorage.removeItem("keeperLegacyProgress");
     sessionStorage.removeItem("beyondTheWavesSave");
+    sessionStorage.removeItem("keeperLegacyProgress");
   } catch (_) {}
 
   window.location.reload();
