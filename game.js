@@ -298,6 +298,7 @@ function finishVictory() {
   updateGold();
   updateProgressionUi();
   writeLog(waveLabel() + " defeated. +" + goldReward + " Gold · +" + xpReward + " XP.");
+  saveGame();
   ui.status.textContent = "VICTORY";
 
   ui.victoryEyebrow.textContent = game.wave === slimeWaves.length
@@ -330,13 +331,6 @@ function setToggle(button, enabled) {
 }
 
 activateSvgButton(document.getElementById("svg-start-game"), () => {
-  game.gold = 0;
-  game.exp = 0;
-  game.level = 1;
-  game.wave = 1;
-  updatePlayerStatsFromLevel();
-  updateProgressionUi();
-  updateGold();
   startGameFromMenu();
 });
 
