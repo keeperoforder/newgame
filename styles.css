@@ -1049,6 +1049,42 @@ h3 {
 .blacksmith-resources span,.blacksmith-resources strong{padding:8px 11px;border:1px solid rgba(255,255,255,.07);border-radius:9px;background:rgba(255,255,255,.03);color:#c7cad6;font-size:.72rem}
 .blacksmith-resources strong{color:#f0d29b}
 .equipment-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.equipment-card{position:relative;overflow:hidden}
+.equipment-preview{height:138px;margin:-16px -16px 14px;display:grid;place-items:center;background:radial-gradient(circle at 50% 45%,rgba(214,174,109,.13),transparent 62%),linear-gradient(180deg,rgba(7,10,15,.4),rgba(7,9,13,.9));border-bottom:1px solid rgba(255,255,255,.06)}
+.equipment-preview .equipment-art-svg{width:118px;height:118px;filter:drop-shadow(0 8px 12px rgba(0,0,0,.55))}
+.equipment-preview.rarity-rare .equipment-art-svg{filter:drop-shadow(0 0 12px rgba(92,169,255,.45))}
+.equipment-preview.rarity-epic .equipment-art-svg{filter:drop-shadow(0 0 14px rgba(189,114,255,.5))}
+.equipment-preview.rarity-legendary .equipment-art-svg{filter:drop-shadow(0 0 18px rgba(240,184,95,.62))}
+.equipment-card:hover .equipment-preview .equipment-art-svg{animation:equipmentFloat .9s ease-in-out infinite alternate}
+@keyframes equipmentFloat{to{transform:translateY(-4px) scale(1.035)}}
+
+.craft-animation{position:fixed;inset:0;z-index:200;display:grid;place-items:center;background:radial-gradient(circle at 50% 52%,rgba(116,78,38,.18),rgba(3,5,9,.9) 55%);backdrop-filter:blur(7px);opacity:0;transition:opacity .28s}
+.craft-animation.active{opacity:1}
+.craft-forge-scene{position:relative;width:min(520px,88vw);height:470px;display:grid;place-items:center}
+.forge-anvil{position:absolute;bottom:86px;left:50%;width:230px;height:110px;transform:translateX(-50%);filter:drop-shadow(0 18px 20px rgba(0,0,0,.65))}
+.anvil-top{position:absolute;left:0;top:0;width:230px;height:30px;border-radius:10px 10px 5px 5px;background:linear-gradient(180deg,#b6bec7,#59636e 48%,#252d36);border:2px solid #d3a96f;box-shadow:0 0 20px rgba(240,184,95,.12)}
+.anvil-body{position:absolute;left:30px;top:28px;width:170px;height:82px;background:linear-gradient(90deg,#242c35,#626d78,#202730);clip-path:polygon(12% 0,88% 0,100% 28%,75% 100%,25% 100%,0 28%);border:2px solid #343e49}
+.forge-hammer{position:absolute;top:24px;left:54%;width:150px;height:190px;transform-origin:82px 165px;transform:rotate(24deg);z-index:5;transition:transform .13s cubic-bezier(.4,0,.2,1)}
+.forge-hammer span{position:absolute;left:68px;top:30px;width:18px;height:150px;border-radius:9px;background:linear-gradient(90deg,#4a2d1d,#b77b43,#56331f);box-shadow:0 0 4px rgba(0,0,0,.5)}
+.forge-hammer:before{content:"";position:absolute;left:36px;top:8px;width:82px;height:48px;border-radius:9px;background:linear-gradient(180deg,#c8d0d7,#626d77 52%,#242b33);border:3px solid #d7ae72;box-shadow:0 0 12px rgba(255,205,123,.12)}
+.hammer-strike-1 .forge-hammer{transform:rotate(-42deg) translate(-8px,-5px)}
+.hammer-strike-2 .forge-hammer{transform:rotate(47deg) translate(8px,6px)}
+.hammer-strike-3 .forge-hammer{transform:rotate(-48deg) translate(-9px,-4px)}
+.forge-sparks{position:absolute;bottom:148px;left:50%;width:190px;height:100px;transform:translateX(-50%);z-index:4;pointer-events:none}
+.forge-sparks i{position:absolute;width:5px;height:18px;border-radius:50%;background:#ffd47c;box-shadow:0 0 12px #ff9e43;opacity:0}
+.hammer-strike-1 .forge-sparks i,.hammer-strike-2 .forge-sparks i,.hammer-strike-3 .forge-sparks i{animation:sparkBurst .42s ease-out forwards}
+.forge-sparks i:nth-child(1){left:25%;top:55%;transform:rotate(-45deg)}.forge-sparks i:nth-child(2){left:38%;top:35%;transform:rotate(25deg)}.forge-sparks i:nth-child(3){left:50%;top:48%;transform:rotate(65deg)}.forge-sparks i:nth-child(4){left:61%;top:32%;transform:rotate(-20deg)}.forge-sparks i:nth-child(5){left:72%;top:54%;transform:rotate(42deg)}.forge-sparks i:nth-child(6){left:47%;top:20%;transform:rotate(10deg)}
+@keyframes sparkBurst{0%{opacity:1;transform:translate(0,0) scale(.7)}100%{opacity:0;transform:translate(var(--sx,0),-58px) scale(1.15)}}
+.craft-reveal{position:absolute;bottom:158px;left:50%;width:145px;height:145px;transform:translate(-50%,20px) scale(.25);opacity:0;z-index:3;display:grid;place-items:center;border-radius:50%;background:radial-gradient(circle,rgba(255,211,127,.3),transparent 68%);transition:transform .55s cubic-bezier(.18,.85,.2,1),opacity .4s}
+.craft-reveal .equipment-art-svg{width:130px;height:130px;filter:drop-shadow(0 0 20px rgba(240,184,95,.65))}
+.craft-animation.reveal .craft-reveal{transform:translate(-50%,0) scale(1);opacity:1}
+.craft-item-name{position:absolute;bottom:52px;left:50%;transform:translateX(-50%);display:grid;gap:5px;text-align:center;opacity:0;transition:opacity .35s .12s}
+.craft-animation.reveal .craft-item-name{opacity:1}
+.craft-item-name strong{color:#f4dfb6;font-size:1.2rem;letter-spacing:.05em;text-shadow:0 2px 12px #000}
+.craft-item-name span{color:#f0b85f;font-size:.68rem;font-weight:900;letter-spacing:.16em}
+.craft-status{position:absolute;top:24px;left:50%;transform:translateX(-50%);color:#8f97aa;font-size:.62rem;font-weight:900;letter-spacing:.2em;white-space:nowrap}
+@media(max-width:700px){.equipment-grid{grid-template-columns:1fr}.craft-forge-scene{height:430px}.forge-hammer{transform:scale(.82) rotate(24deg)}.forge-anvil{transform:translateX(-50%) scale(.82)}}
+
 .equipment-card{padding:16px;border:1px solid rgba(255,255,255,.07);border-radius:14px;background:linear-gradient(180deg,rgba(31,34,45,.9),rgba(13,16,23,.96))}
 .equipment-card-top{display:flex;justify-content:space-between;gap:14px;margin-bottom:13px}
 .equipment-slot{color:#8f97ae;font-size:.62rem;font-weight:900;letter-spacing:.14em}
