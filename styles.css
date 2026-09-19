@@ -1146,16 +1146,16 @@ h3 {
 .resource-chip-icon{display:inline-grid;place-items:center;width:20px;height:20px;flex:0 0 20px;color:#c7ccd6}
 .resource-chip-icon svg{width:100%;height:100%}
 .gold-chip{color:#f0c875;font-size:15px}
-.resource-drop-feed{position:fixed;left:50%;top:17%;z-index:260;display:flex;flex-direction:column;align-items:center;gap:8px;pointer-events:none;transform:translateX(-50%);width:min(360px,90vw)}
-.resource-drop{display:flex;align-items:center;gap:10px;min-width:170px;padding:9px 15px;border:1px solid rgba(240,184,95,.38);border-radius:12px;background:linear-gradient(180deg,rgba(29,31,39,.97),rgba(9,12,17,.97));box-shadow:0 12px 30px rgba(0,0,0,.5),0 0 24px rgba(240,184,95,.1);opacity:0;transform:translateY(18px) scale(.86);transition:opacity .28s ease,transform .32s cubic-bezier(.2,.8,.2,1)}
+.resource-drop-feed{position:fixed;left:50%;top:78px;z-index:260;display:flex;flex-wrap:wrap;justify-content:center;gap:6px;pointer-events:none;transform:translateX(-50%);width:min(760px,92vw)}
+.resource-drop{display:flex;align-items:center;gap:7px;min-width:116px;padding:6px 10px;border:1px solid rgba(240,184,95,.38);border-radius:10px;background:linear-gradient(180deg,rgba(29,31,39,.97),rgba(9,12,17,.97));box-shadow:0 8px 22px rgba(0,0,0,.42),0 0 16px rgba(240,184,95,.08);opacity:0;transform:translateY(-8px) scale(.9);transition:opacity .24s ease,transform .28s cubic-bezier(.2,.8,.2,1)}
 .resource-drop.show{opacity:1;transform:translateY(0) scale(1)}
-.resource-drop-icon{display:grid;place-items:center;width:34px;height:34px;border-radius:9px;background:rgba(255,255,255,.05);color:#e8c16e;box-shadow:inset 0 0 12px rgba(255,255,255,.03)}
-.resource-drop-icon svg{width:24px;height:24px}
+.resource-drop-icon{display:grid;place-items:center;width:26px;height:26px;border-radius:7px;background:rgba(255,255,255,.05);color:#e8c16e;box-shadow:inset 0 0 10px rgba(255,255,255,.03)}
+.resource-drop-icon svg{width:18px;height:18px}
 .resource-drop-copy{display:flex;flex-direction:column;align-items:flex-start;line-height:1.05}
-.resource-drop-copy strong{font-size:1rem;color:#f5e2bb;letter-spacing:.03em}
-.resource-drop-copy small{margin-top:3px;color:#929caf;font-size:.58rem;font-weight:900;letter-spacing:.13em;text-transform:uppercase}
-@keyframes resourceDropExit{to{opacity:0;transform:translateY(-24px) scale(.94)}}
-@media(max-width:850px){.resource-drop-feed{top:12%}}
+.resource-drop-copy strong{font-size:.82rem;color:#f5e2bb;letter-spacing:.03em}
+.resource-drop-copy small{margin-top:2px;color:#929caf;font-size:.5rem;font-weight:900;letter-spacing:.11em;text-transform:uppercase}
+@keyframes resourceDropExit{to{opacity:0;transform:translateY(-12px) scale(.94)}}
+@media(max-width:850px){.resource-drop-feed{top:64px;width:94vw}.resource-drop{min-width:102px;padding:5px 8px}}
 
 /* Resource inventory chips */
 .blacksmith-resources .resource-chip{display:inline-flex;align-items:center;gap:7px;padding:7px 10px;border:1px solid rgba(255,255,255,.09);border-radius:9px;background:linear-gradient(180deg,rgba(35,38,47,.95),rgba(19,22,29,.95));color:#cfd4df;font-size:.68rem;font-weight:700}
