@@ -9,9 +9,23 @@ const screens = {
   thanks: document.getElementById("thanks-screen"),
 };
 
+const slimeWaves = [
+  { name: "Mire Slime", maxHp: 50, damage: 5, attackSpeed: 2000 },
+  { name: "Briar Slime", maxHp: 72, damage: 7, attackSpeed: 1950 },
+  { name: "Horned Slime", maxHp: 100, damage: 9, attackSpeed: 1900 },
+  { name: "Reefguard Slime", maxHp: 135, damage: 12, attackSpeed: 1850 },
+  { name: "Ironhide Slime", maxHp: 180, damage: 15, attackSpeed: 1800 },
+  { name: "Crystal Slime", maxHp: 240, damage: 18, attackSpeed: 1750 },
+  { name: "Abyss Slime", maxHp: 315, damage: 22, attackSpeed: 1700 },
+  { name: "Dread Slime", maxHp: 410, damage: 27, attackSpeed: 1650 },
+  { name: "Void Slime", maxHp: 530, damage: 33, attackSpeed: 1600 },
+  { name: "Slime Sovereign", maxHp: 700, damage: 40, attackSpeed: 1550 },
+];
+
 const game = {
   gold: 0,
   exp: 0,
+  wave: 1,
   soundOn: true,
   musicOn: true,
   player: { maxHp: 100, hp: 100, damage: 10, attackSpeed: 1500 },
@@ -23,12 +37,23 @@ const game = {
 
 const ui = {
   gold: document.getElementById("gold-value"),
+  waveTitle: document.getElementById("wave-title"),
+  playerName: document.getElementById("player-name"),
   playerHpText: document.getElementById("player-hp-text"),
   playerHpBar: document.getElementById("player-hp-bar"),
+  monsterName: document.getElementById("monster-name"),
   monsterHpText: document.getElementById("monster-hp-text"),
   monsterHpBar: document.getElementById("monster-hp-bar"),
+  monsterDamage: document.getElementById("monster-damage"),
+  monsterAttackSpeed: document.getElementById("monster-attack-speed"),
   status: document.getElementById("battle-status"),
   log: document.getElementById("combat-log"),
+  victoryEyebrow: document.getElementById("victory-eyebrow"),
+  continueButton: document.getElementById("continue-game"),
+  nextWaveIcon: document.getElementById("next-wave-icon"),
+  nextWaveEyebrow: document.getElementById("next-wave-eyebrow"),
+  nextWaveTitle: document.getElementById("next-wave-title"),
+  nextWaveDescription: document.getElementById("next-wave-description"),
 };
 
 function showScreen(screen) {
@@ -124,14 +149,46 @@ function clearBattleTimers() {
   }
 }
 
+function getCurrentSlime() {
+  return slimeWaves[game.wave - 1];
+}
+
+function selectSlimeWaveVisual() {
+  document.querySelectorAll(".slime-wave").forEach((element) => {
+    element.setAttribute("display", "none");
+  });
+
+  const active = document.querySelector(`.slime-wave-${game.wave}`);
+  if (active) active.setAttribute("display", "block");
+}
+
+function applyWaveData() {
+  const wave = getCurrentSlime();
+  game.monster.maxHp = wave.maxHp;
+  game.monster.hp = wave.maxHp;
+  game.monster.damage = wave.damage;
+  game.monster.attackSpeed = wave.attackSpeed;
+
+  ui.waveTitle.textContent = `WAVE ${game.wave}`;
+  ui.monsterName.textContent = wave.name;
+  ui.monsterDamage.textContent = String(wave.damage);
+  ui.monsterAttackSpeed.textContent = `${(wave.attackSpeed / 1000).toFixed(1)}s`;
+  selectSlimeWaveVisual();
+}
+
 function resetBattle() {
   clearBattleTimers();
+  applyWaveData();
   game.player.hp = game.player.maxHp;
-  game.monster.hp = game.monster.maxHp;
   game.battleActive = true;
-  ui.status.textContent = "AUTO BATTLE";
+  ui.status.textContent = `WAVE ${game.wave} · AUTO BATTLE`;
   updateBattleUi();
-  writeLog("Battle started...");
+  writeLog(`${waveLabel()} has begun.`);
+}
+
+function waveLabel() {
+  const wave = getCurrentSlime();
+  return `Wave ${game.wave}: ${wave.name}`;
 }
 
 function playerAttack() {
@@ -170,10 +227,24 @@ function finishVictory() {
   game.battleActive = false;
   clearBattleTimers();
 
-  game.gold += 10;
-  game.exp += 5;
+  game.gold += 10 + (game.wave * 2);
+  game.exp += 5 + game.wave;
   updateGold();
   ui.status.textContent = "VICTORY";
+
+  ui.victoryEyebrow.textContent = game.wave === slimeWaves.length
+    ? "ALL 10 WAVES CLEARED"
+    : `WAVE ${game.wave} COMPLETE`;
+  ui.continueButton.textContent = game.wave === slimeWaves.length ? "BACK TO MENU" : "NEXT WAVE";
+
+  if (game.wave < slimeWaves.length) {
+    const next = slimeWaves[game.wave];
+    ui.nextWaveIcon.textContent = String(game.wave + 1);
+    ui.nextWaveEyebrow.textContent = "NEXT BATTLE";
+    ui.nextWaveTitle.textContent = `WAVE ${game.wave + 1}`;
+    ui.nextWaveDescription.textContent = `${next.name} · HP ${next.maxHp} · Damage ${next.damage}`;
+  }
+
   showScreen(screens.victory);
 }
 
@@ -193,6 +264,7 @@ function setToggle(button, enabled) {
 activateSvgButton(document.getElementById("svg-start-game"), () => {
   game.gold = 0;
   game.exp = 0;
+  game.wave = 1;
   updateGold();
   startGameFromMenu();
 });
@@ -234,15 +306,27 @@ document.getElementById("try-again").addEventListener("click", () => {
 document.getElementById("back-to-menu-from-defeat").addEventListener("click", () => {
   clearBattleTimers();
   game.battleActive = false;
+  game.wave = 1;
   closeMenuOverlayViews();
   showScreen(screens.menu);
 });
 
 document.getElementById("continue-game").addEventListener("click", () => {
-  showScreen(screens.wave2);
+  if (game.wave >= slimeWaves.length) {
+    game.wave = 1;
+    closeMenuOverlayViews();
+    showScreen(screens.menu);
+    return;
+  }
+
+  game.wave += 1;
+  startBattle();
 });
 
 document.getElementById("back-to-menu-from-wave2").addEventListener("click", () => {
+  clearBattleTimers();
+  game.battleActive = false;
+  game.wave = 1;
   closeMenuOverlayViews();
   showScreen(screens.menu);
 });
