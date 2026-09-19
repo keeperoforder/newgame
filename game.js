@@ -36,17 +36,16 @@ const slimeWaves = [
   { name: "Abyss Slime", maxHp: 380, damage: 38, attackSpeed: 1700 },
   { name: "Dread Slime", maxHp: 470, damage: 47, attackSpeed: 1650 },
   { name: "Void Slime", maxHp: 500, damage: 50, attackSpeed: 1600 },
-  { name: "Slime Sovereign · MINI-BOSS", maxHp: 5000, damage: 500, attackSpeed: 1500 },
-  { name: "Sewer Rat", maxHp: 650, damage: 65, attackSpeed: 1850 },
-  { name: "Feral Rat", maxHp: 800, damage: 80, attackSpeed: 1800 },
-  { name: "Plague Rat", maxHp: 1000, damage: 100, attackSpeed: 1750 },
-  { name: "Ironclaw Rat", maxHp: 1250, damage: 125, attackSpeed: 1700 },
-  { name: "Ravager Rat", maxHp: 1550, damage: 155, attackSpeed: 1680 },
-  { name: "Venom Rat", maxHp: 1900, damage: 190, attackSpeed: 1650 },
-  { name: "Shadow Rat", maxHp: 2300, damage: 230, attackSpeed: 1600 },
-  { name: "Bloodfang Rat", maxHp: 2750, damage: 275, attackSpeed: 1575 },
-  { name: "Dire Rat", maxHp: 3250, damage: 325, attackSpeed: 1525 },
-  { name: "Rat King · MINI-BOSS", maxHp: 5000, damage: 500, attackSpeed: 1450 },
+  { name: "Sewer Rat", maxHp: 520, damage: 52, attackSpeed: 1850 },
+  { name: "Feral Rat", maxHp: 650, damage: 65, attackSpeed: 1820 },
+  { name: "Plague Rat", maxHp: 820, damage: 82, attackSpeed: 1790 },
+  { name: "Ironclaw Rat", maxHp: 1030, damage: 103, attackSpeed: 1760 },
+  { name: "Ravager Rat", maxHp: 1290, damage: 129, attackSpeed: 1730 },
+  { name: "Venom Rat", maxHp: 1610, damage: 161, attackSpeed: 1700 },
+  { name: "Shadow Rat", maxHp: 2010, damage: 201, attackSpeed: 1670 },
+  { name: "Bloodfang Rat", maxHp: 2510, damage: 251, attackSpeed: 1640 },
+  { name: "Dire Rat", maxHp: 3140, damage: 314, attackSpeed: 1600 },
+  { name: "Rat King · MINI-BOSS", maxHp: 5000, damage: 500, attackSpeed: 1500 },
 ];
 
 const game = {
@@ -672,7 +671,7 @@ function ensureRatWaveVisuals() {
   if (!svg) return;
 
   const namespace = "http://www.w3.org/2000/svg";
-  for (let wave = 11; wave <= 20; wave += 1) {
+  for (let wave = 10; wave <= 20; wave += 1) {
     if (svg.querySelector(`.rat-wave-${wave}`)) continue;
 
     const group = document.createElementNS(namespace, "g");
