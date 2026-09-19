@@ -275,9 +275,24 @@ function getEquipmentName(slot, tier) {
 
 function getEquipmentTierRecipe(slot, tier) {
   if (tier <= 1) return slot.craft;
+
   const source = slot.tier2 || slot.craft;
   const scale = 1 + ((tier - 2) * 0.45);
-  return Object.fromEntries(Object.entries(source).map(([key, value]) => [key, Math.max(1, Math.ceil(value * scale))]));
+  const recipe = Object.fromEntries(
+    Object.entries(source).map(([key, value]) => [key, Math.max(1, Math.ceil(value * scale))])
+  );
+
+  // Higher tiers progressively introduce the rarer materials.
+  // T2 = Steel, T3 = Steel + Magic Dust, T4 = Steel + Rare,
+  // T5+ = Steel + Magic Dust + Rare.
+  if (tier >= 3) {
+    recipe.magicDust = Math.max(1, Math.ceil((2 + (tier - 3)) * (0.8 + tier * 0.12)));
+  }
+  if (tier >= 4) {
+    recipe.rare = Math.max(1, Math.ceil((1 + (tier - 4)) * (0.8 + tier * 0.10)));
+  }
+
+  return recipe;
 }
 
 function getEquipmentTierCost(slot, targetTier) {
@@ -1452,17 +1467,50 @@ function startBattle() {
 }
 
 function addMaterialsForWave(wave) {
-  const commonAmount = 1 + Math.floor(Math.random() * 3);
-  game.materials.iron += commonAmount + (wave >= 20 ? 1 : 0);
-  game.materials.leather += commonAmount + (wave >= 20 ? 1 : 0);
-  game.materials.wood += commonAmount + (wave >= 20 ? 1 : 0);
-  if (wave >= 4) game.materials.steel += 1 + Math.floor(Math.random() * (wave >= 20 ? 4 : 3));
-  if (wave >= 6) game.materials.magicDust += Math.random() < Math.min(0.95, 0.35 + wave * 0.035) ? 1 + (wave >= 15 && Math.random() < 0.35 ? 1 : 0) : 0;
-  if (wave >= 10) game.materials.rare += Math.random() < Math.min(0.65, 0.15 + (wave - 10) * 0.035) ? 1 : 0;
+  const tier = Math.max(1, Math.min(10, Math.ceil(wave / 10)));
+
+  // Each material enters when the corresponding crafting tier needs it.
+  // Early resources remain available, but their importance fades as new
+  // materials are introduced.
+  if (wave <= 10) {
+    const amount = 2 + Math.floor(Math.random() * 3);
+    game.materials.iron += amount;
+    game.materials.leather += amount;
+    game.materials.wood += amount;
+  } else {
+    const commonAmount = Math.max(1, 3 - Math.floor((tier - 2) / 2));
+    game.materials.iron += commonAmount;
+    game.materials.leather += commonAmount;
+    game.materials.wood += commonAmount;
+  }
+
+  if (wave >= 11) {
+    const steelAmount = 3 + tier + Math.floor(Math.random() * 3);
+    game.materials.steel += steelAmount;
+  }
+
+  if (wave >= 21) {
+    const magicAmount = 1 + Math.floor(Math.random() * 2) + Math.floor((tier - 3) / 3);
+    game.materials.magicDust += magicAmount;
+  }
+
+  if (wave >= 31) {
+    const rareAmount = 1 + Math.floor(Math.random() * 2) + Math.floor((tier - 4) / 3);
+    game.materials.rare += rareAmount;
+  }
+
+  // Small milestone bonus at the end of each 10-wave tier.
+  if (wave % 10 === 0) {
+    if (wave >= 11) game.materials.steel += 2 + tier;
+    if (wave >= 21) game.materials.magicDust += 1 + Math.floor(tier / 3);
+    if (wave >= 31) game.materials.rare += 1 + Math.floor(tier / 4);
+  }
+
+  // Final boss reward.
   if (wave === slimeWaves.length) {
-    game.materials.rare += 2 + Math.floor(Math.random() * 2);
-    game.materials.magicDust += 2;
-    game.materials.steel += 2;
+    game.materials.rare += 4;
+    game.materials.magicDust += 4;
+    game.materials.steel += 8;
   }
 }
 
