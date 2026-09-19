@@ -57,6 +57,7 @@ const ui = {
   monsterAttackSpeed: document.getElementById("monster-attack-speed"),
   status: document.getElementById("battle-status"),
   nextWaveButton: document.getElementById("next-wave-button"),
+  autoWaveText: document.getElementById("auto-wave-text"),
   log: document.getElementById("combat-log"),
   victoryEyebrow: document.getElementById("victory-eyebrow"),
   continueButton: document.getElementById("continue-game"),
@@ -251,6 +252,9 @@ function resetBattle() {
     ? `WAVE ${game.wave} · FARMING`
     : `WAVE ${game.wave} · AUTO BATTLE`;
   ui.nextWaveButton.hidden = !game.farmingWave || game.wave >= slimeWaves.length;
+  ui.autoWaveText.textContent = game.farmingWave
+    ? "FARMING · MANUAL ADVANCE"
+    : "AUTO ADVANCING";
   updateBattleUi();
   writeLog(game.farmingWave
     ? `${waveLabel()} is being farmed. Win it until you are ready for the next wave.`
