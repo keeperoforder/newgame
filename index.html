@@ -760,14 +760,21 @@
       <div class="panel result-panel">
         <div class="result-icon victory-icon">✓</div>
         <div id="victory-eyebrow" class="eyebrow">WAVE 1 COMPLETE</div>
-        <h2>VICTORY!</h2>
+        <h2 id="victory-title">VICTORY!</h2>
         <div class="reward-box">
           <div>Reward</div>
           <strong id="victory-gold-reward">Gold +0</strong>
           <strong id="victory-xp-reward">EXP +0</strong>
           <strong id="victory-material-reward">Materials +0</strong>
         </div>
+        <div id="rebirth-panel" class="rebirth-panel" hidden>
+          <div class="rebirth-badge">REBIRTH</div>
+          <strong id="rebirth-count">REBIRTH 0</strong>
+          <p id="rebirth-description">Complete Wave 100 to reset your journey and gain permanent power.</p>
+          <div class="rebirth-bonus" id="rebirth-bonus">Permanent bonus: +0% HP · +0% Damage · +0% XP · +0% Gold</div>
+        </div>
         <button id="continue-game" class="primary full-width">NEXT WAVE</button>
+        <button id="rebirth-button" class="rebirth-button full-width" hidden>REBIRTH</button>
       </div>
     </section>
 
