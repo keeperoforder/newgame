@@ -1436,3 +1436,10 @@ h3 {
   letter-spacing:.08em;
   text-transform:uppercase;
 }
+
+/* Rebirth */
+.rebirth-panel{margin:14px 0;padding:14px;border:1px solid rgba(240,184,95,.35);border-radius:12px;background:linear-gradient(180deg,rgba(240,184,95,.09),rgba(12,15,21,.7));text-align:center}
+.rebirth-badge{display:inline-block;margin-bottom:7px;padding:4px 9px;border-radius:999px;border:1px solid rgba(240,184,95,.45);color:#f0b85f;font-size:.68rem;font-weight:800;letter-spacing:.14em}
+.rebirth-panel p{margin:8px 0;color:#c8c0b7;font-size:.85rem;line-height:1.4}
+.rebirth-bonus{margin-top:10px;color:#f0d6aa;font-size:.76rem;font-weight:700}
+.rebirth-button{margin-top:10px!important;border-color:#d6a45f!important;box-shadow:0 0 18px rgba(214,164,95,.16)}
