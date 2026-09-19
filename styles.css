@@ -1169,3 +1169,19 @@ h3 {
 .blacksmith-resources .resource-steel .resource-chip-icon{color:#83a0b7;background:rgba(131,160,183,.12)}
 .blacksmith-resources .resource-magicDust .resource-chip-icon{color:#b88cff;background:rgba(184,140,255,.13)}
 .blacksmith-resources .resource-rare .resource-chip-icon{color:#f0b85f;background:rgba(240,184,95,.13)}
+
+/* Inventory stays open above the live auto-battle */
+#inventory-screen.inventory-overlay-active{
+  position:fixed;
+  inset:0;
+  z-index:150;
+  display:grid;
+  place-items:center;
+  background:rgba(4,7,12,.78);
+  backdrop-filter:blur(7px);
+  overflow:auto;
+}
+#inventory-screen.inventory-overlay-active .inventory-panel{
+  max-height:88vh;
+  overflow:auto;
+}
