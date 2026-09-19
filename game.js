@@ -278,7 +278,7 @@ function renderInventoryItem(item) {
   return "<article class=\"inventory-item " + getItemVisualClass(item) + "\" style=\"--rarity:" + rarity.color + ";--rarity-glow:" + rarity.glow + "\">" +
     "<div class=\"inventory-item-icon\">" + getSlotIcon(item.slotId) + "</div>" +
     "<div class=\"inventory-item-info\"><div class=\"inventory-rarity\">" + item.rarity + "</div><h3>" + item.name + " <span>Lv." + item.level + "</span></h3><p>" + slot.effect + "</p><div>" + equipmentEffectText(item.slotId, item) + "</div></div>" +
-    "<div class=\"inventory-actions\"><button data-item="" + item.uid + "\" data-action=\"equip\">EQUIP</button><button data-item="" + item.uid + "\" data-action=\"sell\">SELL</button></div></article>";
+    "<div class=\"inventory-actions\"><button data-item=\"" + item.uid + "\" data-action=\"equip\">EQUIP</button><button data-item=\"" + item.uid + "\" data-action=\"sell\">SELL</button></div></article>";
 }
 
 function updateInventoryUi() {
