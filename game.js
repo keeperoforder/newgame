@@ -25,6 +25,7 @@ const slimeWaves = [
 const game = {
   gold: 0,
   exp: 0,
+  level: 1,
   wave: 1,
   soundOn: true,
   musicOn: true,
@@ -37,6 +38,12 @@ const game = {
 
 const ui = {
   gold: document.getElementById("gold-value"),
+  playerLevel: document.getElementById("player-level"),
+  playerLevelCard: document.getElementById("player-level-card"),
+  playerExpText: document.getElementById("player-exp-text"),
+  playerXpBar: document.getElementById("player-xp-bar"),
+  playerDamage: document.getElementById("player-damage"),
+  playerAttackSpeed: document.getElementById("player-attack-speed"),
   waveTitle: document.getElementById("wave-title"),
   playerName: document.getElementById("player-name"),
   playerHpText: document.getElementById("player-hp-text"),
@@ -122,6 +129,62 @@ function setSvgToggle(labelId, toggleId, enabled) {
 
 function updateGold() {
   ui.gold.textContent = String(game.gold);
+}
+
+function getXpToNextLevel(level = game.level) {
+  if (level >= 100) return 0;
+  return 100 + ((level - 1) * 35) + ((level - 1) * (level - 1) * 5);
+}
+
+function getTotalXpForLevel(level) {
+  let total = 0;
+  for (let current = 1; current < level; current += 1) {
+    total += getXpToNextLevel(current);
+  }
+  return total;
+}
+
+function updatePlayerStatsFromLevel() {
+  game.player.maxHp = 100 + ((game.level - 1) * 10);
+  game.player.damage = 10 + ((game.level - 1) * 2);
+  game.player.attackSpeed = Math.max(850, 1500 - ((game.level - 1) * 7));
+}
+
+function updateProgressionUi() {
+  const currentLevelXp = getTotalXpForLevel(game.level);
+  const nextLevelXp = getXpToNextLevel(game.level);
+  const progress = game.level >= 100
+    ? 100
+    : Math.max(0, Math.min(100, ((game.exp - currentLevelXp) / nextLevelXp) * 100));
+
+  ui.playerLevel.textContent = String(game.level);
+  ui.playerLevelCard.textContent = String(game.level);
+  ui.playerExpText.textContent = game.level >= 100
+    ? String(game.exp) + " / MAX"
+    : String(game.exp - currentLevelXp) + " / " + nextLevelXp;
+  ui.playerXpBar.style.width = progress + "%";
+  ui.playerDamage.textContent = String(game.player.damage);
+  ui.playerAttackSpeed.textContent = (game.player.attackSpeed / 1000).toFixed(2) + "s";
+}
+
+function addExperience(amount) {
+  if (amount <= 0 || game.level >= 100) return;
+
+  game.exp += amount;
+  let leveledUp = false;
+
+  while (game.level < 100 && game.exp >= getTotalXpForLevel(game.level + 1)) {
+    game.level += 1;
+    leveledUp = true;
+  }
+
+  updatePlayerStatsFromLevel();
+  updateProgressionUi();
+
+  if (leveledUp) {
+    game.player.hp = game.player.maxHp;
+    writeLog("LEVEL UP! Warden reached level " + game.level + ".");
+  }
 }
 
 function updateBattleUi() {
@@ -227,9 +290,14 @@ function finishVictory() {
   game.battleActive = false;
   clearBattleTimers();
 
-  game.gold += 10 + (game.wave * 2);
-  game.exp += 5 + game.wave;
+  const goldReward = 10 + (game.wave * 2);
+  const xpReward = 5 + game.wave;
+
+  game.gold += goldReward;
+  addExperience(xpReward);
   updateGold();
+  updateProgressionUi();
+  writeLog(waveLabel() + " defeated. +" + goldReward + " Gold · +" + xpReward + " XP.");
   ui.status.textContent = "VICTORY";
 
   ui.victoryEyebrow.textContent = game.wave === slimeWaves.length
@@ -264,7 +332,10 @@ function setToggle(button, enabled) {
 activateSvgButton(document.getElementById("svg-start-game"), () => {
   game.gold = 0;
   game.exp = 0;
+  game.level = 1;
   game.wave = 1;
+  updatePlayerStatsFromLevel();
+  updateProgressionUi();
   updateGold();
   startGameFromMenu();
 });
@@ -337,7 +408,56 @@ document.getElementById("back-to-menu-from-thanks").addEventListener("click", ()
 });
 
 setSvgToggle("svg-sound-label", "svg-sound-toggle", game.soundOn);
-setSvgToggle("svg-music-label", "svg-music-toggle", game.musicOn);
+function saveGame() {
+  const saveData = {
+    gold: game.gold,
+    exp: game.exp,
+    level: game.level,
+    wave: game.wave,
+    soundOn: game.soundOn,
+    musicOn: game.musicOn,
+    playerHp: game.player.hp,
+    monsterHp: game.monster.hp,
+    savedAt: Date.now(),
+  };
 
+  try {
+    localStorage.setItem("beyondTheWavesSave", JSON.stringify(saveData));
+  } catch (_) {}
+}
+
+function loadGame() {
+  try {
+    const raw = localStorage.getItem("beyondTheWavesSave");
+    if (!raw) return;
+
+    const saveData = JSON.parse(raw);
+    game.gold = Number.isFinite(saveData.gold) ? saveData.gold : 0;
+    game.exp = Number.isFinite(saveData.exp) ? saveData.exp : 0;
+    game.level = Math.max(1, Math.min(100, Number.isFinite(saveData.level) ? saveData.level : 1));
+    game.wave = Math.max(1, Math.min(slimeWaves.length, Number.isFinite(saveData.wave) ? saveData.wave : 1));
+    game.soundOn = saveData.soundOn !== false;
+    game.musicOn = saveData.musicOn !== false;
+
+    updatePlayerStatsFromLevel();
+    applyWaveData();
+
+    if (Number.isFinite(saveData.monsterHp)) {
+      game.monster.hp = Math.max(0, Math.min(game.monster.maxHp, saveData.monsterHp));
+    }
+
+    game.player.hp = Number.isFinite(saveData.playerHp)
+      ? Math.max(0, Math.min(game.player.maxHp, saveData.playerHp))
+      : game.player.maxHp;
+  } catch (_) {}
+}
+
+loadGame();
+setSvgToggle("svg-sound-label", "svg-sound-toggle", game.soundOn);
+setSvgToggle("svg-music-label", "svg-music-toggle", game.musicOn);
 updateGold();
+updateProgressionUi();
 updateBattleUi();
+
+window.setInterval(saveGame, 10000);
+window.addEventListener("beforeunload", saveGame);
