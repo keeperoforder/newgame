@@ -315,6 +315,7 @@
               <div class="xp-bar"><div id="player-xp-bar" class="xp-fill"></div></div>
             </div>
             <div class="battle-header-actions">
+              <button id="character-button" class="stats-button" type="button">CHARACTER</button>
               <button id="blacksmith-button" class="stats-button blacksmith-button" type="button">BLACKSMITH</button>
               <button id="stats-button" class="stats-button" type="button">STATS</button>
             </div>
@@ -564,6 +565,64 @@
         <div class="blacksmith-resources" id="blacksmith-resources"></div>
         <div class="equipment-grid" id="equipment-grid"></div>
         <div class="blacksmith-message" id="blacksmith-message">Select equipment to craft or upgrade.</div>
+      </div>
+    </section>
+
+    <section id="character-screen" class="screen">
+      <div class="character-panel">
+        <div class="character-panel-header">
+          <div><div class="eyebrow">WARDEN · EQUIPMENT</div><h2>CHARACTER</h2></div>
+          <button id="character-close" class="stats-close" type="button">×</button>
+        </div>
+        <div class="character-stage">
+          <div class="equipment-slots equipment-left" id="equipment-slots-left"></div>
+          <div class="character-visual">
+            <div class="character-glow"></div>
+            <div class="equipped-aura" id="equipped-aura"></div>
+            <svg class="character-doll" viewBox="0 0 440 420" aria-label="Equipped Warden">
+              <circle cx="220" cy="82" r="48" fill="#c8a46b"/>
+              <path d="M169 72Q220 25 271 72L260 128Q220 158 180 128Z" fill="#1c2530" stroke="#0b1017" stroke-width="8"/>
+              <path d="M170 85H270L261 112Q220 98 179 112Z" fill="#0b1118"/>
+              <path d="M151 146Q220 115 289 146L318 270Q220 318 122 270Z" fill="#26313d" stroke="#0b1118" stroke-width="10"/>
+              <path d="M173 145L150 184L181 230L207 174Z" fill="#8f9aa5" stroke="#10161e" stroke-width="7"/>
+              <path d="M267 145L290 184L259 230L233 174Z" fill="#8f9aa5" stroke="#10161e" stroke-width="7"/>
+              <path d="M122 190L84 238L111 259L151 213Z" fill="#1a222b" stroke="#0b1017" stroke-width="7"/>
+              <path d="M318 190L356 238L329 259L289 213Z" fill="#1a222b" stroke="#0b1017" stroke-width="7"/>
+              <path d="M166 267L145 365L199 374L220 282Z" fill="#313c49" stroke="#0b1017" stroke-width="9"/>
+              <path d="M274 267L295 365L241 374L220 282Z" fill="#313c49" stroke="#0b1017" stroke-width="9"/>
+              <path d="M138 356L199 365L199 392L130 392Z" fill="#141a22"/>
+              <path d="M302 356L241 365L241 392L310 392Z" fill="#141a22"/>
+              <g id="visual-helmet" class="visual-equipment visual-helmet" opacity="0">
+                <path d="M166 84Q220 22 274 84L263 119H177Z" fill="#aab5c0" stroke="#f0d29b" stroke-width="5"/>
+                <path d="M176 88H264L255 111H185Z" fill="#151c24"/>
+              </g>
+              <path id="visual-armor" class="visual-equipment" d="M151 146Q220 116 289 146L318 270Q220 317 122 270Z" fill="none" stroke="#e0b86f" stroke-width="0" opacity="0"/>
+              <path id="visual-weapon" class="visual-equipment" d="M310 205L392 118L407 130L326 218Z" fill="#d9dde2" stroke="#8b6632" stroke-width="8" opacity="0"/>
+              <g id="visual-gloves" class="visual-equipment" opacity="0"><circle cx="100" cy="246" r="16" fill="#d0d6dc"/><circle cx="340" cy="246" r="16" fill="#d0d6dc"/></g>
+              <g id="visual-boots" class="visual-equipment" opacity="0"><path d="M136 356L199 365L199 392H128Z" fill="#4f6d8b"/><path d="M304 356L241 365V392H312Z" fill="#4f6d8b"/></g>
+              <circle id="visual-ring" class="visual-equipment" cx="344" cy="249" r="7" fill="#d8b55f" opacity="0"/>
+              <path id="visual-amulet" class="visual-equipment" d="M220 154L231 171L220 190L209 171Z" fill="#8fd7ff" stroke="#d8b55f" stroke-width="4" opacity="0"/>
+            </svg>
+            <div class="character-name">WARDEN <span id="character-power">POWER 10</span></div>
+          </div>
+          <div class="equipment-slots equipment-right" id="equipment-slots-right"></div>
+        </div>
+        <div class="character-actions">
+          <button id="open-inventory" class="primary">INVENTORY</button>
+          <button id="character-back" class="secondary">BACK</button>
+        </div>
+      </div>
+    </section>
+
+    <section id="inventory-screen" class="screen">
+      <div class="inventory-panel">
+        <div class="character-panel-header">
+          <div><div class="eyebrow">WARDEN · ITEMS</div><h2>INVENTORY</h2></div>
+          <button id="inventory-close" class="stats-close" type="button">×</button>
+        </div>
+        <div class="inventory-gold" id="inventory-gold"></div>
+        <div class="inventory-grid" id="inventory-grid"></div>
+        <div class="blacksmith-message" id="inventory-message">Your crafted and found equipment appears here.</div>
       </div>
     </section>
 
