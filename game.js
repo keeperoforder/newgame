@@ -248,13 +248,13 @@ function resetBattle() {
   game.player.hp = game.player.maxHp;
   game.battleActive = true;
   ui.status.textContent = game.farmingWave
-    ? `WAVE \${game.wave} · FARMING`
-    : `WAVE \${game.wave} · AUTO BATTLE`;
+    ? `WAVE ${game.wave} · FARMING`
+    : `WAVE ${game.wave} · AUTO BATTLE`;
   ui.nextWaveButton.hidden = !game.farmingWave || game.wave >= slimeWaves.length;
   updateBattleUi();
   writeLog(game.farmingWave
-    ? `\${waveLabel()} is being farmed. Win it until you are ready for the next wave.`
-    : `\${waveLabel()} has begun.`);
+    ? `${waveLabel()} is being farmed. Win it until you are ready for the next wave.`
+    : `${waveLabel()} has begun.`);
 }
 
 function waveLabel() {
