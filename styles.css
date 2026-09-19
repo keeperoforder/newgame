@@ -357,196 +357,164 @@ h3 {
 }
 
 
-/* Main menu visual layout based on the provided reference image. */
+/* Original uploaded image is used directly as the main-menu background. */
 #main-menu {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
   width: 100vw;
-  min-height: 100vh;
   height: 100vh;
+  min-height: 0;
   margin: 0;
   padding: 0;
-  align-items: stretch;
-  justify-content: stretch;
-  position: relative;
   overflow: hidden;
-  background: #070b12 url("./assets/main-menu-bg.svg") center center / cover no-repeat;
+  display: block;
+  background: #05070c;
 }
 
-#main-menu .main-menu-frame {
-  position: relative;
+#main-menu .main-menu-bg {
+  position: absolute;
+  inset: 0;
   width: 100%;
   height: 100%;
-  min-height: 100vh;
+  display: block;
+  object-fit: cover;
+  object-position: center center;
+  user-select: none;
+  -webkit-user-drag: none;
 }
 
-#main-menu .main-menu-title {
+#main-menu .main-menu-ui {
   position: absolute;
-  top: clamp(38px, 5.5vh, 76px);
-  left: 50%;
-  transform: translateX(-50%);
-  text-align: center;
-  text-shadow: 0 8px 28px rgba(0,0,0,.65);
+  inset: 0;
+  width: 100%;
+  height: 100%;
   pointer-events: none;
-  white-space: nowrap;
 }
 
-#main-menu .main-menu-title-main,
-#main-menu .main-menu-title-sub {
-  font-family: Georgia, "Times New Roman", serif;
-  font-weight: 900;
-  color: #e4c6aa;
-  letter-spacing: .06em;
-  line-height: .9;
-}
-
-#main-menu .main-menu-title-main {
-  font-size: clamp(3.3rem, 7vw, 6.8rem);
-}
-
-#main-menu .main-menu-title-sub {
-  margin-top: 7px;
-  font-size: clamp(2.4rem, 5.2vw, 4.7rem);
-}
-
-#main-menu .main-menu-tagline {
-  margin-top: 18px;
-  font-family: Georgia, "Times New Roman", serif;
-  font-size: clamp(.66rem, 1vw, .95rem);
-  color: #ddcfbf;
-  letter-spacing: .28em;
-}
-
-#main-menu .main-menu-buttons {
+#main-menu .main-menu-hotspot {
   position: absolute;
-  top: 36.5%;
-  right: 6.8%;
-  width: min(370px, 31vw);
-  display: grid;
-  gap: clamp(14px, 1.6vw, 24px);
+  z-index: 2;
+  display: block;
+  padding: 0;
+  margin: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  appearance: none;
+  pointer-events: auto;
+  cursor: pointer;
+  outline: none;
+  transition: transform .18s ease, background-color .18s ease, box-shadow .18s ease;
 }
 
-#main-menu .menu-action {
-  position: relative;
-  min-height: clamp(72px, 8.1vw, 92px);
-  padding: 12px 28px 12px 22px;
-  display: grid;
-  grid-template-columns: 64px 1fr;
-  align-items: center;
-  gap: 12px;
-  background: linear-gradient(180deg, rgba(20,23,29,.97), rgba(10,13,18,.97));
-  color: #e4d7ca;
-  border: 2px solid rgba(184,132,87,.96);
-  border-radius: 5px;
+/* These percentages follow the button composition of the supplied 1536x1024 image. */
+#main-menu .start-hotspot {
+  top: 36.1%;
+  right: 7.25%;
+  width: 24.2%;
+  height: 8.7%;
+}
+
+#main-menu .settings-hotspot {
+  top: 46.8%;
+  right: 7.25%;
+  width: 24.2%;
+  height: 8.7%;
+}
+
+#main-menu .quit-hotspot {
+  top: 57.3%;
+  right: 7.25%;
+  width: 24.2%;
+  height: 8.7%;
+}
+
+#main-menu .main-menu-hotspot:hover {
+  background: rgba(255, 218, 174, .035);
+  box-shadow: inset 0 0 0 1px rgba(223, 167, 113, .22);
+}
+
+#main-menu .main-menu-hotspot:focus-visible {
   box-shadow:
-    0 13px 30px rgba(0,0,0,.45),
-    inset 0 0 0 1px rgba(255,255,255,.04);
-  clip-path: polygon(
-    5% 0, 95% 0, 100% 17%, 100% 83%, 95% 100%,
-    5% 100%, 0 83%, 0 17%
-  );
-  font-family: Georgia, "Times New Roman", serif;
-  font-size: clamp(1rem, 1.7vw, 1.52rem);
-  font-weight: 700;
-  letter-spacing: .04em;
-  text-align: left;
-  text-shadow: 0 2px 8px rgba(0,0,0,.65);
-  transition: transform .16s ease, filter .16s ease;
+    inset 0 0 0 2px rgba(240, 205, 167, .85),
+    0 0 0 4px rgba(0, 0, 0, .35);
 }
 
-#main-menu .menu-action::before,
-#main-menu .menu-action::after {
-  content: "";
-  position: absolute;
-  width: 18px;
-  height: 18px;
-  top: 50%;
-  background: #12161d;
-  border: 2px solid rgba(184,132,87,.96);
-  transform: translateY(-50%) rotate(45deg);
-  pointer-events: none;
+#main-menu .mobile-menu-buttons {
+  display: none;
 }
 
-#main-menu .menu-action::before { left: -7px; }
-#main-menu .menu-action::after { right: -7px; }
-
-#main-menu .menu-action:hover {
-  transform: translateX(-4px);
-  filter: brightness(1.12);
+#main-menu.is-leaving .main-menu-bg,
+#main-menu.is-leaving .main-menu-ui {
+  opacity: 0;
+  transform: scale(1.015);
+  transition: opacity .24s ease, transform .24s ease;
 }
 
-#main-menu .menu-action:active {
-  transform: translateX(-2px) scale(.99);
-}
-
-#main-menu .menu-icon {
-  display: grid;
-  place-items: center;
-  min-width: 56px;
-  font-size: clamp(2rem, 3vw, 2.7rem);
-  line-height: 1;
-  color: #ebe3db;
-}
-
-#main-menu .menu-exit-icon {
-  font-size: clamp(2.4rem, 3.2vw, 3rem);
-  transform: rotate(180deg);
-}
-
-@media (max-width: 900px) {
-  #main-menu .main-menu-title {
-    top: 6%;
+@media (max-width: 760px) {
+  #main-menu .main-menu-hotspot {
+    display: none;
   }
 
-  #main-menu .main-menu-buttons {
-    right: 5%;
-    width: min(390px, 44vw);
-    top: 37%;
-  }
-}
-
-@media (max-width: 680px) {
-  #main-menu .main-menu-title {
-    top: 7%;
-    white-space: normal;
-    width: 94%;
-  }
-
-  #main-menu .main-menu-title-main {
-    font-size: clamp(2.8rem, 14vw, 4.6rem);
-  }
-
-  #main-menu .main-menu-title-sub {
-    font-size: clamp(2rem, 10vw, 3.5rem);
-  }
-
-  #main-menu .main-menu-buttons {
-    top: 52%;
+  #main-menu .mobile-menu-buttons {
+    position: absolute;
     left: 50%;
-    right: auto;
+    bottom: clamp(28px, 7vh, 64px);
     transform: translateX(-50%);
-    width: min(360px, 88vw);
+    width: min(420px, 86vw);
+    display: grid;
+    gap: clamp(10px, 2.4vw, 16px);
+    pointer-events: auto;
   }
 
-  #main-menu .menu-action {
-    grid-template-columns: 52px 1fr;
-    min-height: 70px;
-    font-size: 1rem;
+  #main-menu .mobile-menu-button {
+    min-height: clamp(54px, 10vw, 66px);
+    width: 100%;
+    padding: 12px 18px;
+    border: 2px solid rgba(184,132,87,.96);
+    border-radius: 5px;
+    background: linear-gradient(180deg, rgba(20,23,29,.96), rgba(10,13,18,.98));
+    color: #ead9c8;
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: clamp(.96rem, 3.2vw, 1.18rem);
+    font-weight: 700;
+    letter-spacing: .07em;
+    text-shadow: 0 2px 8px rgba(0,0,0,.68);
+    box-shadow:
+      0 12px 28px rgba(0,0,0,.42),
+      inset 0 0 0 1px rgba(255,255,255,.03);
+    clip-path: polygon(
+      4% 0, 96% 0, 100% 16%, 100% 84%, 96% 100%,
+      4% 100%, 0 84%, 0 16%
+    );
+    cursor: pointer;
+    transition: transform .16s ease, filter .16s ease;
+  }
+
+  #main-menu .mobile-menu-button:hover {
+    transform: translateY(-2px);
+    filter: brightness(1.1);
   }
 }
 
-
-/* Overlay menus keep the main menu visible underneath and preserve the reference atmosphere. */
-#main-menu {
-  z-index: 1;
+@media (max-width: 440px) {
+  #main-menu .mobile-menu-buttons {
+    width: 90vw;
+    bottom: 24px;
+  }
 }
 
+/* Settings and quit overlays. */
 .overlay-screen {
   position: fixed;
   inset: 0;
-  z-index: 20;
+  z-index: 30;
   display: none;
   align-items: center;
   justify-content: center;
-  padding: 28px;
+  padding: clamp(16px, 4vw, 40px);
 }
 
 .overlay-screen.active {
@@ -556,20 +524,19 @@ h3 {
 .overlay-backdrop {
   position: absolute;
   inset: 0;
-  background: rgba(3, 6, 11, .72);
-  backdrop-filter: blur(4px);
+  background: rgba(3, 6, 11, .74);
+  backdrop-filter: blur(3px);
 }
 
 .menu-overlay-panel {
   position: relative;
   z-index: 1;
   width: min(620px, 94vw);
-  padding: 46px clamp(24px, 5vw, 64px) 42px;
+  padding: clamp(30px, 5vw, 48px) clamp(22px, 5vw, 64px) 42px;
   text-align: center;
   border: 2px solid rgba(184,132,87,.96);
   border-radius: 6px;
-  background:
-    linear-gradient(180deg, rgba(22,24,29,.98), rgba(7,10,15,.98));
+  background: linear-gradient(180deg, rgba(22,24,29,.98), rgba(7,10,15,.98));
   box-shadow:
     0 30px 70px rgba(0,0,0,.58),
     inset 0 0 0 1px rgba(255,255,255,.03);
@@ -589,6 +556,7 @@ h3 {
   background: #0c1016;
   border: 2px solid rgba(184,132,87,.96);
   transform: translateY(-50%) rotate(45deg);
+  pointer-events: none;
 }
 
 .menu-overlay-panel::before { left: -8px; }
@@ -641,20 +609,15 @@ h3 {
   opacity: .75;
 }
 
-.overlay-back-button,
-.quit-actions .menu-action {
-  width: 100%;
-  margin-top: 18px;
-}
-
 .overlay-back-button {
-  grid-template-columns: 60px 1fr;
+  width: 100%;
+  margin-top: 22px;
 }
 
 .overlay-copy {
   color: #c8bbb0;
   font-family: Georgia, "Times New Roman", serif;
-  margin: 0 auto 12px;
+  margin: 0 auto 16px;
   max-width: 420px;
   font-size: 1rem;
   line-height: 1.6;
@@ -668,17 +631,11 @@ h3 {
 
 .quit-actions .menu-action {
   margin-top: 0;
+  width: 100%;
+  min-height: 62px;
 }
 
-.quit-overlay-panel {
-  width: min(700px, 94vw);
-}
-
-@media (max-width: 640px) {
-  .menu-overlay-panel {
-    padding: 34px 22px 30px;
-  }
-
+@media (max-width: 560px) {
   .quit-actions {
     grid-template-columns: 1fr;
   }
