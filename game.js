@@ -2023,3 +2023,301 @@ updateBattleUi();
 
 window.setInterval(saveGame, 10000);
 window.addEventListener("beforeunload", saveGame);
+
+
+/* Long-term progression: World Map, Achievements, Sanctuary, Ascension and Journal. */
+const legacyState = {
+  essence: 0,
+  highestWave: 1,
+  totalWaves: 0,
+  enemiesDefeated: 0,
+  bossesDefeated: 0,
+  totalGold: 0,
+  craftedItems: 0,
+  legendaryCrafts: 0,
+  ascension: { vitality: 0, might: 0, insight: 0, fortune: 0 },
+  achievements: {},
+  activeTab: "map"
+};
+
+function loadLegacyState() {
+  try {
+    const raw = localStorage.getItem("keeperLegacyProgress");
+    if (!raw) return;
+    const data = JSON.parse(raw);
+    Object.assign(legacyState, data);
+    legacyState.ascension = { ...legacyState.ascension, ...(data.ascension || {}) };
+    legacyState.achievements = { ...(data.achievements || {}) };
+  } catch (_) {}
+  legacyState.highestWave = Math.max(1, Math.min(100, Number(legacyState.highestWave) || 1));
+  legacyState.essence = Math.max(0, Math.floor(Number(legacyState.essence) || 0));
+}
+
+function saveLegacyState() {
+  try { localStorage.setItem("keeperLegacyProgress", JSON.stringify(legacyState)); } catch (_) {}
+}
+
+const achievementDefs = [
+  ["first_blood","First Blood","Defeat your first enemy.","⚔","1 Essence",()=>legacyState.enemiesDefeated>=1],
+  ["wave10","Into the Forest","Reach Wave 10.","Ⅰ","1 Essence",()=>legacyState.highestWave>=10],
+  ["wave20","Deep in the Wild","Reach Wave 20.","Ⅱ","1 Essence",()=>legacyState.highestWave>=20],
+  ["wave30","Green Threat","Reach Wave 30.","Ⅲ","1 Essence",()=>legacyState.highestWave>=30],
+  ["wave40","The Dead Rise","Reach Wave 40.","Ⅳ","1 Essence",()=>legacyState.highestWave>=40],
+  ["wave50","Halfway There","Reach Wave 50.","Ⅴ","1 Essence",()=>legacyState.highestWave>=50],
+  ["wave60","Web of Shadows","Reach Wave 60.","Ⅵ","1 Essence",()=>legacyState.highestWave>=60],
+  ["wave70","Corruption","Reach Wave 70.","Ⅶ","1 Essence",()=>legacyState.highestWave>=70],
+  ["wave80","Orc Lands","Reach Wave 80.","Ⅷ","1 Essence",()=>legacyState.highestWave>=80],
+  ["wave90","Hellgate","Reach Wave 90.","Ⅸ","1 Essence",()=>legacyState.highestWave>=90],
+  ["wave100","The Abyss","Defeat the final boss at Wave 100.","👑","2 Essence",()=>legacyState.highestWave>=100],
+  ["boss5","Boss Hunter","Defeat 5 bosses.","☠","1 Essence",()=>legacyState.bossesDefeated>=5],
+  ["boss10","Boss Slayer","Defeat 10 bosses.","☠","2 Essence",()=>legacyState.bossesDefeated>=10],
+  ["kills100","Centurion","Defeat 100 enemies.","💀","1 Essence",()=>legacyState.enemiesDefeated>=100],
+  ["kills1000","Monster Hunter","Defeat 1,000 enemies.","🔥","2 Essence",()=>legacyState.enemiesDefeated>=1000],
+  ["craft10","Master Smith","Craft 10 items.","🔨","1 Essence",()=>legacyState.craftedItems>=10],
+  ["craft50","Forge Adept","Craft 50 items.","⚒","2 Essence",()=>legacyState.craftedItems>=50],
+  ["legendary","Legendary Craft","Craft your first Legendary item.","✦","2 Essence",()=>legacyState.legendaryCrafts>=1],
+  ["rebirth5","Five Lives","Reach 5 Rebirths.","♻","2 Essence",()=>game.rebirths>=5],
+  ["rebirth10","Eternal Warden","Reach 10 Rebirths.","∞","3 Essence",()=>game.rebirths>=10]
+];
+
+function checkAchievements() {
+  let changed = false;
+  achievementDefs.forEach(([id,,,,reward,condition]) => {
+    if (!legacyState.achievements[id] && condition()) {
+      legacyState.achievements[id] = true;
+      const essence = parseInt(reward,10) || 0;
+      legacyState.essence += essence;
+      changed = true;
+    }
+  });
+  if (changed) saveLegacyState();
+  return changed;
+}
+
+function applyLegacyBonuses() {
+  const oldGet = getRebirthBonus;
+  getRebirthBonus = function() {
+    const base = oldGet ? oldGet() : {hp:game.rebirths*8,damage:game.rebirths*4,xp:game.rebirths*5,gold:game.rebirths*5};
+    return {
+      hp: base.hp + legacyState.ascension.vitality * 5,
+      damage: base.damage + legacyState.ascension.might * 3,
+      xp: base.xp + legacyState.ascension.insight * 4,
+      gold: base.gold + legacyState.ascension.fortune * 4
+    };
+  };
+  applyEquipmentStats();
+  game.player.hp = Math.min(game.player.hp || game.player.maxHp, game.player.maxHp);
+}
+
+function ascensionCost(type) {
+  return 1 + (legacyState.ascension[type] || 0);
+}
+
+function buyAscension(type) {
+  const cost = ascensionCost(type);
+  if (legacyState.essence < cost) return;
+  legacyState.essence -= cost;
+  legacyState.ascension[type] = (legacyState.ascension[type] || 0) + 1;
+  applyLegacyBonuses();
+  saveLegacyState();
+  renderLegacy();
+}
+
+function sanctuaryUpgradeCost(type) {
+  const levels = { forge: 0, hall: 0, library: 0, treasury: 0 };
+  const level = legacyState.sanctuary?.[type] || 0;
+  return 2 + level * 2;
+}
+
+function buySanctuary(type) {
+  if (!legacyState.sanctuary) legacyState.sanctuary = { forge:0,hall:0,library:0,treasury:0 };
+  const cost = sanctuaryUpgradeCost(type);
+  if (legacyState.essence < cost) return;
+  legacyState.essence -= cost;
+  legacyState.sanctuary[type] += 1;
+  saveLegacyState();
+  renderLegacy();
+}
+
+function openProgression() {
+  loadLegacyState();
+  checkAchievements();
+  renderLegacy();
+  document.getElementById("progression-screen").classList.add("active");
+  document.getElementById("progression-screen").setAttribute("aria-hidden","false");
+}
+
+function closeProgression() {
+  document.getElementById("progression-screen").classList.remove("active");
+  document.getElementById("progression-screen").setAttribute("aria-hidden","true");
+}
+
+function zoneTravel(startWave) {
+  if (legacyState.highestWave < startWave) return;
+  closeProgression();
+  game.wave = startWave;
+  game.farmingWave = true;
+  game.nextWaveTarget = Math.min(100, Math.max(startWave, legacyState.highestWave));
+  startBattle();
+}
+
+function renderLegacy() {
+  const root = document.getElementById("progression-content");
+  if (!root) return;
+  const tab = legacyState.activeTab;
+  document.querySelectorAll(".progression-tab").forEach(btn => btn.classList.toggle("active",btn.dataset.progressTab===tab));
+  if (tab==="map") renderLegacyMap(root);
+  if (tab==="achievements") renderLegacyAchievements(root);
+  if (tab==="sanctuary") renderLegacySanctuary(root);
+  if (tab==="ascension") renderLegacyAscension(root);
+  if (tab==="journal") renderLegacyJournal(root);
+}
+
+function renderLegacyMap(root) {
+  root.innerHTML = `
+    <div class="progression-stat-grid">
+      <div class="legacy-stat"><span>Highest Wave</span><strong>${legacyState.highestWave}</strong></div>
+      <div class="legacy-stat"><span>Rebirths</span><strong>${game.rebirths}</strong></div>
+      <div class="legacy-stat"><span>Essence</span><strong>${legacyState.essence}</strong></div>
+      <div class="legacy-stat"><span>Bosses</span><strong>${legacyState.bossesDefeated}</strong></div>
+    </div>
+    <h3 class="progression-section-title">WORLD MAP · 10 REALMS</h3>
+    <div class="progression-grid">${zones.map(([name,start,end]) => {
+      const unlocked = legacyState.highestWave >= start;
+      const boss = slimeWaves[end-1];
+      return `<article class="zone-card ${unlocked?"unlocked":"locked"}">
+        <div class="zone-top"><strong class="zone-name">${name}</strong><span class="zone-waves">WAVE ${start}–${end}</span></div>
+        <div class="zone-boss">BOSS · ${boss.name}</div>
+        <small>${unlocked?"Discovered":"Locked · reach Wave "+start}</small>
+        <button type="button" data-travel-wave="${start}" ${unlocked?"":"disabled"}>${unlocked?"TRAVEL TO REALM":"LOCKED"}</button>
+      </article>`;
+    }).join("")}</div>`;
+  root.querySelectorAll("[data-travel-wave]").forEach(b=>b.addEventListener("click",()=>zoneTravel(Number(b.dataset.travelWave))));
+}
+
+function renderLegacyAchievements(root) {
+  const unlocked = achievementDefs.filter(([id])=>legacyState.achievements[id]).length;
+  root.innerHTML = `
+    <div class="progression-stat-grid">
+      <div class="legacy-stat"><span>Unlocked</span><strong>${unlocked} / ${achievementDefs.length}</strong></div>
+      <div class="legacy-stat"><span>Essence</span><strong>${legacyState.essence}</strong></div>
+      <div class="legacy-stat"><span>Highest Wave</span><strong>${legacyState.highestWave}</strong></div>
+      <div class="legacy-stat"><span>Crafted</span><strong>${legacyState.craftedItems}</strong></div>
+    </div>
+    <div class="achievement-list">${achievementDefs.map(([id,title,desc,icon,reward])=>`
+      <article class="achievement-card ${legacyState.achievements[id]?"unlocked":""}">
+        <div class="achievement-icon">${legacyState.achievements[id]?icon:"?"}</div>
+        <div><h3>${title}</h3><p>${desc}</p></div>
+        <div class="achievement-reward">${legacyState.achievements[id]?"CLAIMED":reward}</div>
+      </article>`).join("")}</div>`;
+}
+
+function renderLegacySanctuary(root) {
+  if (!legacyState.sanctuary) legacyState.sanctuary={forge:0,hall:0,library:0,treasury:0};
+  const defs = [
+    ["forge","FORGE","Your sanctuary smithy grows with every cycle.","+2% crafting efficiency per level."],
+    ["hall","WARDEN HALL","Permanent training increases durability.","+5% HP from Rebirth power per level."],
+    ["library","ARCHIVE","Ancient records accelerate learning.","+4% XP gain per level."],
+    ["treasury","TREASURY","A growing vault improves future runs.","+4% Gold gain per level."]
+  ];
+  root.innerHTML = `
+    <div class="essence-banner">ANCIENT ESSENCE · ${legacyState.essence} · earned from Rebirths and achievements</div>
+    <div class="sanctuary-grid">${defs.map(([id,title,desc,effect])=>{
+      const level=legacyState.sanctuary[id]||0, cost=sanctuaryUpgradeCost(id);
+      return `<article class="sanctuary-card"><h3>${title}</h3><p>${desc}</p><div class="sanctuary-level">LEVEL ${level} · ${effect}</div><button data-sanctuary="${id}" ${legacyState.essence<cost?"disabled":""}>UPGRADE · ${cost} ESSENCE</button></article>`;
+    }).join("")}</div>`;
+  root.querySelectorAll("[data-sanctuary]").forEach(b=>b.addEventListener("click",()=>buySanctuary(b.dataset.sanctuary)));
+}
+
+function renderLegacyAscension(root) {
+  const defs=[["vitality","VITALITY","+5% permanent HP per level"],["might","MIGHT","+3% permanent Damage per level"],["insight","INSIGHT","+4% permanent XP gain per level"],["fortune","FORTUNE","+4% permanent Gold gain per level"]];
+  root.innerHTML=`
+    <div class="essence-banner">ANCIENT ESSENCE · ${legacyState.essence} · choose where your eternal power grows.</div>
+    <div class="ascension-path">${defs.map(([id,title,effect])=>`<div class="ascension-node"><span>ASCENSION</span><strong>${title}</strong><em>Lv. ${legacyState.ascension[id]||0}</em><small>${effect}</small></div>`).join("")}</div>
+    <div class="sanctuary-grid">${defs.map(([id,title,effect])=>{const cost=ascensionCost(id);return `<article class="sanctuary-card"><h3>${title}</h3><p>${effect}</p><div class="sanctuary-level">CURRENT LEVEL · ${legacyState.ascension[id]||0}</div><button data-ascension="${id}" ${legacyState.essence<cost?"disabled":""}>ASCEND · ${cost} ESSENCE</button></article>`;}).join("")}</div>`;
+  root.querySelectorAll("[data-ascension]").forEach(b=>b.addEventListener("click",()=>buyAscension(b.dataset.ascension)));
+}
+
+function renderLegacyJournal(root) {
+  const totalRuns = game.rebirths + 1;
+  root.innerHTML=`
+    <div class="journal-highlight"><strong>WARDEN'S CHRONICLE</strong><span>Run ${totalRuns} · Rebirth ${game.rebirths} · The journey continues.</span></div>
+    <div class="progression-stat-grid">
+      <div class="legacy-stat"><span>Highest Wave</span><strong>${legacyState.highestWave}</strong></div>
+      <div class="legacy-stat"><span>Total Waves Cleared</span><strong>${legacyState.totalWaves}</strong></div>
+      <div class="legacy-stat"><span>Enemies Defeated</span><strong>${legacyState.enemiesDefeated}</strong></div>
+      <div class="legacy-stat"><span>Bosses Defeated</span><strong>${legacyState.bossesDefeated}</strong></div>
+      <div class="legacy-stat"><span>Gold Earned</span><strong>${legacyState.totalGold.toLocaleString()}</strong></div>
+      <div class="legacy-stat"><span>Items Crafted</span><strong>${legacyState.craftedItems}</strong></div>
+      <div class="legacy-stat"><span>Legendary Crafted</span><strong>${legacyState.legendaryCrafts}</strong></div>
+      <div class="legacy-stat"><span>Rebirths</span><strong>${game.rebirths}</strong></div>
+    </div>`;
+}
+
+document.getElementById("progress-button")?.addEventListener("click", openProgression);
+document.getElementById("progression-close")?.addEventListener("click", closeProgression);
+document.getElementById("progression-screen")?.addEventListener("click", (e)=>{ if(e.target.id==="progression-screen") closeProgression(); });
+document.querySelectorAll(".progression-tab").forEach(btn=>btn.addEventListener("click",()=>{legacyState.activeTab=btn.dataset.progressTab;renderLegacy();}));
+
+loadLegacyState();
+if (!legacyState.sanctuary) legacyState.sanctuary={forge:0,hall:0,library:0,treasury:0};
+applyLegacyBonuses();
+checkAchievements();
+
+const originalFinishVictory = finishVictory;
+finishVictory = function() {
+  const wave = game.wave;
+  legacyState.highestWave = Math.max(legacyState.highestWave, wave);
+  legacyState.totalWaves += 1;
+  legacyState.enemiesDefeated += 1;
+  legacyState.totalGold += Math.max(0, Math.round((12 + wave * 2) * (1 + ((game.player.goldGain || 0) / 100))));
+  if (getCurrentSlime()?.isBoss) legacyState.bossesDefeated += 1;
+  if (getCurrentSlime()?.isBoss) {
+    const bossBonus = 2 + Math.floor(wave / 20);
+    legacyState.essence += bossBonus;
+    window.setTimeout(()=>showResourceDrop("rare",bossBonus),500);
+  }
+  const before=legacyState.highestWave;
+  const result=originalFinishVictory.apply(this,arguments);
+  checkAchievements();
+  saveLegacyState();
+  if (wave===100) {
+    legacyState.essence += 5;
+    checkAchievements();
+    saveLegacyState();
+  }
+  if (document.getElementById("progression-screen")?.classList.contains("active")) renderLegacy();
+  return result;
+};
+
+const originalCraftOrUpgrade = craftOrUpgradeEquipment;
+craftOrUpgradeEquipment = function(slotId,action) {
+  const before=game.equipment[slotId];
+  const beforeCount=game.inventory.length;
+  const result=originalCraftOrUpgrade.apply(this,arguments);
+  if (action==="craft" && !before && game.equipment[slotId]) {
+    legacyState.craftedItems += 1;
+    if (game.equipment[slotId].rarity==="Legendary") legacyState.legendaryCrafts += 1;
+    checkAchievements(); saveLegacyState();
+  }
+  return result;
+};
+
+// Rebirth button already has its original handler. This second handler records the permanent Legacy reward.
+document.getElementById("rebirth-button")?.addEventListener("click",()=>{
+  const newRebirth = game.rebirths;
+  if (newRebirth > (legacyState.lastRecordedRebirth||0)) {
+    const gained = 1 + Math.floor(newRebirth/5);
+    legacyState.essence += gained;
+    legacyState.lastRecordedRebirth = newRebirth;
+    legacyState.highestWave = Math.max(legacyState.highestWave,100);
+    checkAchievements();
+    saveLegacyState();
+    applyLegacyBonuses();
+    updateProgressionUi(); updateBattleUi();
+    if (document.getElementById("progression-screen")?.classList.contains("active")) renderLegacy();
+  }
+});
+
+window.setInterval(()=>{ checkAchievements(); saveLegacyState(); },10000);
+window.addEventListener("beforeunload",saveLegacyState);
