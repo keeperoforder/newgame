@@ -1625,13 +1625,43 @@ activateSvgButton(document.getElementById("svg-quit-game"), () => {
   openQuitView();
 });
 
-activateSvgButton(document.getElementById("svg-reset-progress"), () => {
-  const confirmed = window.confirm("FULL RESET: delete all progress, Rebirths, equipment, materials and gold? This cannot be undone.");
+function fullResetProgress() {
+  const confirmed = window.confirm("FULL RESET: delete ALL game progress and return to the beginning? This cannot be undone.");
   if (!confirmed) return;
+
   clearBattleTimers();
   game.battleActive = false;
-  try { localStorage.removeItem("beyondTheWavesSave"); } catch (_) {}
+
+  game.gold = 0;
+  game.exp = 0;
+  game.level = 1;
+  game.materials = { iron: 0, leather: 0, wood: 0, steel: 0, magicDust: 0, rare: 0 };
+  game.equipment = { weapon: null, helmet: null, armor: null, gloves: null, boots: null, ring: null, amulet: null };
+  game.inventory = [];
+  game.wave = 1;
+  game.farmingWave = false;
+  game.nextWaveTarget = 1;
+  game.rebirths = 0;
+  game.player = { maxHp: 100, hp: 100, damage: 10, attackSpeed: 1500, critChance: 5, critDamage: 200, armor: 0, magicResist: 0, dodge: 0, movementSpeed: 100, xpGain: 0, goldGain: 0 };
+  game.monster = { maxHp: 50, hp: 50, damage: 5, attackSpeed: 2000 };
+
+  try {
+    localStorage.removeItem("beyondTheWavesSave");
+    sessionStorage.removeItem("beyondTheWavesSave");
+  } catch (_) {}
+
   window.location.reload();
+}
+
+activateSvgButton(document.getElementById("svg-reset-progress"), fullResetProgress);
+
+// Extra delegated click handler makes the SVG reset button reliable even if the
+// browser targets the path/text inside the <g> instead of the group itself.
+document.addEventListener("click", (event) => {
+  const target = event.target;
+  if (target && typeof target.closest === "function" && target.closest("#svg-reset-progress")) {
+    if (target.id !== "svg-reset-progress") fullResetProgress();
+  }
 });
 
 activateSvgButton(document.getElementById("svg-settings-back"), closeMenuOverlayViews);
