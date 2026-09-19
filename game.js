@@ -58,6 +58,7 @@ const game = {
   wave: 1,
   farmingWave: false,
   nextWaveTarget: 1,
+  rebirths: 0,
   soundOn: true,
   musicOn: true,
   player: { maxHp: 100, hp: 100, damage: 10, attackSpeed: 1500, critChance: 5, critDamage: 150, armor: 0, magicResist: 0, dodge: 0, movementSpeed: 100, xpGain: 0, goldGain: 0 },
@@ -126,6 +127,12 @@ const ui = {
   victoryXpReward: document.getElementById("victory-xp-reward"),
   victoryMaterialReward: document.getElementById("victory-material-reward"),
   continueButton: document.getElementById("continue-game"),
+  victoryTitle: document.getElementById("victory-title"),
+  rebirthPanel: document.getElementById("rebirth-panel"),
+  rebirthCount: document.getElementById("rebirth-count"),
+  rebirthDescription: document.getElementById("rebirth-description"),
+  rebirthBonus: document.getElementById("rebirth-bonus"),
+  rebirthButton: document.getElementById("rebirth-button"),
   nextWaveIcon: document.getElementById("next-wave-icon"),
   nextWaveEyebrow: document.getElementById("next-wave-eyebrow"),
   nextWaveTitle: document.getElementById("next-wave-title"),
@@ -233,6 +240,27 @@ function getCraftItemLevel(wave = game.wave, tier = 1) {
 }
 function getMonsterBalanceMultiplier(wave = game.wave) {
   return { hp: 3.25 + Math.min(1.5, wave / 40), damage: 1.25 + Math.min(0.4, wave / 250) };
+}
+function getRebirthBonus() {
+  return { hp: game.rebirths * 10, damage: game.rebirths * 5, xp: game.rebirths * 5, gold: game.rebirths * 5 };
+}
+function updateRebirthUi() {
+  const b = getRebirthBonus();
+  if (ui.rebirthCount) ui.rebirthCount.textContent = "REBIRTH " + game.rebirths;
+  if (ui.rebirthBonus) ui.rebirthBonus.textContent = "Permanent bonus: +" + b.hp + "% HP · +" + b.damage + "% Damage · +" + b.xp + "% XP · +" + b.gold + "% Gold";
+  if (ui.rebirthDescription) ui.rebirthDescription.textContent = "Reset your run at Wave 100. Your permanent Rebirth power stays forever.";
+}
+function performRebirth() {
+  if (game.wave < slimeWaves.length) return;
+  clearBattleTimers();
+  game.rebirths += 1; game.gold = 0; game.exp = 0; game.level = 1;
+  game.materials = { iron: 0, leather: 0, wood: 0, steel: 0, magicDust: 0, rare: 0 };
+  game.equipment = { weapon: null, helmet: null, armor: null, gloves: null, boots: null, ring: null, amulet: null };
+  game.inventory = []; game.wave = 1; game.farmingWave = false; game.nextWaveTarget = 1;
+  game.battleActive = false;
+  updatePlayerStatsFromLevel(); applyWaveData(); game.player.hp = game.player.maxHp;
+  updateGold(); updateProgressionUi(); updateBattleUi(); updateRebirthUi(); saveGame();
+  showScreen(screens.battle); startBattle();
 }
 
 function getEquipmentName(slot, tier) {
@@ -578,16 +606,17 @@ function getEquipmentTotals() {
 
 function applyEquipmentStats() {
   const totals = getEquipmentTotals();
-  game.player.maxHp = 100 + ((game.level - 1) * 7) + totals.maxHp;
-  game.player.damage = 10 + ((game.level - 1) * 1.2) + totals.damage;
+  const rebirthBonus = getRebirthBonus();
+  game.player.maxHp = Math.round((100 + ((game.level - 1) * 7) + totals.maxHp) * (1 + rebirthBonus.hp / 100));
+  game.player.damage = Math.round((10 + ((game.level - 1) * 1.2) + totals.damage) * (1 + rebirthBonus.damage / 100));
   game.player.attackSpeed = Math.max(350, Math.max(850, 1500 - ((game.level - 1) * 7)) - totals.attackSpeed);
   game.player.armor = totals.armor;
   game.player.critChance = 5 + totals.critChance;
   game.player.critDamage = 150 + totals.critDamage;
   game.player.dodge = totals.dodge;
   game.player.movementSpeed = 100 + totals.movementSpeed;
-  game.player.xpGain = totals.xpGain;
-  game.player.goldGain = totals.goldGain;
+  game.player.xpGain = totals.xpGain + getRebirthBonus().xp;
+  game.player.goldGain = totals.goldGain + getRebirthBonus().gold;
 }
 
 function getEquipmentCost(slot, item, action) {
@@ -1467,9 +1496,17 @@ function finishVictory() {
     return;
   }
 
-  ui.victoryEyebrow.textContent = game.wave === slimeWaves.length
-    ? "ALL " + slimeWaves.length + " WAVES CLEARED"
-    : `WAVE ${game.wave} COMPLETE`;
+  if (game.wave === slimeWaves.length) {
+    ui.victoryEyebrow.textContent = "WAVE 100 COMPLETE";
+    ui.victoryTitle.textContent = "ASCENSION";
+    ui.continueButton.hidden = true;
+    ui.rebirthPanel.hidden = false;
+    ui.rebirthButton.hidden = false;
+    updateRebirthUi();
+    showScreen(screens.victory);
+    return;
+  }
+  ui.victoryEyebrow.textContent = `WAVE ${game.wave} COMPLETE`;
   ui.continueButton.textContent = "BACK TO MENU";
 
   if (game.wave < slimeWaves.length) {
@@ -1621,6 +1658,8 @@ document.getElementById("back-to-menu-from-defeat").addEventListener("click", ()
   showScreen(screens.menu);
 });
 
+document.getElementById("rebirth-button").addEventListener("click", performRebirth);
+
 document.getElementById("continue-game").addEventListener("click", () => {
   game.farmingWave = false;
   game.wave = 1;
@@ -1652,6 +1691,7 @@ function saveGame() {
     inventory: JSON.parse(JSON.stringify(game.inventory)),
     wave: game.wave,
     farmingWave: game.farmingWave,
+    rebirths: game.rebirths,
     nextWaveTarget: game.nextWaveTarget,
     soundOn: game.soundOn,
     musicOn: game.musicOn,
@@ -1703,6 +1743,7 @@ function loadGame() {
     });
     game.level = Math.max(1, Math.min(100, Number.isFinite(saveData.level) ? saveData.level : 1));
     game.wave = Math.max(1, Math.min(slimeWaves.length, Number.isFinite(saveData.wave) ? saveData.wave : 1));
+    game.rebirths = Math.max(0, Math.floor(Number.isFinite(saveData.rebirths) ? saveData.rebirths : 0));
     game.farmingWave = saveData.farmingWave === true;
     game.nextWaveTarget = Math.max(game.wave, Math.min(
       slimeWaves.length,
