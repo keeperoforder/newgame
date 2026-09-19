@@ -232,7 +232,7 @@ function getCraftItemLevel(wave = game.wave, tier = 1) {
   return Math.max(1, Math.min(maxLevel, 1 + Math.floor((wave - unlockWave) / 2)));
 }
 function getMonsterBalanceMultiplier(wave = game.wave) {
-  return { hp: 4.25 + Math.min(2.75, wave / 40), damage: 1.35 + Math.min(0.55, wave / 180) };
+  return { hp: 3.25 + Math.min(1.5, wave / 40), damage: 1.25 + Math.min(0.4, wave / 250) };
 }
 
 function getEquipmentName(slot, tier) {
