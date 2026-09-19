@@ -141,6 +141,35 @@
     notify("Attack speed changed.");
   });
 
+
+  bind("dev-set-crit-chance", () => {
+    const value = Number(document.getElementById("dev-crit-chance-input").value);
+    if (!Number.isFinite(value)) return notify("Enter a crit chance value.");
+    api.setPlayerStat("critChance", value);
+    notify("Crit chance changed.");
+  });
+
+  bind("dev-set-crit-damage", () => {
+    const value = Number(document.getElementById("dev-crit-damage-input").value);
+    if (!Number.isFinite(value)) return notify("Enter a crit damage value.");
+    api.setPlayerStat("critDamage", value);
+    notify("Crit damage changed.");
+  });
+
+  bind("dev-set-armor", () => {
+    const value = Number(document.getElementById("dev-armor-input").value);
+    if (!Number.isFinite(value)) return notify("Enter an armor value.");
+    api.setPlayerStat("armor", value);
+    notify("Armor changed.");
+  });
+
+  bind("dev-set-magic-resist", () => {
+    const value = Number(document.getElementById("dev-magic-resist-input").value);
+    if (!Number.isFinite(value)) return notify("Enter a magic resist value.");
+    api.setPlayerStat("magicResist", value);
+    notify("Magic resist changed.");
+  });
+
   bind("dev-set-gold", () => {
     const value = Number(document.getElementById("dev-gold-input").value);
     if (!Number.isFinite(value)) return notify("Enter a gold value.");
