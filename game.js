@@ -58,6 +58,16 @@ const ui = {
   status: document.getElementById("battle-status"),
   nextWaveButton: document.getElementById("next-wave-button"),
   autoWaveText: document.getElementById("auto-wave-text"),
+  statsButton: document.getElementById("stats-button"),
+  statsPanel: document.getElementById("stats-panel"),
+  statsClose: document.getElementById("stats-close"),
+  statsHp: document.getElementById("stats-hp"),
+  statsDamage: document.getElementById("stats-damage"),
+  statsAttackSpeed: document.getElementById("stats-attack-speed"),
+  statsCritChance: document.getElementById("stats-crit-chance"),
+  statsCritDamage: document.getElementById("stats-crit-damage"),
+  statsArmor: document.getElementById("stats-armor"),
+  statsMagicResist: document.getElementById("stats-magic-resist"),
   log: document.getElementById("combat-log"),
   victoryEyebrow: document.getElementById("victory-eyebrow"),
   continueButton: document.getElementById("continue-game"),
@@ -134,6 +144,27 @@ function setSvgToggle(labelId, toggleId, enabled) {
 function updateGold() {
   ui.gold.textContent = String(game.gold);
 }
+function updateStatsUi() {
+  ui.statsHp.textContent = String(game.player.maxHp);
+  ui.statsDamage.textContent = String(game.player.damage);
+  ui.statsAttackSpeed.textContent = (game.player.attackSpeed / 1000).toFixed(2) + "s";
+  ui.statsCritChance.textContent = "5%";
+  ui.statsCritDamage.textContent = "150%";
+  ui.statsArmor.textContent = "0";
+  ui.statsMagicResist.textContent = "0";
+}
+
+function openStatsPanel() {
+  updateStatsUi();
+  ui.statsPanel.classList.add("active");
+  ui.statsPanel.setAttribute("aria-hidden", "false");
+}
+
+function closeStatsPanel() {
+  ui.statsPanel.classList.remove("active");
+  ui.statsPanel.setAttribute("aria-hidden", "true");
+}
+
 
 function getXpToNextLevel(level = game.level) {
   if (level >= 100) return 0;
@@ -169,6 +200,7 @@ function updateProgressionUi() {
   ui.playerXpBar.style.width = progress + "%";
   ui.playerDamage.textContent = String(game.player.damage);
   ui.playerAttackSpeed.textContent = (game.player.attackSpeed / 1000).toFixed(2) + "s";
+  updateStatsUi();
 }
 
 function addExperience(amount) {
@@ -386,6 +418,17 @@ function setToggle(button, enabled) {
 activateSvgButton(document.getElementById("svg-start-game"), () => {
   startGameFromMenu();
 });
+ui.statsButton.addEventListener("click", openStatsPanel);
+ui.statsClose.addEventListener("click", closeStatsPanel);
+ui.statsPanel.addEventListener("click", (event) => {
+  if (event.target === ui.statsPanel) closeStatsPanel();
+});
+document.addEventListener("keydown", (event) => {
+  if (event.key === "Escape" && ui.statsPanel.classList.contains("active")) {
+    closeStatsPanel();
+  }
+});
+
 
 activateSvgButton(document.getElementById("svg-open-settings"), openSettingsView);
 
