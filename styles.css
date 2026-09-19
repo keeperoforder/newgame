@@ -1418,3 +1418,21 @@ h3 {
   max-height:88vh;
   overflow:auto;
 }
+
+/* Progression locks */
+.equipment-card.equipment-locked{
+  opacity:.62;
+  filter:saturate(.45);
+}
+.equipment-lock-note{
+  margin:10px 0;
+  padding:8px 10px;
+  border:1px solid rgba(240,184,95,.28);
+  border-radius:8px;
+  color:#f0b85f;
+  background:rgba(240,184,95,.06);
+  font-size:.72rem;
+  font-weight:700;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+}
