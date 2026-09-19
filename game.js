@@ -1478,16 +1478,7 @@ function finishVictory() {
   addMaterialsForWave(game.wave);
 
   let droppedItem = null;
-  const dropChance = game.wave === slimeWaves.length ? 1 : Math.min(0.25, 0.05 + game.wave * 0.006);
-  if (Math.random() < dropChance) {
-    const unlockedSlots = equipmentSlots.filter((entry) => isEquipmentUnlocked(entry.id, game.wave));
-    const slot = unlockedSlots[Math.floor(Math.random() * unlockedSlots.length)] || equipmentSlots[0];
-    const currentTier = getEquipmentTierForWave(game.wave);
-    const tier = Math.random() < Math.min(0.65, 0.06 + game.wave * 0.006) ? currentTier : 1;
-    const rarity = game.wave === slimeWaves.length ? "Legendary" : getCraftRarity(game.wave);
-    droppedItem = createEquipmentItem(slot.id, tier, getCraftItemLevel(game.wave, tier), rarity);
-    game.inventory.push(droppedItem);
-  }
+
 
   const materialDrops = Object.entries(game.materials)
     .map(([key, value]) => [key, value - materialBefore[key]])
