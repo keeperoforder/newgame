@@ -228,7 +228,8 @@ function renderCharacterSlot(slotId) {
   const item = getEquippedItem(slotId);
   return "<button class=\"character-slot " + (item ? getItemVisualClass(item) : "empty") + "\" data-slot=\"" + slotId + "\">" +
     "<span class=\"slot-icon\">" + (item ? getSlotIcon(slotId) : "+") + "</span>" +
-    "<span><strong>" + slot.name + "</strong><small>" + (item ? item.name + " · Lv." + item.level : "EMPTY") + "</small></span></button>";
+    "<span><strong>" + slot.name + "</strong><small>" + (item ? item.name + " · Lv." + item.level : "EMPTY") + "</small></span>" +
+    (item ? "<em>UNEQUIP</em>" : "") + "</button>";
 }
 
 function getSlotIcon(slotId) {
@@ -254,14 +255,11 @@ function updateCharacterUi() {
   const slots = equipmentSlots.map((slot) => renderCharacterSlot(slot.id));
   ui.equipmentSlotsLeft.innerHTML = slots.slice(0, 4).join("");
   ui.equipmentSlotsRight.innerHTML = slots.slice(4).join("");
-  ui.equipmentSlotsLeft.querySelectorAll(".character-slot").forEach((button) => button.addEventListener("click", () => {
-    if (game.equipment[button.dataset.slot]) {
-      ui.characterPower.textContent = "POWER " + Math.round(game.player.damage);
-    }
-  }));
-  ui.equipmentSlotsRight.querySelectorAll(".character-slot").forEach((button) => button.addEventListener("click", () => {
-    if (game.equipment[button.dataset.slot]) ui.characterPower.textContent = "POWER " + Math.round(game.player.damage);
-  }));
+  [ui.equipmentSlotsLeft, ui.equipmentSlotsRight].forEach((container) => {
+    container.querySelectorAll(".character-slot").forEach((button) => button.addEventListener("click", () => {
+      if (game.equipment[button.dataset.slot]) unequipItem(button.dataset.slot);
+    }));
+  });
   updateCharacterVisuals();
 }
 
@@ -484,6 +482,7 @@ function craftOrUpgradeEquipment(slotId, action) {
     craftAnimation(newItem, () => {
       addItemToInventory(newItem);
       ui.blacksmithMessage.textContent = newItem.name + " crafted and added to Inventory.";
+      updateProgressionUi();
       updateInventoryUi();
       updateBlacksmithUi();
       saveGame();
