@@ -31,7 +31,7 @@ const game = {
   nextWaveTarget: 1,
   soundOn: true,
   musicOn: true,
-  player: { maxHp: 100, hp: 100, damage: 10, attackSpeed: 1500 },
+  player: { maxHp: 100, hp: 100, damage: 10, attackSpeed: 1500, critChance: 5, critDamage: 150, armor: 0, magicResist: 0 },
   monster: { maxHp: 50, hp: 50, damage: 5, attackSpeed: 2000 },
   playerTimer: null,
   monsterTimer: null,
@@ -148,10 +148,10 @@ function updateStatsUi() {
   ui.statsHp.textContent = String(game.player.maxHp);
   ui.statsDamage.textContent = String(game.player.damage);
   ui.statsAttackSpeed.textContent = (game.player.attackSpeed / 1000).toFixed(2) + "s";
-  ui.statsCritChance.textContent = "5%";
-  ui.statsCritDamage.textContent = "150%";
-  ui.statsArmor.textContent = "0";
-  ui.statsMagicResist.textContent = "0";
+  ui.statsCritChance.textContent = String(game.player.critChance) + "%";
+  ui.statsCritDamage.textContent = String(game.player.critDamage) + "%";
+  ui.statsArmor.textContent = String(game.player.armor);
+  ui.statsMagicResist.textContent = String(game.player.magicResist);
 }
 
 function openStatsPanel() {
@@ -518,6 +518,12 @@ function saveGame() {
     musicOn: game.musicOn,
     playerHp: game.player.hp,
     monsterHp: game.monster.hp,
+    playerDamage: game.player.damage,
+    playerAttackSpeed: game.player.attackSpeed,
+    playerCritChance: game.player.critChance,
+    playerCritDamage: game.player.critDamage,
+    playerArmor: game.player.armor,
+    playerMagicResist: game.player.magicResist,
     savedAt: Date.now(),
   };
 
@@ -551,11 +557,149 @@ function loadGame() {
       game.monster.hp = Math.max(0, Math.min(game.monster.maxHp, saveData.monsterHp));
     }
 
+    game.player.damage = Number.isFinite(saveData.playerDamage) ? Math.max(0, saveData.playerDamage) : game.player.damage;
+    game.player.attackSpeed = Number.isFinite(saveData.playerAttackSpeed) ? Math.max(100, saveData.playerAttackSpeed) : game.player.attackSpeed;
+    game.player.critChance = Number.isFinite(saveData.playerCritChance) ? Math.max(0, saveData.playerCritChance) : game.player.critChance;
+    game.player.critDamage = Number.isFinite(saveData.playerCritDamage) ? Math.max(0, saveData.playerCritDamage) : game.player.critDamage;
+    game.player.armor = Number.isFinite(saveData.playerArmor) ? Math.max(0, saveData.playerArmor) : game.player.armor;
+    game.player.magicResist = Number.isFinite(saveData.playerMagicResist) ? Math.max(0, saveData.playerMagicResist) : game.player.magicResist;
+
     game.player.hp = Number.isFinite(saveData.playerHp)
       ? Math.max(0, Math.min(game.player.maxHp, saveData.playerHp))
       : game.player.maxHp;
   } catch (_) {}
 }
+
+
+// Developer bridge. The actual developer UI lives in dev-panel.js.
+// This keeps testing tools isolated from the normal game interface.
+window.beyondTheWavesDevApi = {
+  getState() {
+    return {
+      wave: game.wave,
+      level: game.level,
+      gold: game.gold,
+      exp: game.exp,
+      player: { ...game.player },
+      monster: { ...game.monster },
+      battleActive: game.battleActive,
+      farmingWave: game.farmingWave,
+    };
+  },
+
+  getMaxWave() {
+    return slimeWaves.length;
+  },
+
+  setWave(value) {
+    const target = Math.max(1, Math.min(slimeWaves.length, Math.trunc(Number(value) || 1)));
+    clearBattleTimers();
+    game.wave = target;
+    game.farmingWave = false;
+    game.nextWaveTarget = target;
+    startBattle();
+    saveGame();
+  },
+
+  skipWave() {
+    const target = Math.min(slimeWaves.length, game.wave + 1);
+    if (target === game.wave) return;
+    this.setWave(target);
+  },
+
+  winWave() {
+    if (!game.battleActive) startBattle();
+    finishVictory();
+  },
+
+  loseWave() {
+    if (!game.battleActive) startBattle();
+    finishDefeat();
+  },
+
+  setLevel(value) {
+    const target = Math.max(1, Math.min(100, Math.trunc(Number(value) || 1)));
+    game.level = target;
+    game.exp = getTotalXpForLevel(target);
+    updatePlayerStatsFromLevel();
+    game.player.hp = game.player.maxHp;
+    updateProgressionUi();
+    updateBattleUi();
+    saveGame();
+  },
+
+  setPlayerStat(stat, value) {
+    const numericValue = Number(value);
+    if (!Number.isFinite(numericValue)) return;
+
+    if (stat === "damage") {
+      game.player.damage = Math.max(0, numericValue);
+    } else if (stat === "attackSpeed") {
+      game.player.attackSpeed = Math.max(100, numericValue);
+    } else if (stat === "critChance") {
+      game.player.critChance = Math.max(0, numericValue);
+    } else if (stat === "critDamage") {
+      game.player.critDamage = Math.max(0, numericValue);
+    } else if (stat === "armor") {
+      game.player.armor = Math.max(0, numericValue);
+    } else if (stat === "magicResist") {
+      game.player.magicResist = Math.max(0, numericValue);
+    }
+
+    updateProgressionUi();
+    updateBattleUi();
+    saveGame();
+  },
+
+  setGold(value) {
+    game.gold = Math.max(0, Math.trunc(Number(value) || 0));
+    updateGold();
+    saveGame();
+  },
+
+  setExp(value) {
+    const targetExp = Math.max(0, Math.trunc(Number(value) || 0));
+    game.exp = targetExp;
+
+    let targetLevel = 1;
+    while (targetLevel < 100 && targetExp >= getTotalXpForLevel(targetLevel + 1)) {
+      targetLevel += 1;
+    }
+
+    game.level = targetLevel;
+    updatePlayerStatsFromLevel();
+    game.player.hp = Math.min(game.player.hp, game.player.maxHp);
+    updateProgressionUi();
+    updateBattleUi();
+    saveGame();
+  },
+
+  fullHeal() {
+    game.player.hp = game.player.maxHp;
+    updateBattleUi();
+    saveGame();
+  },
+
+  damagePlayer(amount) {
+    game.player.hp = Math.max(0, game.player.hp - Math.max(0, Number(amount) || 0));
+    updateBattleUi();
+  },
+
+  save() {
+    saveGame();
+  },
+
+  resetBattle() {
+    startBattle();
+  },
+
+  resetSave() {
+    try {
+      localStorage.removeItem("beyondTheWavesSave");
+    } catch (_) {}
+    window.location.reload();
+  },
+};
 
 loadGame();
 setSvgToggle("svg-sound-label", "svg-sound-toggle", game.soundOn);
