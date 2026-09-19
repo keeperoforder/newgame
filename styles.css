@@ -1402,3 +1402,19 @@ h3 {
   .auto-wave-dot { animation: none !important; }
 }
 
+
+/* Keep character equipment open above the live battle */
+#character-screen.character-overlay-active{
+  position:fixed;
+  inset:0;
+  z-index:150;
+  display:grid;
+  place-items:center;
+  background:rgba(4,7,12,.78);
+  backdrop-filter:blur(7px);
+  overflow:auto;
+}
+#character-screen.character-overlay-active .character-panel{
+  max-height:88vh;
+  overflow:auto;
+}
