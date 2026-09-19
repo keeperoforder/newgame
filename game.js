@@ -12,18 +12,33 @@ const screens = {
 };
 
 const equipmentSlots = [
-  { id: "weapon", name: "Weapon", effect: "Damage", baseName: "Iron Sword", craftGold: 100, craft: { iron: 5 }, tier2Name: "Steel Sword", tier2Gold: 500, tier2: { steel: 10 }, stat: "damage" },
-  { id: "helmet", name: "Helmet", effect: "HP / Defense", baseName: "Iron Helm", craftGold: 100, craft: { iron: 5, leather: 3 }, tier2Name: "Steel Helm", tier2Gold: 500, tier2: { steel: 10, leather: 5 }, stat: "defense" },
-  { id: "armor", name: "Armor", effect: "HP / Defense", baseName: "Iron Armor", craftGold: 150, craft: { iron: 8, leather: 5 }, tier2Name: "Steel Armor", tier2Gold: 650, tier2: { steel: 12, leather: 8 }, stat: "defense" },
-  { id: "gloves", name: "Gloves", effect: "Attack Speed", baseName: "Leather Gloves", craftGold: 120, craft: { leather: 6, wood: 2 }, tier2Name: "Steel Gauntlets", tier2Gold: 600, tier2: { steel: 10, leather: 6 }, stat: "attackSpeed" },
-  { id: "boots", name: "Boots", effect: "Movement Speed / Dodge", baseName: "Traveler Boots", craftGold: 120, craft: { leather: 6, wood: 3 }, tier2Name: "Steel Boots", tier2Gold: 600, tier2: { steel: 10, leather: 6 }, stat: "dodge" },
-  { id: "ring", name: "Ring", effect: "Crit Chance / Crit Damage", baseName: "Copper Ring", craftGold: 200, craft: { iron: 8, magicDust: 2 }, tier2Name: "Steel Ring", tier2Gold: 800, tier2: { steel: 12, magicDust: 5 }, stat: "crit" },
-  { id: "amulet", name: "Amulet", effect: "XP Gain / Gold Gain", baseName: "Apprentice Amulet", craftGold: 250, craft: { wood: 5, magicDust: 4 }, tier2Name: "Arcane Amulet", tier2Gold: 900, tier2: { steel: 6, magicDust: 8, rare: 1 }, stat: "gain" },
+  { id: "weapon", name: "Weapon", effect: "Damage", baseName: "Iron Sword", craftGold: 100, craft: { iron: 5 }, tier2Name: "Steel Sword", tier2Gold: 500, tier2: { steel: 10 }, stat: "damage",
+    tierNames: ["Iron Sword", "Steel Sword", "Mithril Sword", "Obsidian Blade", "Runeblade", "Dragonblade", "Voidfang", "Astral Edge", "Celestial Blade", "Eternal Edge"] },
+  { id: "helmet", name: "Helmet", effect: "HP / Defense", baseName: "Iron Helm", craftGold: 100, craft: { iron: 5, leather: 3 }, tier2Name: "Steel Helm", tier2Gold: 500, tier2: { steel: 10, leather: 5 }, stat: "defense",
+    tierNames: ["Iron Helm", "Steel Helm", "Mithril Helm", "Obsidian Helm", "Runic Helm", "Dragon Helm", "Void Helm", "Astral Helm", "Celestial Helm", "Eternal Helm"] },
+  { id: "armor", name: "Armor", effect: "HP / Defense", baseName: "Iron Armor", craftGold: 150, craft: { iron: 8, leather: 5 }, tier2Name: "Steel Armor", tier2Gold: 650, tier2: { steel: 12, leather: 8 }, stat: "defense",
+    tierNames: ["Iron Armor", "Steel Armor", "Mithril Armor", "Obsidian Armor", "Runic Armor", "Dragon Armor", "Void Armor", "Astral Armor", "Celestial Armor", "Eternal Armor"] },
+  { id: "gloves", name: "Gloves", effect: "Attack Speed", baseName: "Leather Gloves", craftGold: 120, craft: { leather: 6, wood: 2 }, tier2Name: "Steel Gauntlets", tier2Gold: 600, tier2: { steel: 10, leather: 6 }, stat: "attackSpeed",
+    tierNames: ["Leather Gloves", "Steel Gauntlets", "Mithril Gauntlets", "Obsidian Gauntlets", "Runic Gauntlets", "Dragon Gauntlets", "Void Gauntlets", "Astral Gauntlets", "Celestial Gauntlets", "Eternal Gauntlets"] },
+  { id: "boots", name: "Boots", effect: "Movement Speed / Dodge", baseName: "Traveler Boots", craftGold: 120, craft: { leather: 6, wood: 3 }, tier2Name: "Steel Boots", tier2Gold: 600, tier2: { steel: 10, leather: 6 }, stat: "dodge",
+    tierNames: ["Traveler Boots", "Steel Boots", "Mithril Boots", "Obsidian Boots", "Runic Boots", "Dragon Boots", "Void Boots", "Astral Boots", "Celestial Boots", "Eternal Boots"] },
+  { id: "ring", name: "Ring", effect: "Crit Chance / Crit Damage", baseName: "Copper Ring", craftGold: 200, craft: { iron: 8, magicDust: 2 }, tier2Name: "Steel Ring", tier2Gold: 800, tier2: { steel: 12, magicDust: 5 }, stat: "crit",
+    tierNames: ["Copper Ring", "Steel Ring", "Mithril Ring", "Obsidian Ring", "Runic Ring", "Dragon Ring", "Void Ring", "Astral Ring", "Celestial Ring", "Eternal Ring"] },
+  { id: "amulet", name: "Amulet", effect: "XP Gain / Gold Gain", baseName: "Apprentice Amulet", craftGold: 250, craft: { wood: 5, magicDust: 4 }, tier2Name: "Arcane Amulet", tier2Gold: 900, tier2: { steel: 6, magicDust: 8, rare: 1 }, stat: "gain",
+    tierNames: ["Apprentice Amulet", "Arcane Amulet", "Mithril Amulet", "Obsidian Amulet", "Runic Amulet", "Dragon Amulet", "Void Amulet", "Astral Amulet", "Celestial Amulet", "Eternal Amulet"] },
 ];
 
 const equipmentTiers = {
-  1: { multiplier: 1, maxLevel: 5 },
-  2: { multiplier: 2.5, maxLevel: 5 },
+  1: { multiplier: 1.00, maxLevel: 5 },
+  2: { multiplier: 1.35, maxLevel: 5 },
+  3: { multiplier: 1.75, maxLevel: 5 },
+  4: { multiplier: 2.20, maxLevel: 5 },
+  5: { multiplier: 2.80, maxLevel: 5 },
+  6: { multiplier: 3.50, maxLevel: 5 },
+  7: { multiplier: 4.35, maxLevel: 5 },
+  8: { multiplier: 5.35, maxLevel: 5 },
+  9: { multiplier: 6.55, maxLevel: 5 },
+  10: { multiplier: 8.00, maxLevel: 5 },
 };
 
 const slimeWaves = [
@@ -217,15 +232,40 @@ function getCraftRarity(wave = game.wave) {
 }
 
 function getCraftItemLevel(wave = game.wave, tier = 1) {
-  return Math.max(1, Math.min(100, wave + (tier === 2 ? 5 : 0)));
+  const maxLevel = equipmentTiers[tier]?.maxLevel || 5;
+  return Math.max(1, Math.min(maxLevel, tier === 1 ? wave : Math.max(1, wave - 9)));
+}
+
+function getEquipmentName(slot, tier) {
+  const names = slot?.tierNames || [slot?.baseName, slot?.tier2Name];
+  return names[Math.max(1, Math.min(10, tier)) - 1] || slot.baseName;
+}
+
+function getEquipmentTierRecipe(slot, tier) {
+  if (tier <= 1) return slot.craft;
+  const source = slot.tier2 || slot.craft;
+  const scale = 1 + ((tier - 2) * 0.55);
+  return Object.fromEntries(Object.entries(source).map(([key, value]) => [key, Math.max(1, Math.ceil(value * scale))]));
+}
+
+function getEquipmentTierCost(slot, targetTier) {
+  const tier = Math.max(2, Math.min(10, targetTier));
+  const gold = Math.round(slot.tier2Gold * Math.pow(1.55, tier - 2));
+  return { gold, materials: getEquipmentTierRecipe(slot, tier) };
+}
+
+function getEquipmentTierForWave(wave = game.wave) {
+  return Math.max(1, Math.min(10, Math.ceil(wave / 2)));
 }
 
 function createEquipmentItem(slotId, tier = 1, level = getCraftItemLevel(), rarity = getCraftRarity()) {
   const slot = equipmentSlots.find((entry) => entry.id === slotId);
-  const names = { 1: slot.baseName, 2: slot.tier2Name };
+  const safeTier = Math.max(1, Math.min(10, tier));
+  const maxLevel = equipmentTiers[safeTier]?.maxLevel || 5;
+  const safeLevel = Math.max(1, Math.min(maxLevel, level));
   return {
     uid: "item-" + Date.now() + "-" + Math.random().toString(36).slice(2, 8),
-    slotId, tier, level, rarity, name: names[tier],
+    slotId, tier: safeTier, level: safeLevel, rarity, name: getEquipmentName(slot, safeTier),
   };
 }
 
@@ -250,7 +290,7 @@ function renderCharacterSlot(slotId) {
   const item = getEquippedItem(slotId);
   return "<button class=\"character-slot " + (item ? getItemVisualClass(item) : "empty") + "\" data-slot=\"" + slotId + "\">" +
     "<span class=\"slot-icon\">" + (item ? getSlotIcon(slotId) : "+") + "</span>" +
-    "<span><strong>" + slot.name + "</strong><small>" + (item ? item.name + " · Lv." + item.level : "EMPTY") + "</small></span>" +
+    "<span><strong>" + slot.name + "</strong><small>" + (item ? item.name + " · T" + item.tier + " · Lv." + item.level : "EMPTY") + "</small></span>" +
     (item ? "<em>UNEQUIP</em>" : "") + "</button>";
 }
 
@@ -259,10 +299,20 @@ function getSlotIcon(slotId) {
 }
 
 function getEquipmentArtSvg(slotId, tier = 1) {
-  const metal = tier === 2 ? "#b8c7d6" : "#8f99a5";
-  const edge = tier === 2 ? "#e7c27a" : "#c18b5a";
-  const leather = tier === 2 ? "#3e5267" : "#4a3428";
-  const glow = tier === 2 ? "#f0b85f" : "#9da8b5";
+  const tierPalette = [
+    ["#8f99a5", "#c18b5a", "#4a3428", "#9da8b5"],
+    ["#b8c7d6", "#e7c27a", "#3e5267", "#f0b85f"],
+    ["#9bd3c7", "#6ee7c8", "#24443f", "#77f5d5"],
+    ["#8e94a8", "#8b72ff", "#29213f", "#b7a4ff"],
+    ["#b7a0d8", "#d6a8ff", "#3b254e", "#e3b8ff"],
+    ["#c99a6b", "#f1c27d", "#493021", "#ffd99b"],
+    ["#5e708f", "#5f9cff", "#17253d", "#7ab1ff"],
+    ["#8798c8", "#a8c7ff", "#24304f", "#c8dcff"],
+    ["#d4c68f", "#f5df7a", "#4a421f", "#fff0a3"],
+    ["#e5e7eb", "#ffffff", "#30333a", "#ffffff"],
+  ];
+  const palette = tierPalette[Math.max(1, Math.min(10, tier)) - 1];
+  const [metal, edge, leather, glow] = palette;
   const common = 'fill="' + metal + '" stroke="' + edge + '" stroke-width="5" stroke-linejoin="round"';
   const art = {
     weapon: '<path d="M38 76L98 18L108 28L48 86Z" ' + common + '/><path d="M25 87L48 64L60 76L37 99Z" fill="' + leather + '" stroke="#1a2028" stroke-width="4"/><path d="M50 55L83 23" stroke="' + glow + '" stroke-width="3"/>',
@@ -335,7 +385,7 @@ function renderInventoryItem(item) {
   const rarity = rarityData[item.rarity];
   const actionData = getEquipmentAction(slot, item);
   const canUpgrade = actionData.action !== "max" && canAfford(actionData.cost);
-  const upgradeLabel = actionData.action === "tier2" ? "FORGE T2" : actionData.action === "upgrade" ? "UPGRADE" : "";
+  const upgradeLabel = actionData.action === "tier" ? "FORGE T" + actionData.targetTier : actionData.action === "upgrade" ? "UPGRADE" : "";
   return "<article class=\"inventory-item " + getItemVisualClass(item) + "\" style=\"--rarity:" + rarity.color + ";--rarity-glow:" + rarity.glow + "\">" +
     "<div class=\"inventory-item-icon\">" + getSlotIcon(item.slotId) + "</div>" +
     "<div class=\"inventory-item-info\"><div class=\"inventory-rarity\">" + item.rarity + "</div><h3>" + item.name + " <span>Lv." + item.level + "</span></h3><p>" + slot.effect + " · Item Level " + item.level + "</p><div>" + equipmentEffectText(item.slotId, item) + "</div>" + getEquipmentComparisonHtml(item) + "</div>" +
@@ -353,14 +403,15 @@ function upgradeInventoryItem(item) {
   }
 
   payCost(actionData.cost);
-  if (actionData.action === "tier2") {
-    item.tier = 2;
-    item.name = slot.tier2Name;
-    item.level = Math.max(item.level, getCraftItemLevel(game.wave, 2));
-    item.rarity = game.wave >= 15 ? "Legendary" : "Epic";
-    ui.inventoryMessage.textContent = item.name + " forged to Tier 2 · Lv." + item.level + ".";
+  if (actionData.action === "tier") {
+    item.tier = actionData.targetTier;
+    item.name = getEquipmentName(slot, item.tier);
+    item.level = 1;
+    item.rarity = game.wave >= 15 ? "Legendary" : Math.max(item.tier, 2) >= 4 ? "Epic" : item.rarity;
+    ui.inventoryMessage.textContent = item.name + " forged to Tier " + item.tier + " · Lv.1.";
   } else {
-    item.level = Math.min(100, item.level + 1);
+    const maxLevel = equipmentTiers[item.tier]?.maxLevel || 5;
+    item.level = Math.min(maxLevel, item.level + 1);
     ui.inventoryMessage.textContent = item.name + " upgraded to Item Lv." + item.level + ".";
   }
 
@@ -412,7 +463,7 @@ function unequipItem(slotId) {
 }
 
 function sellInventoryItem(item) {
-  const value = Math.max(5, Math.round((equipmentSlots.find((entry) => entry.id === item.slotId).craftGold * item.level * (item.tier === 2 ? 2.5 : 1)) * ({Common:1,Rare:1.5,Epic:2.5,Legendary:4}[item.rarity] || 1) * .35));
+  const value = Math.max(5, Math.round((equipmentSlots.find((entry) => entry.id === item.slotId).craftGold * item.level * (equipmentTiers[item.tier]?.multiplier || 1)) * ({Common:1,Rare:1.5,Epic:2.5,Legendary:4}[item.rarity] || 1) * .35));
   removeInventoryItem(item.uid);
   game.gold += value;
   ui.inventoryMessage.textContent = item.name + " sold for " + value + " Gold.";
@@ -537,11 +588,12 @@ function applyEquipmentStats() {
 
 function getEquipmentCost(slot, item, action) {
   if (!item) return { gold: slot.craftGold, materials: slot.craft };
-  if (action === "tier2") return { gold: slot.tier2Gold, materials: slot.tier2 };
+  if (action === "tier") return getEquipmentTierCost(slot, item.tier + 1);
   const level = item.level + 1;
+  const recipe = getEquipmentTierRecipe(slot, item.tier);
   return {
-    gold: Math.round((slot.craftGold * 0.45) * level),
-    materials: Object.fromEntries(Object.entries(slot.craft).map(([key, value]) => [key, Math.max(1, Math.ceil(value * (0.35 + level * 0.12)))])),
+    gold: Math.round((slot.craftGold * (0.45 + item.tier * 0.08)) * level),
+    materials: Object.fromEntries(Object.entries(recipe).map(([key, value]) => [key, Math.max(1, Math.ceil(value * (0.35 + level * 0.12)))])),
   };
 }
 
@@ -589,16 +641,34 @@ function getEquipmentComparisonHtml(item) {
 
 function getEquipmentAction(slot, item) {
   if (!item) return { action: "craft", label: "CRAFT", cost: { gold: slot.craftGold, materials: slot.craft } };
-  if (item.tier === 1 && item.level >= 5) return { action: "tier2", label: "FORGE TIER 2", cost: { gold: slot.tier2Gold, materials: slot.tier2 } };
-  if (item.level < 100) {
+
+  const tier = Math.max(1, Math.min(10, item.tier || 1));
+  const maxLevel = equipmentTiers[tier]?.maxLevel || 5;
+
+  if (item.level < maxLevel) {
     const level = item.level + 1;
-    const recipe = item.tier === 2 ? slot.tier2 : slot.craft;
-    return { action: "upgrade", label: "UPGRADE Lv." + level, cost: {
-      gold: Math.round((slot.craftGold * (item.tier === 2 ? 0.65 : 0.45)) * level),
-      materials: Object.fromEntries(Object.entries(recipe).map(([key, value]) => [key, Math.max(1, Math.ceil(value * (0.35 + level * 0.12)))])),
-    }};
+    const recipe = getEquipmentTierRecipe(slot, tier);
+    return {
+      action: "upgrade",
+      label: "UPGRADE Lv." + level,
+      cost: {
+        gold: Math.round((slot.craftGold * (0.45 + tier * 0.08)) * level),
+        materials: Object.fromEntries(Object.entries(recipe).map(([key, value]) => [key, Math.max(1, Math.ceil(value * (0.35 + level * 0.12)))])),
+      },
+    };
   }
-  return { action: "max", label: "MAX", cost: { gold: 0, materials: {} } };
+
+  if (tier < 10) {
+    const targetTier = tier + 1;
+    return {
+      action: "tier",
+      targetTier,
+      label: "FORGE TIER " + targetTier,
+      cost: getEquipmentTierCost(slot, targetTier),
+    };
+  }
+
+  return { action: "max", label: "MAX T10", cost: { gold: 0, materials: {} } };
 }
 
 function renderEquipmentCard(slot) {
@@ -607,9 +677,9 @@ function renderEquipmentCard(slot) {
   const canBuy = actionData.action !== "max" && canAfford(actionData.cost);
   const materialLine = Object.entries(actionData.cost.materials).map(([key, value]) => "<span>" + value + " " + formatMaterialName(key) + "</span>").join("");
   const title = item ? item.name : slot.baseName;
-  const levelText = item ? " <span>Lv." + item.level + "</span>" : "";
+  const levelText = item ? " <span>T" + item.tier + " · Lv." + item.level + "</span>" : "";
   const button = actionData.action === "max" || !canBuy ? " disabled" : "";
-  const previewItem = item || createEquipmentItem(slot.id, 1, getCraftItemLevel(), getCraftRarity());
+  const previewItem = item || createEquipmentItem(slot.id, 1, 1, getCraftRarity());
   const comparison = item ? "" : getEquipmentComparisonHtml(previewItem);
   return "<article class=\"equipment-card\">" +
     "<div class=\"equipment-preview " + getItemVisualClass(previewItem) + "\">" + getEquipmentArtSvg(slot.id, previewItem.tier) + "</div>" +
@@ -653,22 +723,25 @@ function craftOrUpgradeEquipment(slotId, action) {
 
   payCost(actionData.cost);
   if (!item) {
-    const newItem = createEquipmentItem(slotId, 1, getCraftItemLevel(), getCraftRarity());
+    const newItem = createEquipmentItem(slotId, 1, 1, getCraftRarity());
     craftAnimation(newItem, () => {
       addItemToInventory(newItem);
-      ui.blacksmithMessage.textContent = newItem.name + " · " + newItem.rarity + " · Item Lv." + newItem.level + " crafted and added to Inventory.";
+      ui.blacksmithMessage.textContent = newItem.name + " · T1 · " + newItem.rarity + " · Item Lv.1 crafted and added to Inventory.";
       updateProgressionUi(); updateInventoryUi(); updateBlacksmithUi(); saveGame();
     });
     return;
   }
 
   const oldHp = game.player.hp;
-  if (action === "tier2") {
-    const newItem = createEquipmentItem(slotId, 2, Math.max(item.level, getCraftItemLevel(game.wave, 2)), game.wave >= 15 ? "Legendary" : "Epic");
-    game.inventory.push(newItem);
-    ui.blacksmithMessage.textContent = newItem.name + " · " + newItem.rarity + " · Item Lv." + newItem.level + " forged and added to Inventory.";
+  if (action === "tier") {
+    item.tier = actionData.targetTier;
+    item.level = 1;
+    item.name = getEquipmentName(slot, item.tier);
+    item.rarity = game.wave >= 15 ? "Legendary" : item.tier >= 4 ? "Epic" : item.rarity;
+    ui.blacksmithMessage.textContent = item.name + " · T" + item.tier + " · Lv.1 forged.";
   } else {
-    item.level = Math.min(100, item.level + 1);
+    const maxLevel = equipmentTiers[item.tier]?.maxLevel || 5;
+    item.level = Math.min(maxLevel, item.level + 1);
     ui.blacksmithMessage.textContent = item.name + " upgraded to Item Lv." + item.level + ".";
   }
 
@@ -1004,7 +1077,7 @@ function finishVictory() {
   const dropChance = game.wave === slimeWaves.length ? 1 : Math.min(0.45, 0.08 + game.wave * 0.018);
   if (Math.random() < dropChance) {
     const slot = equipmentSlots[Math.floor(Math.random() * equipmentSlots.length)];
-    const tier = game.wave >= 10 && Math.random() < 0.35 ? 2 : 1;
+    const tier = Math.random() < Math.min(0.75, 0.08 + game.wave * 0.035) ? getEquipmentTierForWave(game.wave) : 1;
     const rarity = game.wave === slimeWaves.length ? "Legendary" : getCraftRarity(game.wave);
     droppedItem = createEquipmentItem(slot.id, tier, getCraftItemLevel(game.wave, tier), rarity);
     game.inventory.push(droppedItem);
@@ -1267,10 +1340,20 @@ function loadGame() {
     if (saveData.equipment && typeof saveData.equipment === "object") {
       Object.keys(game.equipment).forEach((key) => {
         const item = saveData.equipment[key];
-        if (item && Number.isFinite(item.tier) && Number.isFinite(item.level)) game.equipment[key] = item;
+        if (item && Number.isFinite(item.tier) && Number.isFinite(item.level)) {
+          const tier = Math.max(1, Math.min(10, Number(item.tier)));
+          const maxLevel = equipmentTiers[tier]?.maxLevel || 5;
+          game.equipment[key] = { ...item, tier, level: Math.max(1, Math.min(maxLevel, Number(item.level))), name: getEquipmentName(equipmentSlots.find((entry) => entry.id === key), tier) };
+        }
       });
     }
-    if (Array.isArray(saveData.inventory)) game.inventory = saveData.inventory;
+    if (Array.isArray(saveData.inventory)) game.inventory = saveData.inventory.map((item) => {
+      const slot = equipmentSlots.find((entry) => entry.id === item.slotId);
+      if (!slot) return item;
+      const tier = Math.max(1, Math.min(10, Number(item.tier) || 1));
+      const maxLevel = equipmentTiers[tier]?.maxLevel || 5;
+      return { ...item, tier, level: Math.max(1, Math.min(maxLevel, Number(item.level) || 1)), name: getEquipmentName(slot, tier) };
+    });
     game.level = Math.max(1, Math.min(100, Number.isFinite(saveData.level) ? saveData.level : 1));
     game.wave = Math.max(1, Math.min(slimeWaves.length, Number.isFinite(saveData.wave) ? saveData.wave : 1));
     game.farmingWave = saveData.farmingWave === true;
