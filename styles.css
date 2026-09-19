@@ -208,10 +208,34 @@ h3 {
 .character-art {
   display: grid;
   place-items: center;
-  min-height: 150px;
-  font-size: 7rem;
+  min-height: 230px;
   filter: drop-shadow(0 14px 24px rgba(0, 0, 0, 0.4));
   user-select: none;
+}
+
+.character-art svg {
+  width: min(100%, 430px);
+  height: auto;
+  display: block;
+  overflow: visible;
+}
+
+.player-art {
+  background:
+    radial-gradient(circle at 50% 56%, rgba(212, 169, 103, 0.12), transparent 48%);
+}
+
+.slime-art {
+  background:
+    radial-gradient(circle at 50% 62%, rgba(214, 75, 111, 0.12), transparent 54%);
+}
+
+.player-art svg {
+  transform: translateX(8px);
+}
+
+.slime-art svg {
+  transform: translateX(-6px);
 }
 
 .stats { text-align: left; }
@@ -351,8 +375,11 @@ h3 {
   .combatant { min-height: auto; }
 
   .character-art {
-    min-height: 120px;
-    font-size: 5.6rem;
+    min-height: 160px;
+  }
+
+  .character-art svg {
+    width: min(100%, 360px);
   }
 }
 
