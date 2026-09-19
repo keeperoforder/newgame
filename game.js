@@ -43,10 +43,28 @@ function showScreen(screen) {
   screen.setAttribute("aria-hidden", "false");
 }
 
-function startGameFromMenu() {
-  closeOverlay(screens.settings);
-  closeOverlay(screens.quit);
+function setSvgView(view) {
+  document.getElementById("main-menu-view").classList.add("svg-view-hidden");
+  document.getElementById("svg-settings-view").classList.add("svg-view-hidden");
+  document.getElementById("svg-quit-view").classList.add("svg-view-hidden");
 
+  view.classList.remove("svg-view-hidden");
+}
+
+function openSettingsView() {
+  setSvgView(document.getElementById("svg-settings-view"));
+}
+
+function closeMenuOverlayViews() {
+  setSvgView(document.getElementById("main-menu-view"));
+}
+
+function openQuitView() {
+  setSvgView(document.getElementById("svg-quit-view"));
+}
+
+function startGameFromMenu() {
+  closeMenuOverlayViews();
   screens.menu.classList.add("is-leaving");
 
   window.setTimeout(() => {
@@ -59,14 +77,22 @@ function startGameFromMenu() {
   }, 240);
 }
 
-function openOverlay(overlay) {
-  overlay.classList.add("active");
-  overlay.setAttribute("aria-hidden", "false");
+function activateSvgButton(button, handler) {
+  button.addEventListener("click", handler);
+  button.addEventListener("keydown", (event) => {
+    if (event.key === "Enter" || event.key === " ") {
+      event.preventDefault();
+      handler();
+    }
+  });
 }
 
-function closeOverlay(overlay) {
-  overlay.classList.remove("active");
-  overlay.setAttribute("aria-hidden", "true");
+function setSvgToggle(labelId, toggleId, enabled) {
+  const label = document.getElementById(labelId);
+  const toggle = document.getElementById(toggleId);
+  label.textContent = enabled ? "ON" : "OFF";
+  toggle.setAttribute("fill", enabled ? "#4a3021" : "#15191f");
+  toggle.setAttribute("aria-label", enabled ? "Enabled" : "Disabled");
 }
 
 function updateGold() {
@@ -164,62 +190,41 @@ function setToggle(button, enabled) {
   button.classList.toggle("off", !enabled);
 }
 
-document.getElementById("start-game").addEventListener("click", () => {
+activateSvgButton(document.getElementById("svg-start-game"), () => {
   game.gold = 0;
   game.exp = 0;
   updateGold();
   startGameFromMenu();
 });
 
-document.querySelectorAll(".mobile-menu-button").forEach((button) => {
-  button.addEventListener("click", () => {
-    const action = button.dataset.action;
+activateSvgButton(document.getElementById("svg-open-settings"), openSettingsView);
 
-    if (action === "start") {
-      game.gold = 0;
-      game.exp = 0;
-      updateGold();
-      startGameFromMenu();
-    }
-
-    if (action === "settings") {
-      openOverlay(screens.settings);
-    }
-
-    if (action === "quit") {
-      clearBattleTimers();
-      game.battleActive = false;
-      openOverlay(screens.quit);
-    }
-  });
-});
-
-document.getElementById("open-settings").addEventListener("click", () => {
-  openOverlay(screens.settings);
-});
-
-document.getElementById("back-to-menu-from-settings").addEventListener("click", () => {
-  closeOverlay(screens.settings);
-});
-
-document.getElementById("quit-game").addEventListener("click", () => {
+activateSvgButton(document.getElementById("svg-quit-game"), () => {
   clearBattleTimers();
   game.battleActive = false;
-  openOverlay(screens.quit);
+  openQuitView();
 });
 
-document.getElementById("cancel-quit").addEventListener("click", () => {
-  closeOverlay(screens.quit);
-});
+activateSvgButton(document.getElementById("svg-settings-back"), closeMenuOverlayViews);
 
-document.getElementById("confirm-quit").addEventListener("click", () => {
-  closeOverlay(screens.quit);
+activateSvgButton(document.getElementById("svg-cancel-quit"), closeMenuOverlayViews);
 
+activateSvgButton(document.getElementById("svg-confirm-quit"), () => {
+  closeMenuOverlayViews();
   try {
     window.close();
   } catch (_) {}
-
   showScreen(screens.thanks);
+});
+
+activateSvgButton(document.getElementById("svg-sound-toggle"), () => {
+  game.soundOn = !game.soundOn;
+  setSvgToggle("svg-sound-label", "svg-sound-toggle", game.soundOn);
+});
+
+activateSvgButton(document.getElementById("svg-music-toggle"), () => {
+  game.musicOn = !game.musicOn;
+  setSvgToggle("svg-music-label", "svg-music-toggle", game.musicOn);
 });
 
 document.getElementById("try-again").addEventListener("click", () => {
@@ -229,6 +234,7 @@ document.getElementById("try-again").addEventListener("click", () => {
 document.getElementById("back-to-menu-from-defeat").addEventListener("click", () => {
   clearBattleTimers();
   game.battleActive = false;
+  closeMenuOverlayViews();
   showScreen(screens.menu);
 });
 
@@ -237,22 +243,17 @@ document.getElementById("continue-game").addEventListener("click", () => {
 });
 
 document.getElementById("back-to-menu-from-wave2").addEventListener("click", () => {
+  closeMenuOverlayViews();
   showScreen(screens.menu);
 });
 
 document.getElementById("back-to-menu-from-thanks").addEventListener("click", () => {
+  closeMenuOverlayViews();
   showScreen(screens.menu);
 });
 
-document.getElementById("sound-toggle").addEventListener("click", (event) => {
-  game.soundOn = !game.soundOn;
-  setToggle(event.currentTarget, game.soundOn);
-});
-
-document.getElementById("music-toggle").addEventListener("click", (event) => {
-  game.musicOn = !game.musicOn;
-  setToggle(event.currentTarget, game.musicOn);
-});
+setSvgToggle("svg-sound-label", "svg-sound-toggle", game.soundOn);
+setSvgToggle("svg-music-label", "svg-music-toggle", game.musicOn);
 
 updateGold();
 updateBattleUi();
