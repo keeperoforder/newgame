@@ -1040,3 +1040,26 @@ h3 {
   background: #272127;
   transform: translateY(-1px);
 }
+
+
+.battle-header-actions{display:flex;align-items:center;justify-content:flex-end;gap:8px}
+.blacksmith-button{min-width:120px}
+.blacksmith-card{width:min(980px,100%);max-height:min(86vh,860px);overflow:auto;padding:30px;border:1px solid rgba(214,174,109,.34);border-radius:20px;background:radial-gradient(circle at 50% 0%,rgba(122,89,52,.16),transparent 42%),linear-gradient(180deg,#171922,#0b0e14);box-shadow:0 24px 70px rgba(0,0,0,.65),0 0 34px rgba(205,155,86,.08)}
+.blacksmith-resources{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+.blacksmith-resources span,.blacksmith-resources strong{padding:8px 11px;border:1px solid rgba(255,255,255,.07);border-radius:9px;background:rgba(255,255,255,.03);color:#c7cad6;font-size:.72rem}
+.blacksmith-resources strong{color:#f0d29b}
+.equipment-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.equipment-card{padding:16px;border:1px solid rgba(255,255,255,.07);border-radius:14px;background:linear-gradient(180deg,rgba(31,34,45,.9),rgba(13,16,23,.96))}
+.equipment-card-top{display:flex;justify-content:space-between;gap:14px;margin-bottom:13px}
+.equipment-slot{color:#8f97ae;font-size:.62rem;font-weight:900;letter-spacing:.14em}
+.equipment-card h3{margin:4px 0 0;font-size:1rem;color:#f3eee6}
+.equipment-card h3 span{color:#d9b477;font-size:.75rem}
+.equipment-effect{max-width:48%;color:#aeb5c8;font-size:.68rem;line-height:1.45;text-align:right}
+.equipment-recipe{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px}
+.equipment-recipe strong,.equipment-recipe span{padding:5px 8px;border-radius:7px;background:#0d1017;color:#b8becd;font-size:.66rem}
+.equipment-recipe strong{color:#e6c58f}
+.equipment-action{width:100%;min-height:40px;border:1px solid rgba(214,174,109,.35);border-radius:9px;background:linear-gradient(180deg,#3a2b20,#19161a);color:#e6c58f;font-size:.68rem;font-weight:900;letter-spacing:.1em}
+.equipment-action:hover:not(:disabled){filter:brightness(1.15);transform:translateY(-1px)}
+.equipment-action:disabled{opacity:.38;cursor:not-allowed}
+.blacksmith-message{margin-top:14px;min-height:20px;color:#8e96ac;font-size:.72rem;text-align:center}
+@media (max-width:700px){.battle-header-actions{width:100%}.blacksmith-button{min-width:0;flex:1}.equipment-grid{grid-template-columns:1fr}.blacksmith-card{padding:20px}.equipment-card-top{flex-direction:column}.equipment-effect{max-width:none;text-align:left}}
