@@ -1117,3 +1117,15 @@ h3 {
 .character-slot.rarity-rare .slot-icon{color:#5ca9ff;box-shadow:0 0 12px rgba(92,169,255,.22)}
 .character-slot.rarity-epic .slot-icon{color:#bd72ff;box-shadow:0 0 14px rgba(189,114,255,.25)}
 .character-slot.rarity-legendary .slot-icon{color:#f0b85f;box-shadow:0 0 18px rgba(240,184,95,.3)}
+
+/* Floating combat damage feedback */
+.combatant{position:relative;overflow:visible}
+.damage-layer{position:absolute;inset:70px 8% 95px;pointer-events:none;z-index:20;overflow:visible}
+.damage-number{position:absolute;left:50%;top:45%;font-size:1.55rem;font-weight:1000;line-height:1;color:#f4f7ff;letter-spacing:.02em;text-shadow:0 3px 10px rgba(0,0,0,.9),0 0 10px rgba(255,255,255,.2);transform:translate(calc(-50% + var(--damage-x)),12px) rotate(var(--damage-rotate)) scale(.7);opacity:0;animation:damageFloat .78s cubic-bezier(.18,.75,.25,1) forwards}
+.damage-number.critical{font-size:2.55rem;color:#ff3d3d;text-shadow:0 3px 12px #000,0 0 8px #ff1818,0 0 24px rgba(255,30,30,.9);animation:criticalDamageFloat 1.05s cubic-bezier(.12,.8,.2,1) forwards}
+.combatant.damage-flash{animation:damageShake .2s ease-out}
+.combatant.critical-hit{animation:criticalShake .3s ease-out}
+@keyframes damageFloat{0%{opacity:0;transform:translate(calc(-50% + var(--damage-x)),18px) rotate(var(--damage-rotate)) scale(.65)}18%{opacity:1;transform:translate(calc(-50% + var(--damage-x)),0) rotate(var(--damage-rotate)) scale(1.08)}100%{opacity:0;transform:translate(calc(-50% + var(--damage-x)), -70px) rotate(var(--damage-rotate)) scale(.9)}}
+@keyframes criticalDamageFloat{0%{opacity:0;transform:translate(calc(-50% + var(--damage-x)),24px) rotate(var(--damage-rotate)) scale(.45)}16%{opacity:1;transform:translate(calc(-50% + var(--damage-x)),0) rotate(var(--damage-rotate)) scale(1.25)}32%{transform:translate(calc(-50% + var(--damage-x)),0) rotate(var(--damage-rotate)) scale(1)}100%{opacity:0;transform:translate(calc(-50% + var(--damage-x)), -92px) rotate(var(--damage-rotate)) scale(1.05)}}
+@keyframes damageShake{0%{transform:translateX(0)}35%{transform:translateX(-4px)}70%{transform:translateX(4px)}100%{transform:translateX(0)}}
+@keyframes criticalShake{0%{transform:translate(0) scale(1)}20%{transform:translate(-6px,1px) scale(1.015)}40%{transform:translate(6px,-1px) scale(1.02)}60%{transform:translate(-4px) scale(1.01)}100%{transform:translate(0) scale(1)}}
