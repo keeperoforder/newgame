@@ -212,16 +212,29 @@ const rarityData = {
   Legendary: { color: "#f0b85f", glow: "rgba(240,184,95,.34)" },
 };
 
+function getEquipmentUnlockWave(slotId) {
+  return ({ weapon: 1, armor: 1, helmet: 3, gloves: 5, boots: 8, ring: 12, amulet: 16 })[slotId] || 1;
+}
+function isEquipmentUnlocked(slotId, wave = game.wave) {
+  return wave >= getEquipmentUnlockWave(slotId);
+}
+function getEquipmentTierUnlockWave(tier) {
+  return 1 + ((Math.max(1, tier) - 1) * 10);
+}
 function getCraftRarity(wave = game.wave) {
-  if (wave >= 15) return "Legendary";
-  if (wave >= 10) return "Epic";
-  if (wave >= 5) return "Rare";
+  if (wave >= 61) return "Legendary";
+  if (wave >= 31) return "Epic";
+  if (wave >= 11) return "Rare";
   return "Common";
 }
-
 function getCraftItemLevel(wave = game.wave, tier = 1) {
   const maxLevel = equipmentTiers[tier]?.maxLevel || 5;
-  return Math.max(1, Math.min(maxLevel, tier === 1 ? wave : Math.max(1, wave - 9)));
+  const unlockWave = getEquipmentTierUnlockWave(tier);
+  if (wave < unlockWave) return 1;
+  return Math.max(1, Math.min(maxLevel, 1 + Math.floor((wave - unlockWave) / 2)));
+}
+function getMonsterBalanceMultiplier(wave = game.wave) {
+  return { hp: 4.25 + Math.min(2.75, wave / 40), damage: 1.35 + Math.min(0.55, wave / 180) };
 }
 
 function getEquipmentName(slot, tier) {
@@ -243,7 +256,7 @@ function getEquipmentTierCost(slot, targetTier) {
 }
 
 function getEquipmentTierForWave(wave = game.wave) {
-  return Math.max(1, Math.min(10, Math.ceil(wave / 2)));
+  return Math.max(1, Math.min(10, Math.ceil(wave / 10)));
 }
 
 function createEquipmentItem(slotId, tier = 1, level = getCraftItemLevel(), rarity = getCraftRarity()) {
@@ -567,8 +580,8 @@ function getEquipmentTotals() {
 
 function applyEquipmentStats() {
   const totals = getEquipmentTotals();
-  game.player.maxHp = 100 + ((game.level - 1) * 10) + totals.maxHp;
-  game.player.damage = 10 + ((game.level - 1) * 2) + totals.damage;
+  game.player.maxHp = 100 + ((game.level - 1) * 7) + totals.maxHp;
+  game.player.damage = 10 + ((game.level - 1) * 1.2) + totals.damage;
   game.player.attackSpeed = Math.max(350, Math.max(850, 1500 - ((game.level - 1) * 7)) - totals.attackSpeed);
   game.player.armor = totals.armor;
   game.player.critChance = 5 + totals.critChance;
@@ -633,6 +646,10 @@ function getEquipmentComparisonHtml(item) {
 }
 
 function getEquipmentAction(slot, item) {
+  if (!isEquipmentUnlocked(slot.id)) {
+    const unlockWave = getEquipmentUnlockWave(slot.id);
+    return { action: "locked", label: "UNLOCKS WAVE " + unlockWave, cost: { gold: 0, materials: {} } };
+  }
   if (!item) return { action: "craft", label: "CRAFT", cost: { gold: slot.craftGold, materials: slot.craft } };
 
   const tier = Math.max(1, Math.min(10, item.tier || 1));
@@ -653,6 +670,10 @@ function getEquipmentAction(slot, item) {
 
   if (tier < 10) {
     const targetTier = tier + 1;
+    const targetUnlockWave = getEquipmentTierUnlockWave(targetTier);
+    if (game.wave < targetUnlockWave) {
+      return { action: "locked", targetTier, label: "FORGE T" + targetTier + " · WAVE " + targetUnlockWave, cost: { gold: 0, materials: {} } };
+    }
     return {
       action: "tier",
       targetTier,
@@ -671,14 +692,16 @@ function renderEquipmentCard(slot) {
   const materialLine = Object.entries(actionData.cost.materials).map(([key, value]) => "<span>" + value + " " + formatMaterialName(key) + "</span>").join("");
   const title = item ? item.name : slot.baseName;
   const levelText = item ? " <span>T" + item.tier + " · Lv." + item.level + "</span>" : "";
-  const button = actionData.action === "max" || !canBuy ? " disabled" : "";
+  const button = actionData.action === "max" || actionData.action === "locked" || !canBuy ? " disabled" : "";
   const previewItem = item || createEquipmentItem(slot.id, 1, 1, getCraftRarity());
   const comparison = item ? "" : getEquipmentComparisonHtml(previewItem);
-  return "<article class=\"equipment-card\">" +
+  const lockedClass = actionData.action === "locked" ? " equipment-locked" : "";
+  const lockedNote = actionData.action === "locked" ? "<div class=\"equipment-lock-note\">" + actionData.label + "</div>" : "";
+  return "<article class=\"equipment-card" + lockedClass + "\">" +
     "<div class=\"equipment-preview " + getItemVisualClass(previewItem) + "\">" + getEquipmentArtSvg(slot.id, previewItem.tier) + "</div>" +
     "<div class=\"equipment-card-top\"><div><div class=\"equipment-slot\">" + slot.name + "</div><h3>" + title + levelText + "</h3></div>" +
     "<div class=\"equipment-effect\">" + (item ? equipmentEffectText(slot.id, item) : "New item · Item Lv." + previewItem.level + " · " + previewItem.rarity) + "</div></div>" +
-    comparison +
+    comparison + lockedNote +
     "<div class=\"equipment-recipe\"><strong>" + actionData.cost.gold + " Gold</strong>" + materialLine + "</div>" +
     "<button class=\"equipment-action\" data-slot=\"" + slot.id + "\" data-action=\"" + actionData.action + "\"" + button + ">" + actionData.label + "</button>" +
     "</article>";
@@ -707,6 +730,10 @@ function closeBlacksmithPanel() {
 
 function craftOrUpgradeEquipment(slotId, action) {
   const slot = equipmentSlots.find((entry) => entry.id === slotId);
+  if (!slot || !isEquipmentUnlocked(slotId)) {
+    ui.blacksmithMessage.textContent = "This equipment slot is still locked.";
+    return;
+  }
   const item = game.equipment[slotId];
   const actionData = getEquipmentAction(slot, item);
   if (actionData.action !== action || !canAfford(actionData.cost)) {
@@ -768,7 +795,8 @@ function closeStatsPanel() {
 
 function getXpToNextLevel(level = game.level) {
   if (level >= 100) return 0;
-  return 100 + ((level - 1) * 35) + ((level - 1) * (level - 1) * 5);
+  const step = level - 1;
+  return 150 + (step * 55) + (step * step * 8);
 }
 
 function getTotalXpForLevel(level) {
@@ -1247,9 +1275,10 @@ function selectSlimeWaveVisual() {
 
 function applyWaveData() {
   const wave = getCurrentSlime();
-  game.monster.maxHp = wave.maxHp;
-  game.monster.hp = wave.maxHp;
-  game.monster.damage = wave.damage;
+  const balance = getMonsterBalanceMultiplier(game.wave);
+  game.monster.maxHp = Math.round(wave.maxHp * balance.hp);
+  game.monster.hp = game.monster.maxHp;
+  game.monster.damage = Math.max(1, Math.round(wave.damage * balance.damage));
   game.monster.attackSpeed = wave.attackSpeed;
 
   ui.waveTitle.textContent = `WAVE ${game.wave}`;
@@ -1383,18 +1412,20 @@ function finishVictory() {
   game.battleActive = false;
   clearBattleTimers();
 
-  const goldReward = Math.round((10 + (game.wave * 2)) * (1 + ((game.player.goldGain || 0) / 100)));
-  const xpReward = Math.round((5 + game.wave) * (1 + ((game.player.xpGain || 0) / 100)));
+  const goldReward = Math.max(1, Math.round((7 + (game.wave * 1.35)) * (1 + ((game.player.goldGain || 0) / 100))));
+  const xpReward = Math.max(1, Math.round((4 + (game.wave * 0.7)) * (1 + ((game.player.xpGain || 0) / 100))));
 
   game.gold += goldReward;
   const materialBefore = { ...game.materials };
   addMaterialsForWave(game.wave);
 
   let droppedItem = null;
-  const dropChance = game.wave === slimeWaves.length ? 1 : Math.min(0.45, 0.08 + game.wave * 0.018);
+  const dropChance = game.wave === slimeWaves.length ? 1 : Math.min(0.25, 0.05 + game.wave * 0.006);
   if (Math.random() < dropChance) {
-    const slot = equipmentSlots[Math.floor(Math.random() * equipmentSlots.length)];
-    const tier = Math.random() < Math.min(0.75, 0.08 + game.wave * 0.035) ? getEquipmentTierForWave(game.wave) : 1;
+    const unlockedSlots = equipmentSlots.filter((entry) => isEquipmentUnlocked(entry.id, game.wave));
+    const slot = unlockedSlots[Math.floor(Math.random() * unlockedSlots.length)] || equipmentSlots[0];
+    const currentTier = getEquipmentTierForWave(game.wave);
+    const tier = Math.random() < Math.min(0.65, 0.06 + game.wave * 0.006) ? currentTier : 1;
     const rarity = game.wave === slimeWaves.length ? "Legendary" : getCraftRarity(game.wave);
     droppedItem = createEquipmentItem(slot.id, tier, getCraftItemLevel(game.wave, tier), rarity);
     game.inventory.push(droppedItem);
@@ -1448,7 +1479,8 @@ function finishVictory() {
     ui.nextWaveIcon.textContent = String(game.wave + 1);
     ui.nextWaveEyebrow.textContent = "NEXT BATTLE";
     ui.nextWaveTitle.textContent = `WAVE ${game.wave + 1}`;
-    ui.nextWaveDescription.textContent = `${next.name} · HP ${next.maxHp} · Damage ${next.damage}`;
+    const nextBalance = getMonsterBalanceMultiplier(game.wave + 1);
+    ui.nextWaveDescription.textContent = next.name + " · HP " + Math.round(next.maxHp * nextBalance.hp) + " · Damage " + Math.round(next.damage * nextBalance.damage);
   }
 
   if (game.farmingWave) {
