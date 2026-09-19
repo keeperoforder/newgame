@@ -314,7 +314,10 @@
               </div>
               <div class="xp-bar"><div id="player-xp-bar" class="xp-fill"></div></div>
             </div>
-            <button id="stats-button" class="stats-button" type="button">STATS</button>
+            <div class="battle-header-actions">
+              <button id="blacksmith-button" class="stats-button blacksmith-button" type="button">BLACKSMITH</button>
+              <button id="stats-button" class="stats-button" type="button">STATS</button>
+            </div>
           </div>
         </div>
 
@@ -546,6 +549,21 @@
         <div class="combat-log" id="combat-log">
           <p>Battle started...</p>
         </div>
+      </div>
+    </section>
+
+    <section id="blacksmith-panel" class="stats-overlay blacksmith-overlay" aria-hidden="true">
+      <div class="blacksmith-card" role="dialog" aria-modal="true" aria-labelledby="blacksmith-title">
+        <div class="stats-card-header">
+          <div>
+            <div class="eyebrow">WARDEN · FORGE</div>
+            <h2 id="blacksmith-title">BLACKSMITH</h2>
+          </div>
+          <button id="blacksmith-close" class="stats-close" type="button" aria-label="Close blacksmith">×</button>
+        </div>
+        <div class="blacksmith-resources" id="blacksmith-resources"></div>
+        <div class="equipment-grid" id="equipment-grid"></div>
+        <div class="blacksmith-message" id="blacksmith-message">Select equipment to craft or upgrade.</div>
       </div>
     </section>
 
