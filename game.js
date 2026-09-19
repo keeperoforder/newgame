@@ -1322,7 +1322,7 @@ function applyWaveData() {
     enemySide.classList.toggle("boss-enemy", wave.isBoss);
   }
   ui.monsterName.textContent = wave.name;
-  ui.monsterDamage.textContent = String(wave.damage);
+  ui.monsterDamage.textContent = String(game.monster.damage);
   ui.monsterAttackSpeed.textContent = `${(wave.attackSpeed / 1000).toFixed(1)}s`;
   selectSlimeWaveVisual();
 }
