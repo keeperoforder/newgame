@@ -68,6 +68,7 @@ const game = {
   monsterTimer: null,
   battleActive: false,
   inventoryOpen: false,
+  characterOpen: false,
 };
 
 const ui = {
@@ -342,10 +343,15 @@ function updateCharacterUi() {
 
 function openCharacterScreen() {
   updateCharacterUi();
-  showScreen(screens.character);
+  game.characterOpen = true;
+  screens.character.classList.add("character-overlay-active");
+  screens.character.setAttribute("aria-hidden", "false");
 }
 
 function closeCharacterScreen() {
+  game.characterOpen = false;
+  screens.character.classList.remove("character-overlay-active");
+  screens.character.setAttribute("aria-hidden", "true");
   showScreen(screens.battle);
 }
 
@@ -1349,7 +1355,7 @@ function monsterAttack() {
 }
 
 function startBattle() {
-  if (!game.inventoryOpen) {
+  if (!game.inventoryOpen && !game.characterOpen) {
     showScreen(screens.battle);
   }
   resetBattle();
