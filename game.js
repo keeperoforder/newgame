@@ -4,6 +4,8 @@ const screens = {
   quit: document.getElementById("quit-confirmation"),
   battle: document.getElementById("battle-screen"),
   victory: document.getElementById("victory-screen"),
+  character: document.getElementById("character-screen"),
+  inventory: document.getElementById("inventory-screen"),
   defeat: document.getElementById("defeat-screen"),
   wave2: document.getElementById("wave2-screen"),
   thanks: document.getElementById("thanks-screen"),
@@ -43,6 +45,7 @@ const game = {
   level: 1,
   materials: { iron: 0, leather: 0, wood: 0, steel: 0, magicDust: 0, rare: 0 },
   equipment: { weapon: null, helmet: null, armor: null, gloves: null, boots: null, ring: null, amulet: null },
+  inventory: [],
   wave: 1,
   farmingWave: false,
   nextWaveTarget: 1,
@@ -75,6 +78,20 @@ const ui = {
   status: document.getElementById("battle-status"),
   nextWaveButton: document.getElementById("next-wave-button"),
   autoWaveText: document.getElementById("auto-wave-text"),
+  characterButton: document.getElementById("character-button"),
+  characterScreen: document.getElementById("character-screen"),
+  characterClose: document.getElementById("character-close"),
+  characterBack: document.getElementById("character-back"),
+  characterPower: document.getElementById("character-power"),
+  equippedAura: document.getElementById("equipped-aura"),
+  equipmentSlotsLeft: document.getElementById("equipment-slots-left"),
+  equipmentSlotsRight: document.getElementById("equipment-slots-right"),
+  openInventory: document.getElementById("open-inventory"),
+  inventoryScreen: document.getElementById("inventory-screen"),
+  inventoryClose: document.getElementById("inventory-close"),
+  inventoryGrid: document.getElementById("inventory-grid"),
+  inventoryGold: document.getElementById("inventory-gold"),
+  inventoryMessage: document.getElementById("inventory-message"),
   blacksmithButton: document.getElementById("blacksmith-button"),
   blacksmithPanel: document.getElementById("blacksmith-panel"),
   blacksmithClose: document.getElementById("blacksmith-close"),
@@ -170,6 +187,161 @@ function setSvgToggle(labelId, toggleId, enabled) {
 function updateGold() {
   ui.gold.textContent = String(game.gold);
   updateBlacksmithUi();
+  updateCharacterUi();
+  updateInventoryUi();
+}
+
+const rarityData = {
+  Common: { color: "#aeb5c0", glow: "rgba(174,181,192,.15)" },
+  Rare: { color: "#5ca9ff", glow: "rgba(92,169,255,.25)" },
+  Epic: { color: "#bd72ff", glow: "rgba(189,114,255,.28)" },
+  Legendary: { color: "#f0b85f", glow: "rgba(240,184,95,.34)" },
+};
+
+function createEquipmentItem(slotId, tier = 1, level = 1, rarity = "Common") {
+  const slot = equipmentSlots.find((entry) => entry.id === slotId);
+  const names = { 1: slot.baseName, 2: slot.tier2Name };
+  return {
+    uid: "item-" + Date.now() + "-" + Math.random().toString(36).slice(2, 8),
+    slotId, tier, level, rarity, name: names[tier],
+  };
+}
+
+function getItemVisualClass(item) {
+  return item ? "rarity-" + item.rarity.toLowerCase() : "";
+}
+
+function addItemToInventory(item) {
+  game.inventory.push(item);
+}
+
+function removeInventoryItem(uid) {
+  game.inventory = game.inventory.filter((item) => item.uid !== uid);
+}
+
+function getEquippedItem(slotId) {
+  return game.equipment[slotId];
+}
+
+function renderCharacterSlot(slotId) {
+  const slot = equipmentSlots.find((entry) => entry.id === slotId);
+  const item = getEquippedItem(slotId);
+  return "<button class=\"character-slot " + (item ? getItemVisualClass(item) : "empty") + "\" data-slot=\"" + slotId + "\">" +
+    "<span class=\"slot-icon\">" + (item ? getSlotIcon(slotId) : "+") + "</span>" +
+    "<span><strong>" + slot.name + "</strong><small>" + (item ? item.name + " · Lv." + item.level : "EMPTY") + "</small></span></button>";
+}
+
+function getSlotIcon(slotId) {
+  return ({ helmet: "◈", armor: "◆", gloves: "◇", boots: "◀▶", weapon: "⚔", ring: "○", amulet: "✦" })[slotId] || "◆";
+}
+
+function updateCharacterVisuals() {
+  const equipped = Object.fromEntries(Object.entries(game.equipment).map(([key, item]) => [key, Boolean(item)]));
+  ["helmet","armor","weapon","gloves","boots","ring","amulet"].forEach((slot) => {
+    const el = document.getElementById("visual-" + slot);
+    if (el) {
+      el.style.opacity = equipped[slot] ? "1" : "0";
+      el.style.filter = equipped[slot] ? "drop-shadow(0 0 8px " + rarityData[game.equipment[slot].rarity].color + ")" : "";
+    }
+  });
+  ui.equippedAura.className = "equipped-aura " + Object.values(game.equipment).filter(Boolean).map((item) => item.rarity.toLowerCase()).join(" ");
+  const power = Math.round(game.player.damage + game.player.maxHp / 10 + game.player.armor * 5 + game.player.critChance * 2);
+  ui.characterPower.textContent = "POWER " + power;
+}
+
+function updateCharacterUi() {
+  if (!ui.characterScreen) return;
+  const slots = equipmentSlots.map((slot) => renderCharacterSlot(slot.id));
+  ui.equipmentSlotsLeft.innerHTML = slots.slice(0, 4).join("");
+  ui.equipmentSlotsRight.innerHTML = slots.slice(4).join("");
+  ui.equipmentSlotsLeft.querySelectorAll(".character-slot").forEach((button) => button.addEventListener("click", () => {
+    if (game.equipment[button.dataset.slot]) {
+      ui.characterPower.textContent = "POWER " + Math.round(game.player.damage);
+    }
+  }));
+  ui.equipmentSlotsRight.querySelectorAll(".character-slot").forEach((button) => button.addEventListener("click", () => {
+    if (game.equipment[button.dataset.slot]) ui.characterPower.textContent = "POWER " + Math.round(game.player.damage);
+  }));
+  updateCharacterVisuals();
+}
+
+function openCharacterScreen() {
+  updateCharacterUi();
+  showScreen(screens.character);
+}
+
+function closeCharacterScreen() {
+  showScreen(screens.battle);
+}
+
+function renderInventoryItem(item) {
+  const slot = equipmentSlots.find((entry) => entry.id === item.slotId);
+  const rarity = rarityData[item.rarity];
+  return "<article class=\"inventory-item " + getItemVisualClass(item) + "\" style=\"--rarity:" + rarity.color + ";--rarity-glow:" + rarity.glow + "\">" +
+    "<div class=\"inventory-item-icon\">" + getSlotIcon(item.slotId) + "</div>" +
+    "<div class=\"inventory-item-info\"><div class=\"inventory-rarity\">" + item.rarity + "</div><h3>" + item.name + " <span>Lv." + item.level + "</span></h3><p>" + slot.effect + "</p><div>" + equipmentEffectText(item.slotId, item) + "</div></div>" +
+    "<div class=\"inventory-actions\"><button data-item="" + item.uid + "\" data-action=\"equip\">EQUIP</button><button data-item="" + item.uid + "\" data-action=\"sell\">SELL</button></div></article>";
+}
+
+function updateInventoryUi() {
+  if (!ui.inventoryGrid) return;
+  ui.inventoryGold.textContent = "GOLD " + game.gold + " · " + game.inventory.length + " ITEMS";
+  ui.inventoryGrid.innerHTML = game.inventory.length ? game.inventory.map(renderInventoryItem).join("") : "<div class=\"inventory-empty\">Inventory is empty.</div>";
+  ui.inventoryGrid.querySelectorAll("[data-action]").forEach((button) => button.addEventListener("click", () => {
+    const item = game.inventory.find((entry) => entry.uid === button.dataset.item);
+    if (!item) return;
+    if (button.dataset.action === "equip") equipInventoryItem(item);
+    if (button.dataset.action === "sell") sellInventoryItem(item);
+  }));
+}
+
+function equipInventoryItem(item) {
+  const previous = game.equipment[item.slotId];
+  if (previous) addItemToInventory(previous);
+  removeInventoryItem(item.uid);
+  game.equipment[item.slotId] = item;
+  applyEquipmentStats();
+  game.player.hp = Math.min(game.player.maxHp, game.player.hp + 1);
+  updateProgressionUi();
+  updateBattleUi();
+  updateCharacterUi();
+  updateInventoryUi();
+  saveGame();
+}
+
+function unequipItem(slotId) {
+  const item = game.equipment[slotId];
+  if (!item) return;
+  addItemToInventory(item);
+  game.equipment[slotId] = null;
+  applyEquipmentStats();
+  game.player.hp = Math.min(game.player.maxHp, game.player.hp);
+  updateProgressionUi();
+  updateBattleUi();
+  updateCharacterUi();
+  updateInventoryUi();
+  saveGame();
+}
+
+function sellInventoryItem(item) {
+  const value = Math.max(5, Math.round((equipmentSlots.find((entry) => entry.id === item.slotId).craftGold * item.level * (item.tier === 2 ? 2.5 : 1)) * ({Common:1,Rare:1.5,Epic:2.5,Legendary:4}[item.rarity] || 1) * .35));
+  removeInventoryItem(item.uid);
+  game.gold += value;
+  ui.inventoryMessage.textContent = item.name + " sold for " + value + " Gold.";
+  updateGold();
+  saveGame();
+}
+
+function craftAnimation(item, done) {
+  const overlay = document.createElement("div");
+  overlay.className = "craft-animation";
+  overlay.innerHTML = "<div class=\"craft-core\"><div class=\"craft-particles\"></div><div class=\"craft-icon\">" + getSlotIcon(item.slotId) + "</div><strong>" + item.name + "</strong><span>" + item.rarity + " · Lv." + item.level + "</span></div>";
+  document.body.appendChild(overlay);
+  requestAnimationFrame(() => overlay.classList.add("active"));
+  setTimeout(() => {
+    overlay.classList.remove("active");
+    setTimeout(() => { overlay.remove(); done(); }, 260);
+  }, 1250);
 }
 
 function formatMaterialName(id) {
@@ -308,11 +480,22 @@ function craftOrUpgradeEquipment(slotId, action) {
 
   payCost(actionData.cost);
   if (!item) {
-    game.equipment[slotId] = { tier: 1, level: 1, name: slot.baseName };
-    ui.blacksmithMessage.textContent = slot.baseName + " crafted.";
+    const newItem = createEquipmentItem(slotId, 1, 1, game.wave >= 8 ? "Rare" : "Common");
+    craftAnimation(newItem, () => {
+      addItemToInventory(newItem);
+      ui.blacksmithMessage.textContent = newItem.name + " crafted and added to Inventory.";
+      updateInventoryUi();
+      updateBlacksmithUi();
+      saveGame();
+    });
+    return;
   } else if (action === "tier2") {
-    game.equipment[slotId] = { tier: 2, level: 1, name: slot.tier2Name };
-    ui.blacksmithMessage.textContent = slot.tier2Name + " forged.";
+    const newItem = createEquipmentItem(slotId, 2, 1, game.wave >= 10 ? "Legendary" : "Epic");
+    const oldHp = game.player.hp;
+    game.inventory.push(newItem);
+    applyEquipmentStats();
+    game.player.hp = Math.min(game.player.maxHp, oldHp);
+    ui.blacksmithMessage.textContent = newItem.name + " forged and added to Inventory.";
   } else {
     item.level += 1;
     ui.blacksmithMessage.textContent = item.name + " upgraded to Lv." + item.level + ".";
@@ -324,6 +507,8 @@ function craftOrUpgradeEquipment(slotId, action) {
   updateProgressionUi();
   updateBattleUi();
   updateGold();
+  updateInventoryUi();
+  updateCharacterUi();
   saveGame();
   updateBlacksmithUi();
 }
@@ -628,6 +813,11 @@ function setToggle(button, enabled) {
 activateSvgButton(document.getElementById("svg-start-game"), () => {
   startGameFromMenu();
 });
+ui.characterButton.addEventListener("click", openCharacterScreen);
+ui.characterClose.addEventListener("click", closeCharacterScreen);
+ui.characterBack.addEventListener("click", closeCharacterScreen);
+ui.openInventory.addEventListener("click", () => showScreen(screens.inventory));
+ui.inventoryClose.addEventListener("click", () => showScreen(screens.character));
 ui.blacksmithButton.addEventListener("click", openBlacksmithPanel);
 ui.blacksmithClose.addEventListener("click", closeBlacksmithPanel);
 ui.blacksmithPanel.addEventListener("click", (event) => {
@@ -731,6 +921,7 @@ function saveGame() {
     level: game.level,
     materials: { ...game.materials },
     equipment: JSON.parse(JSON.stringify(game.equipment)),
+    inventory: JSON.parse(JSON.stringify(game.inventory)),
     wave: game.wave,
     farmingWave: game.farmingWave,
     nextWaveTarget: game.nextWaveTarget,
@@ -771,6 +962,7 @@ function loadGame() {
         if (item && Number.isFinite(item.tier) && Number.isFinite(item.level)) game.equipment[key] = item;
       });
     }
+    if (Array.isArray(saveData.inventory)) game.inventory = saveData.inventory;
     game.level = Math.max(1, Math.min(100, Number.isFinite(saveData.level) ? saveData.level : 1));
     game.wave = Math.max(1, Math.min(slimeWaves.length, Number.isFinite(saveData.wave) ? saveData.wave : 1));
     game.farmingWave = saveData.farmingWave === true;
