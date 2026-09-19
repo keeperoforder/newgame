@@ -68,6 +68,7 @@ const game = {
   battleActive: false,
   inventoryOpen: false,
   characterOpen: false,
+  inventoryFromCharacter: false,
 };
 
 const ui = {
@@ -400,20 +401,36 @@ function closeCharacterScreen() {
 
 function openInventoryOverlay() {
   updateInventoryUi();
+  game.inventoryFromCharacter = game.characterOpen === true;
+
+  if (game.inventoryFromCharacter) {
+    game.characterOpen = false;
+    screens.character.classList.remove("character-overlay-active");
+    screens.character.setAttribute("aria-hidden", "true");
+  }
+
   game.inventoryOpen = true;
   ui.inventoryScreen.classList.add("inventory-overlay-active");
   ui.inventoryScreen.setAttribute("aria-hidden", "false");
 }
 
 function closeInventoryOverlay() {
+  const returnToCharacter = game.inventoryFromCharacter;
+
+  game.inventoryFromCharacter = false;
   game.inventoryOpen = false;
   ui.inventoryScreen.classList.remove("inventory-overlay-active");
   ui.inventoryScreen.setAttribute("aria-hidden", "true");
-  if (game.battleActive || game.farmingWave || game.wave >= 1) {
-    showScreen(screens.battle);
-  } else {
-    showScreen(screens.character);
+
+  if (returnToCharacter) {
+    game.characterOpen = true;
+    screens.character.classList.add("character-overlay-active");
+    screens.character.setAttribute("aria-hidden", "false");
+    updateCharacterUi();
+    return;
   }
+
+  showScreen(screens.battle);
 }
 
 function renderInventoryItem(item) {
