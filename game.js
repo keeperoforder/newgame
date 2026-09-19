@@ -2098,11 +2098,12 @@ function applyLegacyBonuses() {
   const oldGet = getRebirthBonus;
   getRebirthBonus = function() {
     const base = oldGet ? oldGet() : {hp:game.rebirths*8,damage:game.rebirths*4,xp:game.rebirths*5,gold:game.rebirths*5};
+    const sanctuary = legacyState.sanctuary || { forge:0, hall:0, library:0, treasury:0 };
     return {
-      hp: base.hp + legacyState.ascension.vitality * 5,
+      hp: base.hp + legacyState.ascension.vitality * 5 + sanctuary.hall * 5,
       damage: base.damage + legacyState.ascension.might * 3,
-      xp: base.xp + legacyState.ascension.insight * 4,
-      gold: base.gold + legacyState.ascension.fortune * 4
+      xp: base.xp + legacyState.ascension.insight * 4 + sanctuary.library * 4,
+      gold: base.gold + legacyState.ascension.fortune * 4 + sanctuary.treasury * 4
     };
   };
   applyEquipmentStats();
@@ -2124,7 +2125,6 @@ function buyAscension(type) {
 }
 
 function sanctuaryUpgradeCost(type) {
-  const levels = { forge: 0, hall: 0, library: 0, treasury: 0 };
   const level = legacyState.sanctuary?.[type] || 0;
   return 2 + level * 2;
 }
@@ -2215,7 +2215,7 @@ function renderLegacyAchievements(root) {
 function renderLegacySanctuary(root) {
   if (!legacyState.sanctuary) legacyState.sanctuary={forge:0,hall:0,library:0,treasury:0};
   const defs = [
-    ["forge","FORGE","Your sanctuary smithy grows with every cycle.","+2% crafting efficiency per level."],
+    ["forge","FORGE","A stronger forge wastes less material on every craft.","-2% Gold and material cost per level."] ,
     ["hall","WARDEN HALL","Permanent training increases durability.","+5% HP from Rebirth power per level."],
     ["library","ARCHIVE","Ancient records accelerate learning.","+4% XP gain per level."],
     ["treasury","TREASURY","A growing vault improves future runs.","+4% Gold gain per level."]
@@ -2264,6 +2264,20 @@ if (!legacyState.sanctuary) legacyState.sanctuary={forge:0,hall:0,library:0,trea
 applyLegacyBonuses();
 checkAchievements();
 
+const originalGetEquipmentAction = getEquipmentAction;
+getEquipmentAction = function(slot, item) {
+  const result = originalGetEquipmentAction.apply(this, arguments);
+  const forgeLevel = legacyState.sanctuary?.forge || 0;
+  if (result?.cost && forgeLevel > 0 && result.action !== "locked" && result.action !== "max") {
+    const factor = Math.max(0.5, 1 - forgeLevel * 0.02);
+    result.cost = {
+      gold: Math.max(0, Math.round(result.cost.gold * factor)),
+      materials: Object.fromEntries(Object.entries(result.cost.materials || {}).map(([key,value]) => [key, Math.max(1, Math.ceil(value * factor))]))
+    };
+  }
+  return result;
+};
+
 const originalFinishVictory = finishVictory;
 finishVictory = function() {
   const wave = game.wave;
@@ -2275,6 +2289,7 @@ finishVictory = function() {
   if (getCurrentSlime()?.isBoss) {
     const bossBonus = 2 + Math.floor(wave / 20);
     legacyState.essence += bossBonus;
+    game.materials.rare += bossBonus;
     window.setTimeout(()=>showResourceDrop("rare",bossBonus),500);
   }
   const before=legacyState.highestWave;
@@ -2292,12 +2307,14 @@ finishVictory = function() {
 
 const originalCraftOrUpgrade = craftOrUpgradeEquipment;
 craftOrUpgradeEquipment = function(slotId,action) {
-  const before=game.equipment[slotId];
-  const beforeCount=game.inventory.length;
+  const slot = equipmentSlots.find(entry => entry.id === slotId);
+  const actionData = slot ? getEquipmentAction(slot, game.equipment[slotId]) : null;
+  const canCraft = action === "craft" && actionData?.action === "craft" && canAfford(actionData.cost);
   const result=originalCraftOrUpgrade.apply(this,arguments);
-  if (action==="craft" && !before && game.equipment[slotId]) {
+  if (canCraft) {
     legacyState.craftedItems += 1;
-    if (game.equipment[slotId].rarity==="Legendary") legacyState.legendaryCrafts += 1;
+    const craftedRarity = getCraftRarity();
+    if (craftedRarity === "Legendary") legacyState.legendaryCrafts += 1;
     checkAchievements(); saveLegacyState();
   }
   return result;
