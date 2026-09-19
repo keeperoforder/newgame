@@ -239,10 +239,14 @@ function getCraftItemLevel(wave = game.wave, tier = 1) {
   return Math.max(1, Math.min(maxLevel, 1 + Math.floor((wave - unlockWave) / 2)));
 }
 function getMonsterBalanceMultiplier(wave = game.wave) {
-  return { hp: 3.25 + Math.min(1.5, wave / 40), damage: 1.25 + Math.min(0.4, wave / 250) };
+  const rebirthScale = Math.max(0, game.rebirths || 0);
+  return {
+    hp: (2.6 + Math.min(1.0, wave / 100)) * (1 + rebirthScale * 0.08),
+    damage: (0.018 + Math.min(0.012, wave / 500)) * (1 + rebirthScale * 0.04),
+  };
 }
 function getRebirthBonus() {
-  return { hp: game.rebirths * 10, damage: game.rebirths * 5, xp: game.rebirths * 5, gold: game.rebirths * 5 };
+  return { hp: game.rebirths * 8, damage: game.rebirths * 4, xp: game.rebirths * 5, gold: game.rebirths * 5 };
 }
 function updateRebirthUi() {
   const b = getRebirthBonus();
@@ -271,13 +275,13 @@ function getEquipmentName(slot, tier) {
 function getEquipmentTierRecipe(slot, tier) {
   if (tier <= 1) return slot.craft;
   const source = slot.tier2 || slot.craft;
-  const scale = 1 + ((tier - 2) * 0.55);
+  const scale = 1 + ((tier - 2) * 0.45);
   return Object.fromEntries(Object.entries(source).map(([key, value]) => [key, Math.max(1, Math.ceil(value * scale))]));
 }
 
 function getEquipmentTierCost(slot, targetTier) {
   const tier = Math.max(2, Math.min(10, targetTier));
-  const gold = Math.round(slot.tier2Gold * Math.pow(1.55, tier - 2));
+  const gold = Math.round(slot.tier2Gold * Math.pow(1.28, tier - 2));
   return { gold, materials: getEquipmentTierRecipe(slot, tier) };
 }
 
@@ -823,7 +827,7 @@ function closeStatsPanel() {
 function getXpToNextLevel(level = game.level) {
   if (level >= 100) return 0;
   const step = level - 1;
-  return 150 + (step * 55) + (step * step * 8);
+  return 60 + (step * 20) + (step * step * 2);
 }
 
 function getTotalXpForLevel(level) {
@@ -1395,7 +1399,15 @@ function playerAttack() {
 function monsterAttack() {
   if (!game.battleActive) return;
 
-  const damage = Math.max(1, Math.round(game.monster.damage));
+  const dodged = Math.random() * 100 < Math.min(35, game.player.dodge || 0);
+  if (dodged) {
+    showDamageNumber("player", 0, false);
+    writeLog("Warden dodged the attack.");
+    return;
+  }
+
+  const armorReduction = 100 / (100 + Math.max(0, game.player.armor || 0));
+  const damage = Math.max(1, Math.round(game.monster.damage * armorReduction));
   const tone = combatToneForZone(getCurrentSlime().zone);
   triggerCombatAnimation("enemy", "attack");
   triggerCombatAnimation("player", "hit");
@@ -1422,10 +1434,10 @@ function startBattle() {
 
 function addMaterialsForWave(wave) {
   const commonAmount = 1 + Math.floor(Math.random() * 3);
-  game.materials.iron += commonAmount;
-  game.materials.leather += commonAmount;
-  game.materials.wood += commonAmount;
-  if (wave >= 4) game.materials.steel += 1 + Math.floor(Math.random() * (wave >= 10 ? 3 : 2));
+  game.materials.iron += commonAmount + (wave >= 20 ? 1 : 0);
+  game.materials.leather += commonAmount + (wave >= 20 ? 1 : 0);
+  game.materials.wood += commonAmount + (wave >= 20 ? 1 : 0);
+  if (wave >= 4) game.materials.steel += 1 + Math.floor(Math.random() * (wave >= 20 ? 4 : 3));
   if (wave >= 6) game.materials.magicDust += Math.random() < Math.min(0.95, 0.35 + wave * 0.035) ? 1 + (wave >= 15 && Math.random() < 0.35 ? 1 : 0) : 0;
   if (wave >= 10) game.materials.rare += Math.random() < Math.min(0.65, 0.15 + (wave - 10) * 0.035) ? 1 : 0;
   if (wave === slimeWaves.length) {
@@ -1439,8 +1451,8 @@ function finishVictory() {
   game.battleActive = false;
   clearBattleTimers();
 
-  const goldReward = Math.max(1, Math.round((7 + (game.wave * 1.35)) * (1 + ((game.player.goldGain || 0) / 100))));
-  const xpReward = Math.max(1, Math.round((4 + (game.wave * 0.7)) * (1 + ((game.player.xpGain || 0) / 100))));
+  const goldReward = Math.max(1, Math.round((12 + (game.wave * 2)) * (1 + ((game.player.goldGain || 0) / 100))));
+  const xpReward = Math.max(1, Math.round((10 + (game.wave * 1.4)) * (1 + ((game.player.xpGain || 0) / 100))));
 
   game.gold += goldReward;
   const materialBefore = { ...game.materials };
