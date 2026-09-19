@@ -93,6 +93,9 @@ const ui = {
   statsMagicResist: document.getElementById("stats-magic-resist"),
   log: document.getElementById("combat-log"),
   victoryEyebrow: document.getElementById("victory-eyebrow"),
+  victoryGoldReward: document.getElementById("victory-gold-reward"),
+  victoryXpReward: document.getElementById("victory-xp-reward"),
+  victoryMaterialReward: document.getElementById("victory-material-reward"),
   continueButton: document.getElementById("continue-game"),
   nextWaveIcon: document.getElementById("next-wave-icon"),
   nextWaveEyebrow: document.getElementById("next-wave-eyebrow"),
@@ -535,11 +538,20 @@ function finishVictory() {
   const xpReward = Math.round((5 + game.wave) * (1 + ((game.player.xpGain || 0) / 100)));
 
   game.gold += goldReward;
+  const materialBefore = { ...game.materials };
   addMaterialsForWave(game.wave);
+  const materialDrops = Object.entries(game.materials)
+    .map(([key, value]) => [key, value - materialBefore[key]])
+    .filter(([, value]) => value > 0);
   addExperience(xpReward);
   updateGold();
   updateProgressionUi();
-  writeLog(waveLabel() + " defeated. +" + goldReward + " Gold · +" + xpReward + " XP.");
+  ui.victoryGoldReward.textContent = "Gold +" + goldReward;
+  ui.victoryXpReward.textContent = "EXP +" + xpReward;
+  ui.victoryMaterialReward.textContent = materialDrops.length
+    ? materialDrops.map(([key, value]) => formatMaterialName(key) + " +" + value).join(" · ")
+    : "Materials +0";
+  writeLog(waveLabel() + " defeated. +" + goldReward + " Gold · +" + xpReward + " XP · " + (materialDrops.length ? materialDrops.map(([key, value]) => formatMaterialName(key) + " +" + value).join(" · ") : "no materials") + ".");
   saveGame();
   ui.status.textContent = "VICTORY";
 
