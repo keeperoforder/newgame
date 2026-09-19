@@ -1014,7 +1014,7 @@ function finishVictory() {
     .map(([key, value]) => [key, value - materialBefore[key]])
     .filter(([, value]) => value > 0);
   materialDrops.forEach(([key, value], index) => {
-    window.setTimeout(() => showResourceDrop(key, value), index * 120);
+    window.setTimeout(() => showResourceDrop(key, value), index * 70);
   });
   addExperience(xpReward);
   updateGold();
