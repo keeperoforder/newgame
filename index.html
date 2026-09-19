@@ -314,6 +314,7 @@
               </div>
               <div class="xp-bar"><div id="player-xp-bar" class="xp-fill"></div></div>
             </div>
+            <button id="stats-button" class="stats-button" type="button">STATS</button>
           </div>
         </div>
 
@@ -544,6 +545,27 @@
 
         <div class="combat-log" id="combat-log">
           <p>Battle started...</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="stats-panel" class="stats-overlay" aria-hidden="true">
+      <div class="stats-card" role="dialog" aria-modal="true" aria-labelledby="stats-title">
+        <div class="stats-card-header">
+          <div>
+            <div class="eyebrow">WARDEN · CHARACTER</div>
+            <h2 id="stats-title">STATS</h2>
+          </div>
+          <button id="stats-close" class="stats-close" type="button" aria-label="Close stats">×</button>
+        </div>
+        <div class="stats-grid">
+          <div class="character-stat"><span>HP</span><strong id="stats-hp">100</strong></div>
+          <div class="character-stat"><span>DAMAGE</span><strong id="stats-damage">10</strong></div>
+          <div class="character-stat"><span>ATTACK SPEED</span><strong id="stats-attack-speed">1.50s</strong></div>
+          <div class="character-stat"><span>CRIT CHANCE</span><strong id="stats-crit-chance">5%</strong></div>
+          <div class="character-stat"><span>CRIT DAMAGE</span><strong id="stats-crit-damage">150%</strong></div>
+          <div class="character-stat"><span>ARMOR</span><strong id="stats-armor">0</strong></div>
+          <div class="character-stat"><span>MAGIC RESIST</span><strong id="stats-magic-resist">0</strong></div>
         </div>
       </div>
     </section>
