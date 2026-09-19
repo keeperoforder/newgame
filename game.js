@@ -304,7 +304,7 @@ function finishVictory() {
   ui.victoryEyebrow.textContent = game.wave === slimeWaves.length
     ? "ALL 10 WAVES CLEARED"
     : `WAVE ${game.wave} COMPLETE`;
-  ui.continueButton.textContent = game.wave === slimeWaves.length ? "BACK TO MENU" : "NEXT WAVE";
+  ui.continueButton.textContent = "BACK TO MENU";
 
   if (game.wave < slimeWaves.length) {
     const next = slimeWaves[game.wave];
@@ -312,6 +312,17 @@ function finishVictory() {
     ui.nextWaveEyebrow.textContent = "NEXT BATTLE";
     ui.nextWaveTitle.textContent = `WAVE ${game.wave + 1}`;
     ui.nextWaveDescription.textContent = `${next.name} · HP ${next.maxHp} · Damage ${next.damage}`;
+  }
+
+  if (game.wave < slimeWaves.length) {
+    ui.status.textContent = "VICTORY · NEXT WAVE";
+    writeLog(waveLabel() + " cleared. Next wave starting automatically...");
+    window.setTimeout(() => {
+      if (game.battleActive || game.wave >= slimeWaves.length) return;
+      game.wave += 1;
+      startBattle();
+    }, 1400);
+    return;
   }
 
   showScreen(screens.victory);
@@ -377,15 +388,9 @@ document.getElementById("back-to-menu-from-defeat").addEventListener("click", ()
 });
 
 document.getElementById("continue-game").addEventListener("click", () => {
-  if (game.wave >= slimeWaves.length) {
-    game.wave = 1;
-    closeMenuOverlayViews();
-    showScreen(screens.menu);
-    return;
-  }
-
-  game.wave += 1;
-  startBattle();
+  game.wave = 1;
+  closeMenuOverlayViews();
+  showScreen(screens.menu);
 });
 
 document.getElementById("back-to-menu-from-wave2").addEventListener("click", () => {
