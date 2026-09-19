@@ -1503,3 +1503,53 @@ h3 {
 .journal-highlight strong{display:block;color:#f2d5a1;font-size:1.1rem}
 .journal-highlight span{color:#7f899d;font-size:.62rem}
 @media(max-width:800px){.progression-card{padding:18px}.progression-stat-grid{grid-template-columns:repeat(2,1fr)}.progression-grid,.achievement-list,.sanctuary-grid{grid-template-columns:1fr}.ascension-path{grid-template-columns:repeat(2,1fr)}}
+
+/* Ukrainian first-time guide */
+.menu-guide-button{
+  position:absolute;
+  left:50%;
+  bottom:34px;
+  transform:translateX(-50%);
+  z-index:30;
+  padding:10px 22px;
+  border:1px solid #c18b5a;
+  border-radius:8px;
+  background:rgba(9,13,19,.9);
+  color:#eee2d7;
+  font:700 14px Georgia,"Times New Roman",serif;
+  letter-spacing:2px;
+  cursor:pointer;
+  box-shadow:0 5px 18px rgba(0,0,0,.35);
+}
+.menu-guide-button:hover{filter:brightness(1.15);transform:translateX(-50%) translateY(-2px)}
+.guide-panel{
+  width:min(920px,92vw);
+  max-height:88vh;
+  overflow:auto;
+}
+.guide-panel h2{margin:4px 0 18px}
+.guide-steps{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:12px;
+}
+.guide-steps article{
+  padding:16px 18px;
+  border:1px solid rgba(193,139,90,.38);
+  border-radius:12px;
+  background:rgba(12,17,24,.72);
+}
+.guide-steps strong{display:block;color:#e7c6a6;letter-spacing:1px;margin-bottom:7px}
+.guide-steps p{margin:0;color:#c8c0b7;line-height:1.5}
+.guide-tip{
+  margin:16px 0;
+  padding:14px 16px;
+  border-left:3px solid #c18b5a;
+  background:rgba(193,139,90,.08);
+  color:#d9c7b7;
+  line-height:1.5;
+}
+@media(max-width:700px){
+  .guide-steps{grid-template-columns:1fr}
+  .menu-guide-button{bottom:16px}
+}
