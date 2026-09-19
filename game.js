@@ -1,7 +1,5 @@
 const screens = {
   menu: document.getElementById("main-menu"),
-  settings: document.getElementById("settings-screen"),
-  quit: document.getElementById("quit-confirmation"),
   battle: document.getElementById("battle-screen"),
   victory: document.getElementById("victory-screen"),
   character: document.getElementById("character-screen"),
