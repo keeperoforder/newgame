@@ -37,6 +37,16 @@ const slimeWaves = [
   { name: "Dread Slime", maxHp: 470, damage: 47, attackSpeed: 1650 },
   { name: "Void Slime", maxHp: 500, damage: 50, attackSpeed: 1600 },
   { name: "Slime Sovereign · MINI-BOSS", maxHp: 5000, damage: 500, attackSpeed: 1500 },
+  { name: "Sewer Rat", maxHp: 650, damage: 65, attackSpeed: 1850 },
+  { name: "Feral Rat", maxHp: 800, damage: 80, attackSpeed: 1800 },
+  { name: "Plague Rat", maxHp: 1000, damage: 100, attackSpeed: 1750 },
+  { name: "Ironclaw Rat", maxHp: 1250, damage: 125, attackSpeed: 1700 },
+  { name: "Ravager Rat", maxHp: 1550, damage: 155, attackSpeed: 1680 },
+  { name: "Venom Rat", maxHp: 1900, damage: 190, attackSpeed: 1650 },
+  { name: "Shadow Rat", maxHp: 2300, damage: 230, attackSpeed: 1600 },
+  { name: "Bloodfang Rat", maxHp: 2750, damage: 275, attackSpeed: 1575 },
+  { name: "Dire Rat", maxHp: 3250, damage: 325, attackSpeed: 1525 },
+  { name: "Rat King · MINI-BOSS", maxHp: 5000, damage: 500, attackSpeed: 1450 },
 ];
 
 const game = {
@@ -657,7 +667,78 @@ function getCurrentSlime() {
   return slimeWaves[game.wave - 1];
 }
 
+function ensureRatWaveVisuals() {
+  const svg = document.querySelector(".slime-art svg");
+  if (!svg) return;
+
+  const namespace = "http://www.w3.org/2000/svg";
+  for (let wave = 11; wave <= 20; wave += 1) {
+    if (svg.querySelector(`.rat-wave-${wave}`)) continue;
+
+    const group = document.createElementNS(namespace, "g");
+    group.setAttribute("class", "slime-wave rat-wave rat-wave-" + wave);
+    group.setAttribute("display", "none");
+
+    const t = (wave - 11) / 9;
+    const body = document.createElementNS(namespace, "ellipse");
+    body.setAttribute("cx", "220");
+    body.setAttribute("cy", "205");
+    body.setAttribute("rx", String(105 + t * 22));
+    body.setAttribute("ry", String(68 + t * 16));
+    body.setAttribute("fill", wave === 20 ? "#4b2630" : (wave >= 17 ? "#5b303b" : "#675048"));
+    body.setAttribute("stroke", wave === 20 ? "#e3a75d" : "#241b1d");
+    body.setAttribute("stroke-width", wave === 20 ? "12" : "9");
+
+    const head = document.createElementNS(namespace, "path");
+    head.setAttribute("d", "M128 205Q125 137 174 112L153 70L191 91L220 67L249 91L287 70L266 115Q314 143 312 205Z");
+    head.setAttribute("fill", body.getAttribute("fill"));
+    head.setAttribute("stroke", body.getAttribute("stroke"));
+    head.setAttribute("stroke-width", body.getAttribute("stroke-width"));
+
+    const eyeL = document.createElementNS(namespace, "circle");
+    eyeL.setAttribute("cx", "185"); eyeL.setAttribute("cy", "158"); eyeL.setAttribute("r", wave === 20 ? "13" : "10"); eyeL.setAttribute("fill", "#ff4d5e");
+    const eyeR = eyeL.cloneNode(); eyeR.setAttribute("cx", "255");
+
+    const nose = document.createElementNS(namespace, "path");
+    nose.setAttribute("d", "M209 181Q220 171 231 181L220 192Z");
+    nose.setAttribute("fill", "#d98a8f");
+
+    const teeth = document.createElementNS(namespace, "path");
+    teeth.setAttribute("d", "M183 205Q220 234 257 205");
+    teeth.setAttribute("fill", "none");
+    teeth.setAttribute("stroke", "#e8d7c4");
+    teeth.setAttribute("stroke-width", wave === 20 ? "10" : "7");
+    teeth.setAttribute("stroke-linecap", "round");
+
+    const earL = document.createElementNS(namespace, "path");
+    earL.setAttribute("d", "M158 111L132 48L187 91Z"); earL.setAttribute("fill", "#8a4d55"); earL.setAttribute("stroke", "#24151a"); earL.setAttribute("stroke-width", "7");
+    const earR = earL.cloneNode(); earR.setAttribute("d", "M282 111L308 48L253 91Z");
+
+    const armor = document.createElementNS(namespace, "path");
+    armor.setAttribute("d", "M150 246Q220 218 290 246L307 286Q220 315 133 286Z");
+    armor.setAttribute("fill", wave === 20 ? "#7d4933" : (wave >= 17 ? "#48394c" : "#303944"));
+    armor.setAttribute("stroke", wave === 20 ? "#f0bd72" : "#161c24");
+    armor.setAttribute("stroke-width", "7");
+
+    const clawL = document.createElementNS(namespace, "path");
+    clawL.setAttribute("d", "M145 255L91 281L104 298L161 278Z"); clawL.setAttribute("fill", "#b9a18c"); clawL.setAttribute("stroke", "#20181a"); clawL.setAttribute("stroke-width", "6");
+    const clawR = clawL.cloneNode(); clawR.setAttribute("d", "M295 255L349 281L336 298L279 278Z");
+
+    [body, head, earL, earR, eyeL, eyeR, nose, teeth, armor, clawL, clawR].forEach((el) => group.appendChild(el));
+    if (wave === 20) {
+      const crown = document.createElementNS(namespace, "path");
+      crown.setAttribute("d", "M180 70L194 37L220 62L246 37L260 70L246 91H194Z");
+      crown.setAttribute("fill", "#f0bd72");
+      crown.setAttribute("stroke", "#5b371d");
+      crown.setAttribute("stroke-width", "5");
+      group.appendChild(crown);
+    }
+    svg.appendChild(group);
+  }
+}
+
 function selectSlimeWaveVisual() {
+  ensureRatWaveVisuals();
   document.querySelectorAll(".slime-wave").forEach((element) => {
     element.setAttribute("display", "none");
   });
