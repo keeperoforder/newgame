@@ -322,7 +322,7 @@
             <div class="battle-header-actions">
               <button id="character-button" class="stats-button" type="button">CHARACTER</button>
               <button id="blacksmith-button" class="stats-button blacksmith-button" type="button">BLACKSMITH</button>
-              <button id="stats-button" class="stats-button" type="button">STATS</button>
+              <button id="stats-button" class="stats-button" type="button">STATS</button><button id="progress-button" class="stats-button progression-button" type="button">LEGACY</button>
             </div>
           </div>
         </div>
@@ -654,6 +654,28 @@
     </section>
 
 
+
+
+    <section id="progression-screen" class="progression-overlay" aria-hidden="true">
+      <div class="progression-card" role="dialog" aria-modal="true" aria-labelledby="progression-title">
+        <div class="progression-header">
+          <div>
+            <div class="eyebrow">WARDEN · LEGACY</div>
+            <h2 id="progression-title">LEGACY</h2>
+            <p class="progression-subtitle">Every victory leaves something behind.</p>
+          </div>
+          <button id="progression-close" class="stats-close" type="button" aria-label="Close legacy">×</button>
+        </div>
+        <div class="progression-tabs" role="tablist">
+          <button class="progression-tab active" data-progress-tab="map" type="button">WORLD</button>
+          <button class="progression-tab" data-progress-tab="achievements" type="button">ACHIEVEMENTS</button>
+          <button class="progression-tab" data-progress-tab="sanctuary" type="button">SANCTUARY</button>
+          <button class="progression-tab" data-progress-tab="ascension" type="button">ASCENSION</button>
+          <button class="progression-tab" data-progress-tab="journal" type="button">JOURNAL</button>
+        </div>
+        <div id="progression-content" class="progression-content"></div>
+      </div>
+    </section>
 
     <button id="dev-open-button" class="dev-open-button" type="button" title="Developer Panel (F2)">DEV</button>
     <section id="dev-panel" class="dev-overlay" aria-hidden="true">
