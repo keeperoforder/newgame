@@ -425,6 +425,43 @@ function craftAnimation(item, done) {
   }, 2450);
 }
 
+function getMaterialIconSvg(id) {
+  const icons = {
+    iron: '<svg viewBox="0 0 32 32" aria-hidden="true"><path d="M9 4h14l5 8-8 16H12L4 12z" fill="currentColor" opacity=".9"/><path d="M9 4l7 8-4 16M23 4l-7 8 4 16M4 12h24" fill="none" stroke="rgba(255,255,255,.55)" stroke-width="1.6"/></svg>',
+    leather: '<svg viewBox="0 0 32 32" aria-hidden="true"><path d="M8 5q8 5 16 0l3 6-5 16H10L5 11z" fill="currentColor" opacity=".9"/><path d="M9 9l4 4m10-4l-4 4M10 23h12" fill="none" stroke="rgba(255,255,255,.55)" stroke-width="1.5"/></svg>',
+    wood: '<svg viewBox="0 0 32 32" aria-hidden="true"><path d="M7 6h18v20H7z" fill="currentColor" opacity=".9"/><path d="M11 6v20m5-20v20m5-20v20" stroke="rgba(255,255,255,.4)" stroke-width="1.5"/><path d="M10 11h4m5 5h4m-12 5h5" stroke="rgba(255,255,255,.6)" stroke-width="1.5"/></svg>',
+    steel: '<svg viewBox="0 0 32 32" aria-hidden="true"><path d="M5 8l11-5 11 5-3 17-8 4-8-4z" fill="currentColor" opacity=".9"/><path d="M5 8l11 6 11-6M16 14v15" fill="none" stroke="rgba(255,255,255,.6)" stroke-width="1.6"/></svg>',
+    magicDust: '<svg viewBox="0 0 32 32" aria-hidden="true"><path d="M16 3l2.5 9.5L28 16l-9.5 2.5L16 28l-2.5-9.5L4 16l9.5-3.5z" fill="currentColor"/><circle cx="25" cy="7" r="2" fill="currentColor"/><circle cx="7" cy="24" r="1.8" fill="currentColor"/></svg>',
+    rare: '<svg viewBox="0 0 32 32" aria-hidden="true"><path d="M16 3l4 7 8 1-6 6 1.5 8-7.5-3.8L8.5 25 10 17 4 11l8-1z" fill="currentColor"/><path d="M16 7v16M10 12h12" stroke="rgba(255,255,255,.55)" stroke-width="1.4"/></svg>'
+  };
+  return icons[id] || '<svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="11" fill="currentColor"/></svg>';
+}
+
+function showResourceDrop(id, amount) {
+  if (!amount || amount <= 0) return;
+  let feed = document.getElementById("resource-drop-feed");
+  if (!feed) {
+    feed = document.createElement("div");
+    feed.id = "resource-drop-feed";
+    feed.className = "resource-drop-feed";
+    feed.setAttribute("aria-live", "polite");
+    document.body.appendChild(feed);
+  }
+
+  const drop = document.createElement("div");
+  drop.className = "resource-drop";
+  drop.innerHTML =
+    '<span class="resource-drop-icon">' + getMaterialIconSvg(id) + '</span>' +
+    '<span class="resource-drop-copy"><strong>+' + amount + '</strong><small>' + formatMaterialName(id) + '</small></span>';
+  feed.appendChild(drop);
+
+  requestAnimationFrame(() => drop.classList.add("show"));
+  window.setTimeout(() => {
+    drop.classList.remove("show");
+    window.setTimeout(() => drop.remove(), 350);
+  }, 1900);
+}
+
 function formatMaterialName(id) {
   return ({ iron: "Iron", leather: "Leather", wood: "Wood", steel: "Steel", magicDust: "Magic Dust", rare: "Rare" })[id] || id;
 }
@@ -567,8 +604,8 @@ function renderEquipmentCard(slot) {
 
 function updateBlacksmithUi() {
   if (!ui.blacksmithResources) return;
-  ui.blacksmithResources.innerHTML = "<strong>Gold " + game.gold + "</strong>" +
-    Object.entries(game.materials).map(([key, value]) => "<span>" + formatMaterialName(key) + " " + value + "</span>").join("");
+  ui.blacksmithResources.innerHTML = "<strong><span class=\"resource-chip-icon gold-chip\">✦</span> Gold " + game.gold + "</strong>" +
+    Object.entries(game.materials).map(([key, value]) => "<span><i class=\"resource-chip-icon\">" + getMaterialIconSvg(key) + "</i>" + formatMaterialName(key) + " " + value + "</span>").join("");
   ui.equipmentGrid.innerHTML = equipmentSlots.map(renderEquipmentCard).join("");
   ui.equipmentGrid.querySelectorAll(".equipment-action").forEach((button) => {
     button.addEventListener("click", () => craftOrUpgradeEquipment(button.dataset.slot, button.dataset.action));
@@ -955,6 +992,9 @@ function finishVictory() {
   const materialDrops = Object.entries(game.materials)
     .map(([key, value]) => [key, value - materialBefore[key]])
     .filter(([, value]) => value > 0);
+  materialDrops.forEach(([key, value], index) => {
+    window.setTimeout(() => showResourceDrop(key, value), index * 120);
+  });
   addExperience(xpReward);
   updateGold();
   updateProgressionUi();
