@@ -242,7 +242,7 @@ function getMonsterBalanceMultiplier(wave = game.wave) {
   const rebirthScale = Math.max(0, game.rebirths || 0);
   return {
     hp: (2.6 + Math.min(1.0, wave / 100)) * (1 + rebirthScale * 0.08),
-    damage: (0.024 + Math.min(0.010, wave / 700)) * (1 + rebirthScale * 0.04),
+    damage: (0.85 + Math.min(0.30, wave / 100)) * (1 + rebirthScale * 0.04),
   };
 }
 function getRebirthBonus() {
