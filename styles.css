@@ -1453,3 +1453,53 @@ h3 {
 .rebirth-panel p{margin:8px 0;color:#c8c0b7;font-size:.85rem;line-height:1.4}
 .rebirth-bonus{margin-top:10px;color:#f0d6aa;font-size:.76rem;font-weight:700}
 .rebirth-button{margin-top:10px!important;border-color:#d6a45f!important;box-shadow:0 0 18px rgba(214,164,95,.16)}
+
+
+/* Legacy / long-term progression hub */
+.progression-overlay{position:fixed;inset:0;z-index:180;display:none;place-items:center;padding:24px;background:rgba(3,6,11,.82);backdrop-filter:blur(9px)}
+.progression-overlay.active{display:grid}
+.progression-card{width:min(1120px,96vw);max-height:92vh;overflow:auto;border:1px solid rgba(240,184,95,.22);border-radius:22px;background:linear-gradient(180deg,#171a22,#090c12);box-shadow:0 30px 90px rgba(0,0,0,.6),0 0 45px rgba(240,184,95,.07);padding:26px}
+.progression-header{display:flex;justify-content:space-between;gap:20px;align-items:flex-start}
+.progression-header h2{margin:4px 0 0;font-size:2rem;letter-spacing:.08em}
+.progression-subtitle{margin:6px 0 0;color:#7f899d;font-size:.72rem}
+.progression-tabs{display:flex;gap:7px;flex-wrap:wrap;margin:22px 0 18px;padding-bottom:12px;border-bottom:1px solid rgba(255,255,255,.07)}
+.progression-tab{padding:10px 13px;border:1px solid rgba(255,255,255,.08);border-radius:9px;background:#11151d;color:#8d96a8;font-size:.62rem;font-weight:900;letter-spacing:.12em;cursor:pointer}
+.progression-tab.active,.progression-tab:hover{color:#f1d39b;border-color:rgba(240,184,95,.4);background:rgba(240,184,95,.07)}
+.progression-content{min-height:420px}
+.progression-section-title{margin:0 0 12px;color:#f0d6aa;font-size:.72rem;letter-spacing:.15em}
+.progression-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.progression-stat-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-bottom:18px}
+.legacy-stat,.achievement-card,.sanctuary-card,.journal-card,.zone-card,.ascension-card{border:1px solid rgba(255,255,255,.07);border-radius:14px;background:linear-gradient(180deg,rgba(29,33,43,.92),rgba(12,15,21,.96));padding:14px}
+.legacy-stat span,.achievement-card small,.zone-card small,.journal-card small{display:block;color:#737d91;font-size:.55rem;font-weight:900;letter-spacing:.11em;text-transform:uppercase}
+.legacy-stat strong{display:block;margin-top:5px;color:#f0d6aa;font-size:1.3rem}
+.zone-card{position:relative;overflow:hidden}
+.zone-card.unlocked{border-color:rgba(240,184,95,.25)}
+.zone-card.locked{opacity:.5}
+.zone-top{display:flex;justify-content:space-between;gap:10px}
+.zone-name{font-weight:900;letter-spacing:.08em}
+.zone-waves{color:#7f899d;font-size:.6rem}
+.zone-boss{margin:10px 0;color:#d8b16d;font-size:.62rem}
+.zone-card button,.sanctuary-card button{width:100%;margin-top:10px;padding:9px;border:1px solid rgba(240,184,95,.25);border-radius:8px;background:#151a23;color:#e7d0a6;font-size:.6rem;font-weight:900;cursor:pointer}
+.zone-card button:disabled,.sanctuary-card button:disabled{opacity:.4;cursor:not-allowed}
+.achievement-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.achievement-card{display:grid;grid-template-columns:42px 1fr auto;gap:11px;align-items:center}
+.achievement-icon{width:42px;height:42px;display:grid;place-items:center;border-radius:11px;background:#10151d;color:#596274;font-size:1.15rem}
+.achievement-card.unlocked{border-color:rgba(240,184,95,.32);box-shadow:0 0 22px rgba(240,184,95,.06)}
+.achievement-card.unlocked .achievement-icon{color:#f0c875;background:rgba(240,184,95,.09)}
+.achievement-card h3{margin:0 0 4px;font-size:.76rem}
+.achievement-card p{margin:0;color:#7f899d;font-size:.6rem;line-height:1.35}
+.achievement-reward{color:#c6a66e;font-size:.55rem;font-weight:900;text-align:right}
+.sanctuary-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.sanctuary-card h3{margin:0 0 5px;color:#ead4a9}
+.sanctuary-card p{margin:0;color:#7f899d;font-size:.62rem;line-height:1.4}
+.sanctuary-level{margin-top:10px;color:#f0c875;font-size:.65rem;font-weight:900}
+.essence-banner{margin-bottom:14px;padding:13px 15px;border:1px solid rgba(240,184,95,.3);border-radius:12px;background:rgba(240,184,95,.06);color:#e9d2a5;font-size:.68rem;font-weight:900}
+.ascension-path{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:18px}
+.ascension-node{padding:16px 10px;text-align:center;border:1px solid rgba(255,255,255,.07);border-radius:13px;background:#10141c}
+.ascension-node span{display:block;color:#6e7789;font-size:.5rem;letter-spacing:.1em}
+.ascension-node strong{display:block;margin:7px 0;color:#ddd}
+.ascension-node em{font-style:normal;color:#f0c875;font-size:.58rem}
+.journal-highlight{padding:15px;border:1px solid rgba(240,184,95,.18);border-radius:14px;background:radial-gradient(circle at 50% 0,rgba(240,184,95,.08),transparent 55%),#10141b;margin-bottom:12px}
+.journal-highlight strong{display:block;color:#f2d5a1;font-size:1.1rem}
+.journal-highlight span{color:#7f899d;font-size:.62rem}
+@media(max-width:800px){.progression-card{padding:18px}.progression-stat-grid{grid-template-columns:repeat(2,1fr)}.progression-grid,.achievement-list,.sanctuary-grid{grid-template-columns:1fr}.ascension-path{grid-template-columns:repeat(2,1fr)}}
