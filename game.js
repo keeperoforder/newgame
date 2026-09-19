@@ -236,6 +236,24 @@ function getSlotIcon(slotId) {
   return ({ helmet: "◈", armor: "◆", gloves: "◇", boots: "◀▶", weapon: "⚔", ring: "○", amulet: "✦" })[slotId] || "◆";
 }
 
+function getEquipmentArtSvg(slotId, tier = 1) {
+  const metal = tier === 2 ? "#b8c7d6" : "#8f99a5";
+  const edge = tier === 2 ? "#e7c27a" : "#c18b5a";
+  const leather = tier === 2 ? "#3e5267" : "#4a3428";
+  const glow = tier === 2 ? "#f0b85f" : "#9da8b5";
+  const common = 'fill="' + metal + '" stroke="' + edge + '" stroke-width="5" stroke-linejoin="round"';
+  const art = {
+    weapon: '<path d="M38 76L98 18L108 28L48 86Z" ' + common + '/><path d="M25 87L48 64L60 76L37 99Z" fill="' + leather + '" stroke="#1a2028" stroke-width="4"/><path d="M50 55L83 23" stroke="' + glow + '" stroke-width="3"/>',
+    helmet: '<path d="M25 74Q50 18 75 74V91H25Z" ' + common + '/><path d="M28 61H72L68 76H32Z" fill="#111821"/><path d="M50 23V54" stroke="' + glow + '" stroke-width="3"/>',
+    armor: '<path d="M24 26L50 17L76 26L88 82Q50 105 12 82Z" ' + common + '/><path d="M50 20V91M22 46H78" stroke="' + glow + '" stroke-width="3" opacity=".8"/><path d="M30 30L18 52M70 30L82 52" stroke="' + leather + '" stroke-width="8"/>',
+    gloves: '<path d="M24 30L42 23L51 48L43 82L22 75Z" ' + common + '/><path d="M76 30L58 23L49 48L57 82L78 75Z" ' + common + '/><path d="M28 52H47M53 52H72" stroke="' + glow + '" stroke-width="3"/>',
+    boots: '<path d="M24 19L48 24L45 68L79 75L77 92H20Z" ' + common + '/><path d="M76 19L52 24L55 68L21 75L23 92H80Z" ' + common + '/><path d="M28 76H72" stroke="' + glow + '" stroke-width="3"/>',
+    ring: '<circle cx="50" cy="55" r="27" fill="none" stroke="' + edge + '" stroke-width="10"/><circle cx="50" cy="28" r="10" fill="' + glow + '" stroke="' + edge + '" stroke-width="4"/><path d="M42 28L50 19L58 28" fill="' + metal + '"/>',
+    amulet: '<path d="M50 18L78 49L50 91L22 49Z" fill="' + glow + '" stroke="' + edge + '" stroke-width="6"/><path d="M50 30L65 49L50 72L35 49Z" fill="#172332" stroke="' + metal + '" stroke-width="4"/><path d="M50 8V22" stroke="' + edge + '" stroke-width="5"/>'
+  };
+  return '<svg class="equipment-art-svg" viewBox="0 0 100 110" aria-hidden="true"><defs><filter id="equipmentGlow"><feGaussianBlur stdDeviation="2"/></filter></defs><g filter="url(#equipmentGlow)" opacity=".35" stroke="' + glow + '">' + (art[slotId] || art.armor) + '</g><g>' + (art[slotId] || art.armor) + '</g></svg>';
+}
+
 function updateCharacterVisuals() {
   const equipped = Object.fromEntries(Object.entries(game.equipment).map(([key, item]) => [key, Boolean(item)]));
   ["helmet","armor","weapon","gloves","boots","ring","amulet"].forEach((slot) => {
@@ -333,13 +351,25 @@ function sellInventoryItem(item) {
 function craftAnimation(item, done) {
   const overlay = document.createElement("div");
   overlay.className = "craft-animation";
-  overlay.innerHTML = "<div class=\"craft-core\"><div class=\"craft-particles\"></div><div class=\"craft-icon\">" + getSlotIcon(item.slotId) + "</div><strong>" + item.name + "</strong><span>" + item.rarity + " · Lv." + item.level + "</span></div>";
+  overlay.innerHTML =
+    '<div class="craft-forge-scene">' +
+      '<div class="forge-anvil"><div class="anvil-top"></div><div class="anvil-body"></div></div>' +
+      '<div class="forge-sparks"><i></i><i></i><i></i><i></i><i></i><i></i></div>' +
+      '<div class="forge-hammer"><span></span></div>' +
+      '<div class="craft-reveal">' + getEquipmentArtSvg(item.slotId, item.tier) + '</div>' +
+      '<div class="craft-item-name"><strong>' + item.name + '</strong><span>' + item.rarity + ' · Lv.' + item.level + '</span></div>' +
+      '<div class="craft-status">FORGING · TEMPERING · COMPLETE</div>' +
+    '</div>';
   document.body.appendChild(overlay);
   requestAnimationFrame(() => overlay.classList.add("active"));
+  setTimeout(() => overlay.classList.add("hammer-strike-1"), 420);
+  setTimeout(() => overlay.classList.add("hammer-strike-2"), 820);
+  setTimeout(() => overlay.classList.add("hammer-strike-3"), 1220);
+  setTimeout(() => overlay.classList.add("reveal"), 1540);
   setTimeout(() => {
     overlay.classList.remove("active");
-    setTimeout(() => { overlay.remove(); done(); }, 260);
-  }, 1250);
+    setTimeout(() => { overlay.remove(); done(); }, 320);
+  }, 2450);
 }
 
 function formatMaterialName(id) {
@@ -439,8 +469,9 @@ function renderEquipmentCard(slot) {
   const levelText = item ? " <span>Lv." + item.level + "</span>" : "";
   const button = actionData.action === "max" || !canBuy ? " disabled" : "";
   return "<article class=\"equipment-card\">" +
+    "<div class=\"equipment-preview " + (item ? getItemVisualClass(item) : "") + "\">" + getEquipmentArtSvg(slot.id, item ? item.tier : 1) + "</div>" +
     "<div class=\"equipment-card-top\"><div><div class=\"equipment-slot\">" + slot.name + "</div><h3>" + title + levelText + "</h3></div>" +
-    "<div class=\"equipment-effect\">" + (item ? equipmentEffectText(slot.id, item) : "Create this item to unlock its bonus.") + "</div></div>" +
+    "<div class=\"equipment-effect\">" + (item ? equipmentEffectText(slot.id, item) : "Craft this item to unlock its bonus.") + "</div></div>" +
     "<div class=\"equipment-recipe\"><strong>" + actionData.cost.gold + " Gold</strong>" + materialLine + "</div>" +
     "<button class=\"equipment-action\" data-slot=\"" + slot.id + "\" data-action=\"" + actionData.action + "\"" + button + ">" + actionData.label + "</button>" +
     "</article>";
