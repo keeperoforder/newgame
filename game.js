@@ -237,6 +237,13 @@ function writeLog(message) {
   ui.log.innerHTML = `<p>${message}</p>`;
 }
 
+function restartPlayerTimer() {
+  if (game.playerTimer) clearInterval(game.playerTimer);
+  game.playerTimer = game.battleActive
+    ? setInterval(playerAttack, game.player.attackSpeed)
+    : null;
+}
+
 function clearBattleTimers() {
   if (game.playerTimer) {
     clearInterval(game.playerTimer);
@@ -625,6 +632,7 @@ window.beyondTheWavesDevApi = {
     game.player.hp = game.player.maxHp;
     updateProgressionUi();
     updateBattleUi();
+    restartPlayerTimer();
     saveGame();
   },
 
@@ -648,6 +656,7 @@ window.beyondTheWavesDevApi = {
 
     updateProgressionUi();
     updateBattleUi();
+    restartPlayerTimer();
     saveGame();
   },
 
