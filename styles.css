@@ -1184,6 +1184,16 @@ h3 {
 #inventory-screen.inventory-overlay-active .inventory-panel{
   max-height:88vh;
   overflow:auto;
+  overscroll-behavior:contain;
+}
+#inventory-screen.inventory-overlay-active .inventory-panel > .character-panel-header{
+  position:sticky;
+  top:-28px;
+  z-index:20;
+  margin:-28px -28px 18px;
+  padding:28px 28px 18px;
+  background:linear-gradient(180deg,#171922 0%,#171922 78%,rgba(23,25,34,.96) 100%);
+  border-radius:22px 22px 0 0;
 }
 
 /* Dynamic combat presentation */
