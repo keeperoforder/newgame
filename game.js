@@ -43,6 +43,22 @@ function showScreen(screen) {
   screen.setAttribute("aria-hidden", "false");
 }
 
+function startGameFromMenu() {
+  closeOverlay(screens.settings);
+  closeOverlay(screens.quit);
+
+  screens.menu.classList.add("is-leaving");
+
+  window.setTimeout(() => {
+    screens.menu.classList.remove("is-leaving");
+    showScreen(screens.battle);
+    resetBattle();
+
+    game.playerTimer = setInterval(playerAttack, game.player.attackSpeed);
+    game.monsterTimer = setInterval(monsterAttack, game.monster.attackSpeed);
+  }, 240);
+}
+
 function openOverlay(overlay) {
   overlay.classList.add("active");
   overlay.setAttribute("aria-hidden", "false");
@@ -152,7 +168,30 @@ document.getElementById("start-game").addEventListener("click", () => {
   game.gold = 0;
   game.exp = 0;
   updateGold();
-  startBattle();
+  startGameFromMenu();
+});
+
+document.querySelectorAll(".mobile-menu-button").forEach((button) => {
+  button.addEventListener("click", () => {
+    const action = button.dataset.action;
+
+    if (action === "start") {
+      game.gold = 0;
+      game.exp = 0;
+      updateGold();
+      startGameFromMenu();
+    }
+
+    if (action === "settings") {
+      openOverlay(screens.settings);
+    }
+
+    if (action === "quit") {
+      clearBattleTimers();
+      game.battleActive = false;
+      openOverlay(screens.quit);
+    }
+  });
 });
 
 document.getElementById("open-settings").addEventListener("click", () => {
@@ -178,11 +217,8 @@ document.getElementById("confirm-quit").addEventListener("click", () => {
 
   try {
     window.close();
-  } catch (_) {
-    // Browsers normally block closing tabs that were not opened by script.
-  }
+  } catch (_) {}
 
-  // Keep the page in a clear "exited" state when the browser prevents closing it.
   showScreen(screens.thanks);
 });
 
