@@ -302,6 +302,63 @@ h3 {
   letter-spacing: 0.12em;
 }
 
+.battle-controls {
+  min-height: 58px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 16px;
+}
+
+.next-wave-button {
+  min-width: 220px;
+  padding: 11px 26px 12px;
+  border: 1px solid rgba(208, 166, 103, .58);
+  border-radius: 12px;
+  background:
+    linear-gradient(180deg, rgba(112, 77, 43, .96), rgba(54, 37, 28, .98));
+  color: #f3d8a9;
+  box-shadow:
+    0 0 0 1px rgba(0,0,0,.35) inset,
+    0 8px 22px rgba(0,0,0,.35),
+    0 0 18px rgba(209,157,88,.16);
+  cursor: pointer;
+  transition: transform .16s ease, filter .16s ease, box-shadow .16s ease;
+  text-align: center;
+}
+
+.next-wave-button:hover {
+  transform: translateY(-2px) scale(1.02);
+  filter: brightness(1.12);
+  box-shadow:
+    0 0 0 1px rgba(255,224,174,.14) inset,
+    0 10px 26px rgba(0,0,0,.4),
+    0 0 24px rgba(209,157,88,.28);
+}
+
+.next-wave-button:active {
+  transform: translateY(1px) scale(.98);
+}
+
+.next-wave-button[hidden] {
+  display: none;
+}
+
+.next-wave-button-kicker {
+  display: block;
+  margin-bottom: 2px;
+  color: #a99a88;
+  font-size: .55rem;
+  font-weight: 900;
+  letter-spacing: .18em;
+}
+
+.next-wave-button strong {
+  display: block;
+  font-size: .95rem;
+  letter-spacing: .12em;
+}
+
 .combat-log {
   margin-top: 20px;
   min-height: 54px;
