@@ -323,7 +323,7 @@ function closeInventoryOverlay() {
   game.inventoryOpen = false;
   ui.inventoryScreen.classList.remove("inventory-overlay-active");
   ui.inventoryScreen.setAttribute("aria-hidden", "true");
-  if (game.battleActive) {
+  if (game.battleActive || game.farmingWave || game.wave >= 1) {
     showScreen(screens.battle);
   } else {
     showScreen(screens.character);
@@ -1028,6 +1028,15 @@ function finishVictory() {
 
   if (game.inventoryOpen) {
     ui.status.textContent = game.farmingWave ? "FARMING · NEXT WAVE READY" : "VICTORY · NEXT WAVE";
+
+    if (game.farmingWave) {
+      ui.nextWaveButton.hidden = false;
+      ui.autoWaveText.textContent = "FARMING · MANUAL ADVANCE";
+      writeLog(waveLabel() + " cleared while Inventory is open. Next Wave is ready when you choose to advance.");
+      saveGame();
+      return;
+    }
+
     if (game.wave < slimeWaves.length) {
       writeLog(waveLabel() + " cleared while Inventory is open. Next wave starting automatically...");
       window.setTimeout(() => {
