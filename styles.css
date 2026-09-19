@@ -1129,3 +1129,14 @@ h3 {
 @keyframes criticalDamageFloat{0%{opacity:0;transform:translate(calc(-50% + var(--damage-x)),24px) rotate(var(--damage-rotate)) scale(.45)}16%{opacity:1;transform:translate(calc(-50% + var(--damage-x)),0) rotate(var(--damage-rotate)) scale(1.25)}32%{transform:translate(calc(-50% + var(--damage-x)),0) rotate(var(--damage-rotate)) scale(1)}100%{opacity:0;transform:translate(calc(-50% + var(--damage-x)), -92px) rotate(var(--damage-rotate)) scale(1.05)}}
 @keyframes damageShake{0%{transform:translateX(0)}35%{transform:translateX(-4px)}70%{transform:translateX(4px)}100%{transform:translateX(0)}}
 @keyframes criticalShake{0%{transform:translate(0) scale(1)}20%{transform:translate(-6px,1px) scale(1.015)}40%{transform:translate(6px,-1px) scale(1.02)}60%{transform:translate(-4px) scale(1.01)}100%{transform:translate(0) scale(1)}}
+
+/* Equipment comparison */
+.item-comparison{margin:8px 0;padding:8px 9px;border:1px solid rgba(255,255,255,.07);border-radius:9px;background:rgba(6,9,14,.52)}
+.comparison-title{margin-bottom:6px;color:#7f8ba1;font-size:.55rem;font-weight:900;letter-spacing:.12em}
+.comparison-row{display:grid;grid-template-columns:1fr auto auto;gap:8px;align-items:center;padding:3px 0;color:#aeb6c5;font-size:.58rem}
+.comparison-row span:nth-child(2){color:#d8dce4}
+.comparison-row strong{min-width:45px;text-align:right;font-size:.58rem}
+.comparison-row strong.better{color:#55d889}
+.comparison-row strong.worse{color:#ff6868}
+.comparison-row strong.same{color:#8b94a5}
+.equipment-effect{line-height:1.5}
