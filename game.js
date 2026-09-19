@@ -1,6 +1,7 @@
 const screens = {
   menu: document.getElementById("main-menu"),
   settings: document.getElementById("settings-screen"),
+  quit: document.getElementById("quit-confirmation"),
   battle: document.getElementById("battle-screen"),
   victory: document.getElementById("victory-screen"),
   defeat: document.getElementById("defeat-screen"),
@@ -31,8 +32,25 @@ const ui = {
 };
 
 function showScreen(screen) {
-  Object.values(screens).forEach((element) => element.classList.remove("active"));
+  Object.values(screens).forEach((element) => {
+    if (element) {
+      element.classList.remove("active");
+      element.setAttribute("aria-hidden", "true");
+    }
+  });
+
   screen.classList.add("active");
+  screen.setAttribute("aria-hidden", "false");
+}
+
+function openOverlay(overlay) {
+  overlay.classList.add("active");
+  overlay.setAttribute("aria-hidden", "false");
+}
+
+function closeOverlay(overlay) {
+  overlay.classList.remove("active");
+  overlay.setAttribute("aria-hidden", "true");
 }
 
 function updateGold() {
@@ -138,16 +156,33 @@ document.getElementById("start-game").addEventListener("click", () => {
 });
 
 document.getElementById("open-settings").addEventListener("click", () => {
-  showScreen(screens.settings);
+  openOverlay(screens.settings);
 });
 
 document.getElementById("back-to-menu-from-settings").addEventListener("click", () => {
-  showScreen(screens.menu);
+  closeOverlay(screens.settings);
 });
 
 document.getElementById("quit-game").addEventListener("click", () => {
   clearBattleTimers();
   game.battleActive = false;
+  openOverlay(screens.quit);
+});
+
+document.getElementById("cancel-quit").addEventListener("click", () => {
+  closeOverlay(screens.quit);
+});
+
+document.getElementById("confirm-quit").addEventListener("click", () => {
+  closeOverlay(screens.quit);
+
+  try {
+    window.close();
+  } catch (_) {
+    // Browsers normally block closing tabs that were not opened by script.
+  }
+
+  // Keep the page in a clear "exited" state when the browser prevents closing it.
   showScreen(screens.thanks);
 });
 
