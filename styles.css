@@ -532,3 +532,154 @@ h3 {
     font-size: 1rem;
   }
 }
+
+
+/* Overlay menus keep the main menu visible underneath and preserve the reference atmosphere. */
+#main-menu {
+  z-index: 1;
+}
+
+.overlay-screen {
+  position: fixed;
+  inset: 0;
+  z-index: 20;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 28px;
+}
+
+.overlay-screen.active {
+  display: flex;
+}
+
+.overlay-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(3, 6, 11, .72);
+  backdrop-filter: blur(4px);
+}
+
+.menu-overlay-panel {
+  position: relative;
+  z-index: 1;
+  width: min(620px, 94vw);
+  padding: 46px clamp(24px, 5vw, 64px) 42px;
+  text-align: center;
+  border: 2px solid rgba(184,132,87,.96);
+  border-radius: 6px;
+  background:
+    linear-gradient(180deg, rgba(22,24,29,.98), rgba(7,10,15,.98));
+  box-shadow:
+    0 30px 70px rgba(0,0,0,.58),
+    inset 0 0 0 1px rgba(255,255,255,.03);
+  clip-path: polygon(
+    2.5% 0, 97.5% 0, 100% 5%, 100% 95%, 97.5% 100%,
+    2.5% 100%, 0 95%, 0 5%
+  );
+}
+
+.menu-overlay-panel::before,
+.menu-overlay-panel::after {
+  content: "";
+  position: absolute;
+  width: 19px;
+  height: 19px;
+  top: 50%;
+  background: #0c1016;
+  border: 2px solid rgba(184,132,87,.96);
+  transform: translateY(-50%) rotate(45deg);
+}
+
+.menu-overlay-panel::before { left: -8px; }
+.menu-overlay-panel::after { right: -8px; }
+
+.menu-overlay-decor {
+  margin-bottom: 12px;
+  color: #d7aa79;
+  font-size: 1rem;
+  opacity: .9;
+}
+
+.menu-overlay-panel .eyebrow {
+  color: #c8b6a2;
+  font-family: Georgia, "Times New Roman", serif;
+  letter-spacing: .28em;
+}
+
+.menu-overlay-panel h2 {
+  margin: 10px 0 28px;
+  color: #e4c6aa;
+  font-family: Georgia, "Times New Roman", serif;
+  letter-spacing: .09em;
+  text-shadow: 0 6px 22px rgba(0,0,0,.55);
+}
+
+.menu-overlay-panel .setting-row {
+  border-bottom: 1px solid rgba(184,132,87,.25);
+  color: #e7dbcf;
+  font-family: Georgia, "Times New Roman", serif;
+  font-weight: 700;
+  letter-spacing: .07em;
+}
+
+.menu-overlay-panel .toggle {
+  min-width: 88px;
+  min-height: 44px;
+  border-radius: 4px;
+  background: #13171d;
+  border: 1px solid rgba(184,132,87,.7);
+  color: #e4c6aa;
+}
+
+.menu-overlay-panel .toggle.on {
+  background: linear-gradient(180deg, #4a3021, #261a13);
+}
+
+.menu-overlay-panel .toggle.off {
+  background: #14171b;
+  opacity: .75;
+}
+
+.overlay-back-button,
+.quit-actions .menu-action {
+  width: 100%;
+  margin-top: 18px;
+}
+
+.overlay-back-button {
+  grid-template-columns: 60px 1fr;
+}
+
+.overlay-copy {
+  color: #c8bbb0;
+  font-family: Georgia, "Times New Roman", serif;
+  margin: 0 auto 12px;
+  max-width: 420px;
+  font-size: 1rem;
+  line-height: 1.6;
+}
+
+.quit-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.quit-actions .menu-action {
+  margin-top: 0;
+}
+
+.quit-overlay-panel {
+  width: min(700px, 94vw);
+}
+
+@media (max-width: 640px) {
+  .menu-overlay-panel {
+    padding: 34px 22px 30px;
+  }
+
+  .quit-actions {
+    grid-template-columns: 1fr;
+  }
+}
