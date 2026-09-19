@@ -9,69 +9,285 @@
 <body>
   <main id="app">
     <section id="main-menu" class="screen active" aria-label="Main Menu">
-      <img
-        class="main-menu-bg"
-        src="./assets/main-menu-bg.svg"
-        alt=""
-        aria-hidden="true"
-        draggable="false"
-      />
 
-      <div class="main-menu-ui" aria-label="Main menu controls">
-        <button id="start-game" class="main-menu-hotspot start-hotspot" type="button" aria-label="Start Game"></button>
-        <button id="open-settings" class="main-menu-hotspot settings-hotspot" type="button" aria-label="Settings"></button>
-        <button id="quit-game" class="main-menu-hotspot quit-hotspot" type="button" aria-label="Quit"></button>
+      <svg
+        id="main-menu-svg"
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 1600 900"
+        preserveAspectRatio="xMidYMid meet"
+        role="img"
+        aria-label="Fantasy game main menu"
+      >
+        <defs>
+          <linearGradient id="skyGradient" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#050b16"/>
+            <stop offset="48%" stop-color="#14253d"/>
+            <stop offset="78%" stop-color="#704c61"/>
+            <stop offset="100%" stop-color="#1a2332"/>
+          </linearGradient>
+          <linearGradient id="waterGradient" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#314760"/>
+            <stop offset="100%" stop-color="#07111e"/>
+          </linearGradient>
+          <linearGradient id="groundGradient" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#26372d"/>
+            <stop offset="100%" stop-color="#090c0e"/>
+          </linearGradient>
+          <linearGradient id="panelGradient" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#1d2026"/>
+            <stop offset="100%" stop-color="#090c11"/>
+          </linearGradient>
+          <radialGradient id="sunGlow" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stop-color="#ffe2a0" stop-opacity=".98"/>
+            <stop offset="35%" stop-color="#ffb36f" stop-opacity=".36"/>
+            <stop offset="100%" stop-color="#ff9b66" stop-opacity="0"/>
+          </radialGradient>
+          <radialGradient id="fireGlow" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stop-color="#ffbf60" stop-opacity=".86"/>
+            <stop offset="100%" stop-color="#ff6b26" stop-opacity="0"/>
+          </radialGradient>
+          <filter id="softBlur" x="-50%" y="-50%" width="200%" height="200%">
+            <feGaussianBlur stdDeviation="24"/>
+          </filter>
+          <filter id="smallBlur" x="-50%" y="-50%" width="200%" height="200%">
+            <feGaussianBlur stdDeviation="9"/>
+          </filter>
+          <filter id="shadow" x="-30%" y="-30%" width="160%" height="180%">
+            <feDropShadow dx="0" dy="9" stdDeviation="10" flood-color="#000000" flood-opacity=".68"/>
+          </filter>
+          <filter id="buttonGlow" x="-30%" y="-30%" width="160%" height="170%">
+            <feDropShadow dx="0" dy="0" stdDeviation="7" flood-color="#d7a16b" flood-opacity=".42"/>
+          </filter>
+        </defs>
 
-        <div class="mobile-menu-buttons">
-          <button class="mobile-menu-button" type="button" data-action="start">START GAME</button>
-          <button class="mobile-menu-button" type="button" data-action="settings">SETTINGS</button>
-          <button class="mobile-menu-button" type="button" data-action="quit">QUIT</button>
-        </div>
-      </div>
-    </section>
+        <style>
+          <![CDATA[
+          #main-menu-svg { background:#05080e; font-family: Georgia, "Times New Roman", serif; }
+          .svg-button { cursor:pointer; transform-box:fill-box; transform-origin:center; transition:transform .16s ease, filter .16s ease; outline:none; }
+          .svg-button:hover { transform:scale(1.035); filter:brightness(1.12) drop-shadow(0 0 10px rgba(212,158,104,.28)); }
+          .svg-button:active { transform:scale(.975); filter:brightness(.94); }
+          .svg-button:focus-visible { filter:brightness(1.14) drop-shadow(0 0 0 3px rgba(238,208,176,.85)); }
+          .svg-view-hidden { display:none; }
+          .setting-toggle:hover { filter:brightness(1.13); }
+          .tiny-text { fill:#c8c0b7; font-size:16px; letter-spacing:2px; }
+          @media (max-width: 900px) {
+            #main-menu-svg { background:#05080e; }
+            .main-actions { transform:translate(-70px, 30px) scale(.92); transform-origin:center; }
+            .main-title { transform:translate(0, 22px) scale(.92); transform-origin:center; }
+          }
+          @media (max-width: 700px) {
+            .main-actions { transform:translate(-360px, 275px) scale(.78); transform-origin:center; }
+            .main-title { transform:translate(0, 40px) scale(.78); transform-origin:center; }
+            .landscape-left, .landscape-right { opacity:.72; }
+          }
+          @media (max-width: 480px) {
+            .main-actions { transform:translate(-360px, 300px) scale(.68); transform-origin:center; }
+            .main-title { transform:translate(0, 65px) scale(.62); transform-origin:center; }
+          }
+          ]]>
+        </style>
 
-    <section id="settings-screen" class="overlay-screen" aria-hidden="true">
-      <div class="overlay-backdrop"></div>
-      <div class="menu-overlay-panel settings-overlay-panel" role="dialog" aria-modal="true" aria-labelledby="settings-title">
-        <div class="menu-overlay-decor">◆</div>
-        <div class="eyebrow">SETTINGS</div>
-        <h2 id="settings-title">SETTINGS</h2>
+        <!-- SKY -->
+        <rect width="1600" height="900" fill="url(#skyGradient)"/>
 
-        <div class="setting-row">
-          <span>SOUND</span>
-          <button id="sound-toggle" class="toggle on" type="button">ON</button>
-        </div>
+        <g opacity=".96">
+          <path d="M0 390L155 220L282 352L430 202L555 365L700 236L835 382L980 218L1110 356L1265 220L1404 342L1518 244L1600 302V0H0Z" fill="#182841"/>
+          <path d="M0 485L145 330L285 446L430 292L565 466L706 332L845 472L995 316L1130 454L1280 308L1418 456L1530 340L1600 385V0H0Z" fill="#101d31"/>
+          <path d="M0 570L138 425L282 542L419 404L570 560L714 423L852 566L1000 410L1141 552L1281 420L1423 560L1544 432L1600 468V0H0Z" fill="#0a1525"/>
+        </g>
 
-        <div class="setting-row">
-          <span>MUSIC</span>
-          <button id="music-toggle" class="toggle on" type="button">ON</button>
-        </div>
+        <!-- SUNSET -->
+        <ellipse cx="690" cy="390" rx="245" ry="180" fill="url(#sunGlow)" filter="url(#softBlur)"/>
+        <circle cx="690" cy="390" r="40" fill="#ffd98f"/>
 
-        <button id="back-to-menu-from-settings" class="menu-action overlay-back-button" type="button">
-          <span class="menu-icon">↩</span>
-          <span>BACK</span>
-        </button>
-      </div>
-    </section>
+        <!-- SEA -->
+        <path d="M0 552C214 514 407 536 590 520C803 501 972 546 1165 518C1322 495 1483 514 1600 489V900H0Z" fill="url(#waterGradient)"/>
+        <g stroke="#8295ae" stroke-opacity=".28" stroke-width="4">
+          <path d="M475 586H1150"/>
+          <path d="M390 639H1220"/>
+          <path d="M280 702H1340"/>
+          <path d="M175 770H1460"/>
+        </g>
 
-    <section id="quit-confirmation" class="overlay-screen" aria-hidden="true">
-      <div class="overlay-backdrop"></div>
-      <div class="menu-overlay-panel quit-overlay-panel" role="dialog" aria-modal="true" aria-labelledby="quit-title">
-        <div class="menu-overlay-decor">◆</div>
-        <div class="eyebrow">LEAVE THE JOURNEY</div>
-        <h2 id="quit-title">QUIT GAME?</h2>
-        <p class="overlay-copy">Are you sure you want to leave the game?</p>
-        <div class="quit-actions">
-          <button id="confirm-quit" class="menu-action" type="button">
-            <span class="menu-icon">✓</span>
-            <span>YES</span>
-          </button>
-          <button id="cancel-quit" class="menu-action" type="button">
-            <span class="menu-icon">×</span>
-            <span>NO</span>
-          </button>
-        </div>
-      </div>
+        <!-- CASTLE -->
+        <g fill="#080d14" filter="url(#shadow)">
+          <path d="M820 410H1045V520H820Z"/>
+          <path d="M850 410V310L878 255L906 310V410Z"/>
+          <path d="M914 410V285L945 220L976 285V410Z"/>
+          <path d="M982 410V306L1008 250L1034 306V410Z"/>
+          <rect x="801" y="503" width="260" height="68"/>
+        </g>
+        <g fill="#f9c977">
+          <rect x="866" y="352" width="7" height="13"/>
+          <rect x="932" y="331" width="7" height="15"/>
+          <rect x="1000" y="352" width="7" height="14"/>
+          <rect x="882" y="424" width="7" height="12"/>
+          <rect x="955" y="426" width="7" height="12"/>
+          <rect x="1015" y="421" width="7" height="12"/>
+        </g>
+
+        <!-- LEFT / RIGHT CLIFFS -->
+        <path d="M0 556C147 514 272 537 410 510C452 501 480 496 515 488V900H0Z" fill="url(#groundGradient)" class="landscape-left"/>
+        <path d="M1600 555C1460 514 1340 536 1215 520C1170 514 1142 508 1110 499V900H1600Z" fill="#080c11" class="landscape-right"/>
+
+        <!-- TREE CANOPY -->
+        <g fill="#070c13">
+          <path d="M0 0H610V82C486 60 373 84 252 148C153 199 78 248 0 305Z"/>
+          <path d="M0 86C98 32 188 16 290 24C188 68 110 145 34 246L0 272Z"/>
+          <path d="M445 0C520 20 576 52 635 95C568 80 511 86 465 112C453 72 447 37 445 0Z"/>
+        </g>
+        <g fill="#17202b" opacity=".9">
+          <path d="M68 0C141 17 208 55 281 113C236 100 197 112 158 138C133 91 104 46 68 0Z"/>
+          <path d="M285 0C358 27 424 65 490 122C444 104 408 109 370 132C350 78 323 37 285 0Z"/>
+        </g>
+
+        <!-- BANNER -->
+        <g transform="translate(76,64)">
+          <path d="M0 0H202V245L104 286L0 245Z" fill="#17212d" stroke="#b77e4f" stroke-width="7"/>
+          <path d="M101 79L142 121L101 163L60 121Z" fill="none" stroke="#b77e4f" stroke-width="8"/>
+        </g>
+
+        <!-- LANTERN -->
+        <g transform="translate(42,110)">
+          <path d="M18 46H73L65 135H26Z" fill="#141920" stroke="#b77e4f" stroke-width="5"/>
+          <path d="M29 48H62L46 25Z" fill="#0c1117"/>
+          <path d="M46 73C63 95 63 116 46 131C29 116 29 95 46 73Z" fill="#ffb54d" filter="url(#smallBlur)"/>
+          <path d="M46 78C56 93 56 107 46 120C37 107 36 93 46 78Z" fill="#ffe28d"/>
+        </g>
+
+        <!-- TRAVELER -->
+        <g transform="translate(225,507)">
+          <ellipse cx="193" cy="203" rx="170" ry="75" fill="#04070a"/>
+          <path d="M55 59Q119 5 194 38Q247 60 289 124L252 204L103 191L31 141Z" fill="#0c1117"/>
+          <path d="M92 76Q149 48 210 70L243 139L185 167L105 150Z" fill="#171c22"/>
+          <circle cx="78" cy="72" r="37" fill="#080c11"/>
+          <path d="M70 123L18 215L89 224L127 146Z" fill="#10151b"/>
+          <path d="M224 120L296 182L252 227L195 158Z" fill="#11171d"/>
+          <path d="M102 186L17 295L68 310L160 213Z" fill="#090d12"/>
+          <path d="M179 187L268 296L311 279L221 164Z" fill="#090d12"/>
+          <path d="M8 239L-25 276L29 293L76 252Z" fill="#171c22"/>
+          <path d="M267 286L322 325L278 341L232 304Z" fill="#171c22"/>
+          <path d="M0 238L88 112" stroke="#a66f3d" stroke-width="15" stroke-linecap="round"/>
+        </g>
+
+        <!-- CAMPFIRE -->
+        <ellipse cx="548" cy="800" rx="185" ry="130" fill="url(#fireGlow)" filter="url(#softBlur)"/>
+        <g transform="translate(480,690)">
+          <path d="M55 136Q22 90 61 50Q87 24 78 -12Q130 28 109 70Q155 42 152 1Q197 67 155 115Q116 148 55 136Z" fill="#ff7930"/>
+          <path d="M76 126Q63 92 90 69Q110 50 104 24Q136 56 121 83Q147 69 147 50Q166 86 139 113Q111 138 76 126Z" fill="#ffd26d"/>
+          <path d="M5 157L131 110M40 172L166 124" stroke="#3d2b1f" stroke-width="17" stroke-linecap="round"/>
+        </g>
+
+        <!-- SMALL DETAILS -->
+        <g fill="#0a0f15">
+          <path d="M1460 610L1435 490L1464 518L1487 391L1511 650Z"/>
+          <path d="M1263 690L1238 590L1260 607L1278 540L1290 710Z"/>
+          <path d="M1361 735L1338 646L1360 661L1378 601L1387 756Z"/>
+        </g>
+
+        <!-- MAIN TITLE -->
+        <g class="main-title" text-anchor="middle" filter="url(#shadow)">
+          <text x="810" y="125" fill="#e7c6a6" font-size="104" font-weight="900" letter-spacing="5">BEYOND</text>
+          <text x="810" y="207" fill="#e7c6a6" font-size="64" font-weight="900" letter-spacing="8">THE WAVES</text>
+          <path d="M575 232H760M860 232H1045" stroke="#d0a373" stroke-width="3"/>
+          <path d="M802 232L810 224L818 232L810 240Z" fill="#18212b" stroke="#d0a373" stroke-width="2"/>
+          <text x="810" y="271" fill="#ded0c2" font-size="17" letter-spacing="7">FURTHER THAN THE KNOWN.</text>
+        </g>
+
+        <!-- AMBIENCE TEXT -->
+        <g class="tiny-text">
+          <text x="33" y="41">SMALL</text><text x="33" y="62">STEPS</text><text x="33" y="83">BIGGER</text><text x="33" y="104">WORLDS</text>
+          <text x="1568" y="41" text-anchor="end">EXPLORE</text><text x="1568" y="62" text-anchor="end">BUILD</text>
+          <text x="1568" y="83" text-anchor="end">SURVIVE</text><text x="1568" y="104" text-anchor="end">GO BEYOND</text>
+          <text x="33" y="856">v0.1.0</text><text x="33" y="879">A NEW JOURNEY AWAITS</text>
+          <text x="1568" y="825" text-anchor="end">SAME SKY</text><text x="1568" y="847" text-anchor="end">DIFFERENT LANDS</text><text x="1568" y="869" text-anchor="end">BEYOND THE WAVES</text>
+        </g>
+
+        <!-- MAIN ACTIONS -->
+        <g id="main-menu-view" class="main-actions">
+          <g id="svg-start-game" class="svg-button" tabindex="0" role="button" aria-label="Start Game">
+            <path d="M1080 337L1104 309H1471L1495 337V402L1471 430H1104L1080 402Z" fill="url(#panelGradient)" stroke="#c18b5a" stroke-width="4"/>
+            <path d="M1062 368L1081 349L1100 368L1081 387Z" fill="#11161c" stroke="#c18b5a" stroke-width="4"/>
+            <path d="M1475 368L1494 349L1513 368L1494 387Z" fill="#11161c" stroke="#c18b5a" stroke-width="4"/>
+            <g fill="none" stroke="#eee3d9" stroke-width="7" stroke-linecap="round">
+              <path d="M1156 343L1188 375M1188 343L1156 375"/>
+              <circle cx="1172" cy="359" r="29" stroke-width="4"/>
+            </g>
+            <text x="1304" y="370" fill="#eee2d7" font-size="31" font-weight="700" text-anchor="middle" letter-spacing="1">START GAME</text>
+          </g>
+
+          <g id="svg-open-settings" class="svg-button" tabindex="0" role="button" aria-label="Settings">
+            <path d="M1080 448L1104 420H1471L1495 448V513L1471 541H1104L1080 513Z" fill="url(#panelGradient)" stroke="#c18b5a" stroke-width="4"/>
+            <path d="M1062 479L1081 460L1100 479L1081 498Z" fill="#11161c" stroke="#c18b5a" stroke-width="4"/>
+            <path d="M1475 479L1494 460L1513 479L1494 498Z" fill="#11161c" stroke="#c18b5a" stroke-width="4"/>
+            <g fill="none" stroke="#eee3d9" stroke-width="6">
+              <circle cx="1172" cy="480" r="20"/>
+              <circle cx="1172" cy="480" r="8" fill="#eee3d9"/>
+              <path d="M1172 448V438M1172 522V512M1140 480H1130M1214 480H1204M1149 457L1142 450M1202 510L1195 503M1195 457L1202 450M1142 510L1149 503"/>
+            </g>
+            <text x="1304" y="491" fill="#eee2d7" font-size="31" font-weight="700" text-anchor="middle" letter-spacing="2">SETTINGS</text>
+          </g>
+
+          <g id="svg-quit-game" class="svg-button" tabindex="0" role="button" aria-label="Quit">
+            <path d="M1080 559L1104 531H1471L1495 559V624L1471 652H1104L1080 624Z" fill="url(#panelGradient)" stroke="#c18b5a" stroke-width="4"/>
+            <path d="M1062 590L1081 571L1100 590L1081 609Z" fill="#11161c" stroke="#c18b5a" stroke-width="4"/>
+            <path d="M1475 590L1494 571L1513 590L1494 609Z" fill="#11161c" stroke="#c18b5a" stroke-width="4"/>
+            <g fill="none" stroke="#eee3d9" stroke-width="6" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M1149 568H1188V611H1149Z"/>
+              <path d="M1168 589H1133M1133 589L1146 576M1133 589L1146 602"/>
+            </g>
+            <text x="1304" y="602" fill="#eee2d7" font-size="31" font-weight="700" text-anchor="middle" letter-spacing="2">QUIT</text>
+          </g>
+        </g>
+
+        <!-- SETTINGS VIEW -->
+        <g id="svg-settings-view" class="svg-view-hidden">
+          <rect width="1600" height="900" fill="#03060b" fill-opacity=".64"/>
+          <rect x="430" y="178" width="740" height="560" rx="12" fill="#090d13" fill-opacity=".95" stroke="#c18b5a" stroke-width="4" filter="url(#shadow)"/>
+          <path d="M430 214L456 190H1144L1170 214M430 702L456 726H1144L1170 702" fill="none" stroke="#8d613f" stroke-width="2"/>
+          <g text-anchor="middle">
+            <text x="800" y="267" fill="#d9c7b7" font-size="15" letter-spacing="5">SETTINGS</text>
+            <text x="800" y="318" fill="#e7c6a6" font-size="54" font-weight="800" letter-spacing="4">SETTINGS</text>
+          </g>
+
+          <g class="setting-row" fill="#e8ddd2">
+            <text x="535" y="390" font-size="25" letter-spacing="2">SOUND</text>
+            <rect id="svg-sound-toggle" class="svg-button setting-toggle" x="942" y="354" width="124" height="52" rx="8" fill="#4a3021" stroke="#c18b5a" stroke-width="2"/>
+            <text id="svg-sound-label" x="1004" y="388" text-anchor="middle" font-size="22" font-weight="700">ON</text>
+
+            <text x="535" y="480" font-size="25" letter-spacing="2">MUSIC</text>
+            <rect id="svg-music-toggle" class="svg-button setting-toggle" x="942" y="444" width="124" height="52" rx="8" fill="#4a3021" stroke="#c18b5a" stroke-width="2"/>
+            <text id="svg-music-label" x="1004" y="478" text-anchor="middle" font-size="22" font-weight="700">ON</text>
+          </g>
+
+          <g id="svg-settings-back" class="svg-button" tabindex="0" role="button" aria-label="Back">
+            <path d="M610 584L632 557H968L990 584V646L968 673H632L610 646Z" fill="url(#panelGradient)" stroke="#c18b5a" stroke-width="4"/>
+            <path d="M642 615H620L637 598M620 615L637 632" fill="none" stroke="#eee3d9" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+            <text x="800" y="627" fill="#eee2d7" font-size="27" font-weight="700" text-anchor="middle" letter-spacing="2">BACK</text>
+          </g>
+        </g>
+
+        <!-- QUIT CONFIRMATION VIEW -->
+        <g id="svg-quit-view" class="svg-view-hidden">
+          <rect width="1600" height="900" fill="#02050a" fill-opacity=".72"/>
+          <rect x="458" y="274" width="684" height="354" rx="12" fill="#090d13" fill-opacity=".97" stroke="#c18b5a" stroke-width="4" filter="url(#shadow)"/>
+          <g text-anchor="middle">
+            <text x="800" y="346" fill="#d9c7b7" font-size="14" letter-spacing="4">LEAVE THE JOURNEY</text>
+            <text x="800" y="402" fill="#e7c6a6" font-size="43" font-weight="800" letter-spacing="3">ARE YOU SURE YOU WANT TO QUIT?</text>
+            <text x="800" y="444" fill="#c6bbb0" font-size="18">Your current battle will end.</text>
+          </g>
+
+          <g id="svg-confirm-quit" class="svg-button" tabindex="0" role="button" aria-label="Yes">
+            <path d="M545 495L567 469H796L818 495V560L796 586H567L545 560Z" fill="url(#panelGradient)" stroke="#c18b5a" stroke-width="4"/>
+            <text x="681" y="540" fill="#eee2d7" font-size="27" font-weight="700" text-anchor="middle" letter-spacing="2">YES</text>
+          </g>
+
+          <g id="svg-cancel-quit" class="svg-button" tabindex="0" role="button" aria-label="No">
+            <path d="M782 495L804 469H1033L1055 495V560L1033 586H804L782 560Z" fill="url(#panelGradient)" stroke="#c18b5a" stroke-width="4"/>
+            <text x="919" y="540" fill="#eee2d7" font-size="27" font-weight="700" text-anchor="middle" letter-spacing="2">NO</text>
+          </g>
+        </g>
+      </svg>
     </section>
 
     <section id="battle-screen" class="screen">
