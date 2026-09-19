@@ -61,7 +61,7 @@ const game = {
   rebirths: 0,
   soundOn: true,
   musicOn: true,
-  player: { maxHp: 100, hp: 100, damage: 10, attackSpeed: 1500, critChance: 5, critDamage: 150, armor: 0, magicResist: 0, dodge: 0, movementSpeed: 100, xpGain: 0, goldGain: 0 },
+  player: { maxHp: 100, hp: 100, damage: 10, attackSpeed: 1500, critChance: 5, critDamage: 200, armor: 0, magicResist: 0, dodge: 0, movementSpeed: 100, xpGain: 0, goldGain: 0 },
   monster: { maxHp: 50, hp: 50, damage: 5, attackSpeed: 2000 },
   playerTimer: null,
   monsterTimer: null,
@@ -616,7 +616,7 @@ function applyEquipmentStats() {
   game.player.attackSpeed = Math.max(350, Math.max(850, 1500 - ((game.level - 1) * 7)) - totals.attackSpeed);
   game.player.armor = totals.armor;
   game.player.critChance = 5 + totals.critChance;
-  game.player.critDamage = 150 + totals.critDamage;
+  game.player.critDamage = 200 + totals.critDamage;
   game.player.dodge = totals.dodge;
   game.player.movementSpeed = 100 + totals.movementSpeed;
   game.player.xpGain = totals.xpGain + getRebirthBonus().xp;
@@ -1621,6 +1621,15 @@ activateSvgButton(document.getElementById("svg-quit-game"), () => {
   clearBattleTimers();
   game.battleActive = false;
   openQuitView();
+});
+
+activateSvgButton(document.getElementById("svg-reset-progress"), () => {
+  const confirmed = window.confirm("FULL RESET: delete all progress, Rebirths, equipment, materials and gold? This cannot be undone.");
+  if (!confirmed) return;
+  clearBattleTimers();
+  game.battleActive = false;
+  try { localStorage.removeItem("beyondTheWavesSave"); } catch (_) {}
+  window.location.reload();
 });
 
 activateSvgButton(document.getElementById("svg-settings-back"), closeMenuOverlayViews);
